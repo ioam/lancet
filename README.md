@@ -76,7 +76,7 @@ def model_analysis():
 
 * Core classes designed to be extended to match your workflow. Optional components available for tight integration with the [Topographica simulator](https://github.com/ioam/topographica). These allow you to analyse your model both within simulations as they run and across simulations once all the data is collected.
 
-* Ongoing work on (optional) tools for easily storing your data using HDF5 with [PyTables](http://www.pytables.org/) and on automated version control.
+* Ongoing work on (optional) tools for easily storing your data using HDF5 (using [PyTables](http://www.pytables.org/)), automated version control and analysis.
 
 <!--
 ## Background
