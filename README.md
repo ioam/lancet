@@ -2,12 +2,10 @@
 
 **A tool to help you launch simulations, organise the output and dissect the results.**
 
-Use the following command to automatically fetch the [param](https://github.com/ioam/param) dependency:
 ```bash
-git clone --recursive git://github.com/jlstevens/lancet.git
+git clone git://github.com/jlstevens/lancet.git
 ```
-
-Otherwise clone as normal and make sure to install the param package using ```pip install param```.
+Lancet uses [param](https://github.com/ioam/param), make sure to install it with ```pip install param```.
 
 ## Introduction
 
