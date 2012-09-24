@@ -58,6 +58,8 @@ import numpy as np
 import itertools
 from collections import defaultdict
 
+# Local hack to make use of submodule version (when available)
+sys.path = [os.path.join(os.path.abspath('.'),'param')] + sys.path
 import param
 
 #=====================#
