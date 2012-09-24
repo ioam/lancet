@@ -22,7 +22,7 @@ analysis and visualisation tools with Python.
 Typical usage includes specification of constant arguments, description of
 parameter ranges or even search procedures (such as hillclimbing, bisection
 optimisation etc). Argument specifiers can compose together using Cartesian
-products or Concatenation to express huge numbers of argument sets concisely.
+Products or Concatenation to express huge numbers of argument sets concisely.
 
 Command Templates
 ------------------
