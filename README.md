@@ -5,7 +5,7 @@
 ```bash
 git clone git://github.com/jlstevens/lancet.git
 ```
-Lancet uses [param](https://github.com/ioam/param), make sure to install it with ```pip install param```.
+In common with many projects on [IOAM](https://github.com/ioam), Lancet uses [param](https://github.com/ioam/param) so make sure to install it with ```pip install param```.
 
 ## Introduction
 
