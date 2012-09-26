@@ -104,23 +104,14 @@ class BaseArgs(param.Parameterized):
             words, if the arguments cannot be known ahead of time (eg. parameter
             search), dynamic must be set to True.''')
 
-    rationale = param.String(default='',  allow_None=True, doc='''
-         Allows documentation to be associated with each argument specfier.
-         This allows a justification of the arguments are chosen and their
-         method of generation. Note that rationale is one of the few
-         argument specifier parameters not declared constant''')
-
     fp_precision = param.Integer(default=4,  constant=True, doc='''
          The floating point precision to use for floating point values.  Unlike
          other basic Python types, floats need care with their representation as
          you only want to display up to the precision actually specified.''')
 
-    def __init__(self, rationale='',  **params):
+    def __init__(self,   **params):
         self.format_map = defaultdict(dict)
         super(BaseArgs,self).__init__(**params)
-
-        if rationale != '': rationale = "\n[ %s ]\n%s" % (repr(self), rationale)
-        self.rationale += rationale
 
     def __iter__(self): return self
 
@@ -231,7 +222,7 @@ class BaseArgs(param.Parameterized):
         """
         Argument specifiers are expected to have a succinct representation that
         is both human-readable but correctly functions as a proper object
-        representation ie. repr. Only rationale can be omitted.
+        representation ie. repr.
         """
         return repr(self)
 
@@ -426,18 +417,14 @@ class StaticConcatenate(StaticArgs):
     second.
     """
 
-    def __init__(self, first, second, rationale=''):
+    def __init__(self, first, second):
 
         self.first = first
         self.second = second
 
         specs = list(first.copy()(review=False)) + list(second.copy()(review=False))
 
-        rationales = [rationale, first.rationale, second.rationale]
-        if rationale == '': rationales = rationales[1:]
-        rationale = "\n\n".join([r for r in rationales if (r is not '')])
-
-        super(StaticConcatenate, self).__init__(specs, rationale=rationale)
+        super(StaticConcatenate, self).__init__(specs)
         merged_format_map = dict(first.format_map, **second.format_map) # FIXME! Max of fp_precision!
         self.format_map = defaultdict(dict, merged_format_map)          # Method in base class?
 
@@ -451,14 +438,10 @@ class StaticCartesianProduct(StaticArgs):
     generates the cartesian produce of the arguments in first followed by the
     arguments in second. Note that len(first * second) = len(first)*len(second)
     """
-    def __init__(self, first, second, rationale=''):
+    def __init__(self, first, second):
 
         self.first = first
         self.second = second
-
-        rationales = [rationale, first.rationale, second.rationale]
-        if rationale == '': rationales = rationales[1:]
-        rationale = "\n\n".join([r for r in rationales if (r is not '')])
 
         specs = self._cartesian_product(list(first.copy()(review=False)),
                                         list(second.copy()(review=False)))
@@ -467,7 +450,7 @@ class StaticCartesianProduct(StaticArgs):
                    &  set(self.second.varying_keys() + self.second.constant_keys()))
         assert overlap == set(), 'Sets of keys cannot overlap between argument specifiers in cartesian product.'
 
-        super(StaticCartesianProduct, self).__init__(specs, rationale=rationale)
+        super(StaticCartesianProduct, self).__init__(specs)
         merged_format_map = dict(first.format_map, **second.format_map)
         self.format_map = defaultdict(dict, merged_format_map)
 
@@ -481,11 +464,10 @@ class Args(StaticArgs):
     product.
     """
 
-    def __init__(self, rationale='', fp_precision=4, **kwargs):
+    def __init__(self, fp_precision=4, **kwargs):
         assert kwargs != {}, "Empty specification not allowed."
         specs = [dict((k, kwargs[k]) for k in kwargs)]
-        super(Args,self).__init__(specs,
-                                  rationale=rationale, fp_precision=fp_precision)
+        super(Args,self).__init__(specs, fp_precision=fp_precision)
         for key in specs[0]:
             self._float_format(key, fp_precision)
 
@@ -520,7 +502,7 @@ class LinearArgs(StaticArgs):
          The function to be mapped across the linear range. Identity  by default ''')
 
     def __init__(self, arg_name, value, end_value=None,
-                 steps=2, fp_precision=4, mapfn=identityfn, rationale=''):
+                 steps=2, fp_precision=4, mapfn=identityfn):
 
         if end_value is not None:
             values = np.linspace(value, end_value, steps, endpoint=True)
@@ -531,7 +513,7 @@ class LinearArgs(StaticArgs):
 
         super(LinearArgs, self).__init__(_specs, arg_name=arg_name, value=value,
                                           end_value=end_value, steps=steps,
-                                          fp_precision=fp_precision, rationale=rationale,
+                                          fp_precision=fp_precision,
                                           mapfn=mapfn)
 
         self._float_format(arg_name, fp_precision)
@@ -549,12 +531,11 @@ class ListArgs(StaticArgs):
     arg_name = param.String(default='default',doc='''
          The key name that take its values from the given list.''')
 
-    def __init__(self, arg_name, value_list, fp_precision=4, rationale=''):
+    def __init__(self, arg_name, value_list, fp_precision=4):
 
         self._value_list = value_list
         _specs = [ {arg_name:val} for val in value_list]
         super(ListArgs, self).__init__(_specs, arg_name=arg_name,
-                                        rationale=rationale,
                                         fp_precision=fp_precision)
 
         self._float_format(arg_name, fp_precision)
@@ -568,14 +549,10 @@ class ListArgs(StaticArgs):
 #=============================#
 
 class DynamicConcatenate(BaseArgs):
-    def __init__(self, first, second, rationale=''):
+    def __init__(self, first, second):
         self.first = first
         self.second = second
-        rationales = [rationale, first.rationale, second.rationale]
-        if rationale == '': rationales = rationales[1:]
-        rationale = "\n\n".join([r for r in rationales if (r is not '')])
-
-        super(Concatenate, self).__init__(dynamic=True, rationale=rationale)
+        super(Concatenate, self).__init__(dynamic=True)
 
         self._exhausted = False
         self._first_sent = False
@@ -622,19 +599,15 @@ class DynamicConcatenate(BaseArgs):
 
 class DynamicCartesianProduct(BaseArgs):
 
-    def __init__(self, first, second, rationale=''):
+    def __init__(self, first, second):
 
         self.first = first
         self.second = second
 
-        rationales = [rationale, first.rationale, second.rationale]
-        if rationale == '': rationales = rationales[1:]
-        rationale = "\n\n".join([r for r in rationales if (r is not '')])
-
         overlap = set(self.first.varying_keys()) &  set(self.second.varying_keys())
         assert overlap == set(), 'Sets of keys cannot overlap between argument specifiers in cartesian product.'
 
-        super(CartesianProduct, self).__init__(dynamic=True, rationale=rationale)
+        super(CartesianProduct, self).__init__(dynamic=True)
 
         self._first_cached = None
         self._second_cached = None
@@ -1491,9 +1464,6 @@ class review_and_launch(param.Parameterized):
         print("Varying Keys: %s" % arg_specifier.varying_keys())
         print("Constant Keys: %s" % arg_specifier.constant_keys())
         print("Definition: %s" % arg_specifier)
-
-        if arg_specifier.rationale != '':
-            print("\nRationale:\n%s\n" % arg_specifier.rationale)
 
         response = self.input_options(['Y', 'n','quit'],
                 '\nShow available argument specifier entries?', default='y')
