@@ -60,6 +60,10 @@ from collections import defaultdict
 
 import param
 
+float_types = [float] + np.sctypes['float']
+def identityfn(x): return x
+def fp_repr(x):    return str(x) if (type(x) in float_types) else repr(x)
+
 #=====================#
 # Argument Specifiers #
 #=====================#
@@ -110,7 +114,6 @@ class BaseArgs(param.Parameterized):
          you only want to display up to the precision actually specified.''')
 
     def __init__(self,   **params):
-        self.format_map = defaultdict(dict)
         super(BaseArgs,self).__init__(**params)
 
     def __iter__(self): return self
@@ -136,9 +139,9 @@ class BaseArgs(param.Parameterized):
         """
         raise NotImplementedError
 
-    def round_floats(self, specs, fp_precision,
-                     float_types = tuple([float]+np.sctypes['float'])):
-        return (dict((k, np.round(v,fp_precision) if (type(v) in float_types) else v)
+    def round_floats(self, specs, fp_precision):
+        _round = lambda v, fp: np.round(v, fp) if (type(v) in np.sctypes['float']) else round(v, fp)
+        return (dict((k, _round(v, fp_precision) if (type(v) in float_types) else v)
                      for (k,v) in spec.items()) for spec in specs)
 
     def next(self):
@@ -348,8 +351,8 @@ class StaticArgs(BaseArgs):
             szipped = [(i, dict((str(k),v) for (k,v) in d.items())) for (i,d) in uzipped]
         return dict(szipped)
 
-    def __init__(self, specs, **kwargs):
-        self._specs = list(specs)
+    def __init__(self, specs, fp_precision=4, **kwargs):
+        self._specs = list(self.round_floats(specs, fp_precision))
         super(StaticArgs, self).__init__(dynamic=False, **kwargs)
 
     def __iter__(self):
@@ -444,18 +447,16 @@ class Args(StaticArgs):
     product.
     """
 
-    def __init__(self, fp_precision=4, **kwargs):
+    def __init__(self, **kwargs):
         assert kwargs != {}, "Empty specification not allowed."
+        fp_precision = kwargs.pop('fp_precision') if ('fp_precision' in kwargs) else 4
         specs = [dict((k, kwargs[k]) for k in kwargs)]
-        specs = self.round_floats(specs, fp_precision)
         super(Args,self).__init__(specs, fp_precision=fp_precision)
 
     def __repr__(self):
         spec = self._specs[0]
-        return "Args(%s)"  % ', '.join(['%s=%s' % (k, v) for (k,v) in spec.items()])
+        return "Args(%s)"  % ', '.join(['%s=%s' % (k, fp_repr(v)) for (k,v) in spec.items()])
 
-
-def identityfn(x): return x
 
 class LinearArgs(StaticArgs):
     """
@@ -481,7 +482,7 @@ class LinearArgs(StaticArgs):
          The function to be mapped across the linear range. Identity  by default ''')
 
     def __init__(self, arg_name, value, end_value=None,
-                 steps=2, fp_precision=4, mapfn=identityfn):
+                 steps=1, mapfn=identityfn, **kwargs):
 
         if end_value is not None:
             values = np.linspace(value, end_value, steps, endpoint=True)
@@ -490,15 +491,13 @@ class LinearArgs(StaticArgs):
             specs = [{arg_name:mapfn(value)}]
         self._pparams = ['end_value', 'steps', 'fp_precision', 'mapfn']
 
-        specs = self.round_floats(specs, fp_precision)
         super(LinearArgs, self).__init__(specs, arg_name=arg_name, value=value,
                                          end_value=end_value, steps=steps,
-                                         fp_precision=fp_precision,
-                                         mapfn=mapfn)
+                                         mapfn=mapfn, **kwargs)
 
     def __repr__(self):
         modified = dict(self.get_param_values(onlychanged=True))
-        pstr = ', '.join(['%s=%s' % (k,modified[k]) for k in self._pparams if k in modified])
+        pstr = ', '.join(['%s=%s' % (k, modified[k]) for k in self._pparams if k in modified])
         return "%s('%s', %s, %s)" % (self.__class__.__name__, self.arg_name, self.value, pstr)
 
 class ListArgs(StaticArgs):
@@ -509,15 +508,13 @@ class ListArgs(StaticArgs):
     arg_name = param.String(default='default',doc='''
          The key name that take its values from the given list.''')
 
-    def __init__(self, arg_name, value_list, fp_precision=4):
+    def __init__(self, arg_name, value_list, **kwargs):
 
         specs = [ {arg_name:val} for val in value_list]
-        specs = self.round_floats(specs, fp_precision)
-        super(ListArgs, self).__init__(specs, arg_name=arg_name,
-                                        fp_precision=fp_precision)
+        super(ListArgs, self).__init__(specs, arg_name=arg_name, **kwargs)
 
     def __repr__(self):
-        value_list = (str(val) for val in self._value_list)
+        value_list = (fp_repr(spec[self.arg_name]) for spec in self._specs)
         return "%s('%s',[%s])" % (self.__class__.__name__, self.arg_name, ', '.join(value_list))
 
 #=============================#
