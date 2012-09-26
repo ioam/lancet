@@ -64,6 +64,12 @@ float_types = [float] + np.sctypes['float']
 def identityfn(x): return x
 def fp_repr(x):    return str(x) if (type(x) in float_types) else repr(x)
 
+def set_fp_precision(value):
+    """
+    Function to set the floating precision across lancet.
+    """
+    BaseArgs.set_default('fp_precision', value)
+
 #=====================#
 # Argument Specifiers #
 #=====================#
@@ -268,16 +274,16 @@ class BaseArgs(param.Parameterized):
         all_keys =  self.constant_keys() + self.varying_keys()
         assert set(args) <= set(all_keys), 'Specified args must belong to the set of keys'
 
-        if log_file is not None:
-            try: log_file = open(os.path.abspath(log_file), 'w')
-            except: raise Exception('Could not create log file at log_path')
-
         if review:
             self.show()
             response =  None
             while response not in ['y','N', '']:
                 response = raw_input('Continue? [y, N]: ')
             if response != 'y': return False
+
+        if log_file is not None:
+            try: log_file = open(os.path.abspath(log_file), 'w')
+            except: raise Exception('Could not create log file at log_path')
 
         return log_file
 
@@ -324,7 +330,6 @@ class BaseArgs(param.Parameterized):
 
         if log_file is not None: log_file.close()
 
-
 class StaticArgs(BaseArgs):
     """
     Base class for many important static argument specifiers (dynamic=False)
@@ -351,7 +356,8 @@ class StaticArgs(BaseArgs):
             szipped = [(i, dict((str(k),v) for (k,v) in d.items())) for (i,d) in uzipped]
         return dict(szipped)
 
-    def __init__(self, specs, fp_precision=4, **kwargs):
+    def __init__(self, specs, fp_precision=None, **kwargs):
+        if fp_precision is None: fp_precision = BaseArgs.fp_precision
         self._specs = list(self.round_floats(specs, fp_precision))
         super(StaticArgs, self).__init__(dynamic=False, **kwargs)
 
@@ -449,7 +455,7 @@ class Args(StaticArgs):
 
     def __init__(self, **kwargs):
         assert kwargs != {}, "Empty specification not allowed."
-        fp_precision = kwargs.pop('fp_precision') if ('fp_precision' in kwargs) else 4
+        fp_precision = kwargs.pop('fp_precision') if ('fp_precision' in kwargs) else BaseArgs.fp_precision
         specs = [dict((k, kwargs[k]) for k in kwargs)]
         super(Args,self).__init__(specs, fp_precision=fp_precision)
 
