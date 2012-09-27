@@ -36,10 +36,10 @@ Parameter spaces often need to be explored for the purpose of plotting, tuning o
 >>> for kwargs in pspace(log_file='mylog'):
 ...:   slow_simulation_and_analysis(**kwargs)
 
-0: exc=1.0, inh=-10.0, gNa=0.05000000000
-1: exc=1.0, inh=-10.0, gNa=0.05555555555
+0: exc=1.0, inh=-10.0, gNa=0.05
+1: exc=1.0, inh=-10.0, gNa=0.0556
 ...
-99998: exc=20.0, inh=-20.0, gNa=0.0944444444444
+99998: exc=20.0, inh=-20.0, gNa=0.0944
 99999: exc=20.0, inh=-20.0, gNa=0.1
 Continue? [y, N]:
 ```
