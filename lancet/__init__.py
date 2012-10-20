@@ -1064,11 +1064,10 @@ class QLauncher(Launcher):
         """
         Method to generate Popen style argument list for qsub using the
         qsub_switches and qsub_flag_options parameters. Switches are returned
-        first, sorted alphanumerically.  The qsub_flag_options follow in keys()
-        ordered if not a vanilla Python dictionary (ie. a Python 2.7+ or
-        param.external OrderedDict). Otherwise the keys are sorted
-        alphanumerically. Note that override_options is a list of key-value
-        pairs.
+        first. The qsub_flag_options follow in keys() ordered if not a vanilla
+        Python dictionary (ie. a Python 2.7+ or param.external OrderedDict).
+        Otherwise the keys are sorted alphanumerically. Note that
+        override_options is a list of key-value pairs.
         """
 
         opt_dict = type(self.qsub_flag_options)()
@@ -1092,7 +1091,7 @@ class QLauncher(Launcher):
         ordered_options = [[k]+([v] if type(v) == str else list(v)) for (k,v) in ordered_pairs]
         flattened_options = [el for kvs in ordered_options for el in kvs]
 
-        return (['qsub'] + sorted(self.qsub_switches)
+        return (['qsub'] + self.qsub_switches
                 + flattened_options + [pipes.quote(c) for c in cmd_args])
 
     def launch(self):
