@@ -828,7 +828,7 @@ class Launcher(param.Parameterized):
             lines = ['%d %s' % (tid, json.dumps(spec)) for (tid, spec) in specs]
             log.write('\n'.join(lines))
 
-    def record_info(self):
+    def record_info(self, completed=True):
         """
         All launchers should call this method to write the info file at the
         end of the launch.  The info file saves the full timestamp and launcher
@@ -839,8 +839,11 @@ class Launcher(param.Parameterized):
             ('%s.info' % self.batch_name)), 'w') as info:
             startstr = time.strftime("Start Date: %d-%m-%Y Start Time: %H:%M (%Ss)",
                                      self.timestamp)
-            endstr = time.strftime("Completed: %d-%m-%Y Start Time: %H:%M (%Ss)",
-                                   time.localtime())
+            if completed:
+                endstr = time.strftime("Completed: %d-%m-%Y Start Time: %H:%M (%Ss)",
+                                       time.localtime())
+            else:
+                endstr = "Completed: N/A"
             lines = [startstr, endstr, 'Batch name: %s' % self.batch_name,
                      'Description: %s' % self.description]
             info.write('\n'.join(lines))
@@ -923,6 +926,8 @@ class Launcher(param.Parameterized):
         """
         launchinfo = self._setup_launch()
         streams_path = self._setup_streams_path()
+
+        self.record_info(completed=False)
 
         last_tid = 0
         last_tids = []
@@ -1064,11 +1069,10 @@ class QLauncher(Launcher):
         """
         Method to generate Popen style argument list for qsub using the
         qsub_switches and qsub_flag_options parameters. Switches are returned
-        first, sorted alphanumerically.  The qsub_flag_options follow in keys()
-        ordered if not a vanilla Python dictionary (ie. a Python 2.7+ or
-        param.external OrderedDict). Otherwise the keys are sorted
-        alphanumerically. Note that override_options is a list of key-value
-        pairs.
+        first. The qsub_flag_options follow in keys() ordered if not a vanilla
+        Python dictionary (ie. a Python 2.7+ or param.external OrderedDict).
+        Otherwise the keys are sorted alphanumerically. Note that
+        override_options is a list of key-value pairs.
         """
 
         opt_dict = type(self.qsub_flag_options)()
@@ -1092,7 +1096,7 @@ class QLauncher(Launcher):
         ordered_options = [[k]+([v] if type(v) == str else list(v)) for (k,v) in ordered_pairs]
         flattened_options = [el for kvs in ordered_options for el in kvs]
 
-        return (['qsub'] + sorted(self.qsub_switches)
+        return (['qsub'] + self.qsub_switches
                 + flattened_options + [pipes.quote(c) for c in cmd_args])
 
     def launch(self):
@@ -1110,6 +1114,8 @@ class QLauncher(Launcher):
         self.qsub_flag_options['-e'] = streams_path
 
         self.collate_and_launch()
+
+        self.record_info(completed=False)
 
     def collate_and_launch(self):
         """
