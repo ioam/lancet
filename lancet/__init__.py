@@ -757,6 +757,9 @@ class Launcher(param.Parameterized):
     description = param.String(default='', doc='''
               A short description of the purpose of the current set of tasks.''')
 
+    metadata = param.Dict(default={}, doc='''
+              Metadata information to add to the info file.''')
+
     max_concurrency = param.Integer(default=2, allow_None=True, doc='''
              Concurrency limit to impose on the launch. As the current class
              uses subprocess locally, multiple processes are possible at
@@ -828,25 +831,32 @@ class Launcher(param.Parameterized):
             lines = ['%d %s' % (tid, json.dumps(spec)) for (tid, spec) in specs]
             log.write('\n'.join(lines))
 
-    def record_info(self, completed=True):
+    def record_info(self, setup_info=None):
         """
-        All launchers should call this method to write the info file at the
-        end of the launch.  The info file saves the full timestamp and launcher
-        description. The file is written to the root_directory.
+        All launchers should call this method to write the info file at the end
+        of the launch. The info file saves the given setup_info, usually the
+        launch dict returned by _setup_launch. The file is written to the
+        root_directory. When called without setup_info, the existing info file
+        is being updated with the end-time.
         """
+        info_path = os.path.join(self.root_directory, ('%s.info' % self.batch_name))
 
-        with open(os.path.join(self.root_directory,
-            ('%s.info' % self.batch_name)), 'w') as info:
-            startstr = time.strftime("Start Date: %d-%m-%Y Start Time: %H:%M (%Ss)",
-                                     self.timestamp)
-            if completed:
-                endstr = time.strftime("Completed: %d-%m-%Y Start Time: %H:%M (%Ss)",
-                                       time.localtime())
-            else:
-                endstr = "Completed: N/A"
-            lines = [startstr, endstr, 'Batch name: %s' % self.batch_name,
-                     'Description: %s' % self.description]
-            info.write('\n'.join(lines))
+        if setup_info is None:
+            try:
+                with open(info_path, 'r') as info_file:
+                    setup_info = json.load(info_file)
+            except:
+                setup_info = {}
+
+            setup_info.update({'end_time' : tuple(time.localtime())})
+        else:
+            setup_info.update({
+                'end_time' : None,
+                'metadata' : self.metadata
+                })
+
+        with open(info_path, 'w') as info_file:
+            json.dump(setup_info, info_file, sort_keys=True, indent=4)
 
     def _setup_launch(self):
         """
@@ -862,12 +872,6 @@ class Launcher(param.Parameterized):
         metrics_dir = os.path.join(self.root_directory, 'metrics')
         if not os.path.isdir(metrics_dir) and self.arg_specifier.dynamic:
             os.makedirs(metrics_dir)
-
-        formatstr = "Batch '%s' of tasks specified by %s and %s launched by %s with tag '%s':\n"
-        classnames= [el.__class__.__name__ for el in
-                [self.arg_specifier, self.command_template, self]]
-        self.description = (formatstr % tuple([self.batch_name] + \
-                classnames + [self.tag]))+self.description
 
         return {'root_directory':    self.root_directory,
                 'timestamp':         self.timestamp,
@@ -927,7 +931,7 @@ class Launcher(param.Parameterized):
         launchinfo = self._setup_launch()
         streams_path = self._setup_streams_path()
 
-        self.record_info(completed=False)
+        self.record_info(launchinfo)
 
         last_tid = 0
         last_tids = []
@@ -1115,7 +1119,7 @@ class QLauncher(Launcher):
 
         self.collate_and_launch()
 
-        self.record_info(completed=False)
+        self.record_info(self._launchinfo)
 
     def collate_and_launch(self):
         """
