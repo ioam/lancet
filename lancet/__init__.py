@@ -227,7 +227,7 @@ class BaseArgs(param.Parameterized):
         Concatenates two argument specifiers. See StaticConcatenate and
         DynamicConcatenate documentation respectively.
         """
-        if other is None: return self
+        if not other: return self
         assert not (self.dynamic and other.dynamic), 'Cannot concatenate two dynamic specifiers.'
 
         if self.dynamic or other.dynamic: return DynamicConcatenate(self,other)
@@ -238,7 +238,7 @@ class BaseArgs(param.Parameterized):
         Takes the cartesian product of two argument specifiers. See
         StaticCartesianProduct and DynamicCartesianProduct documentation.
         """
-        if other is None: return None
+        if not other: return []
         assert not (self.dynamic and other.dynamic), \
             'Cannot take Cartesian product two dynamic specifiers.'
 
@@ -246,10 +246,10 @@ class BaseArgs(param.Parameterized):
         else:                             return StaticCartesianProduct(self, other)
 
     def __radd__(self, other):
-        if other is None: return self
+        if not other: return self
 
     def __rmul__(self, other):
-        if other is None: return None
+        if not other: return []
 
     def _cartesian_product(self, first_specs, second_specs):
         """
