@@ -1387,10 +1387,10 @@ class review_and_launch(param.Parameterized):
         if clashes != []: raise Exception("Keys %s not in CommandTemplate allowed list" % list(clashes[0]))
 
     def __call__(self, f):
-        if self.main_script and f.__module__ != '__main__': return None
+        if self.main_script and f.__module__ != '__main__': return False
 
         # Resuming launch as necessary
-        if self.launcher_class.resume_launch(): return None
+        if self.launcher_class.resume_launch(): return False
 
         # Setting the output directory via param
         if self.output_directory is not None:
@@ -1411,29 +1411,32 @@ class review_and_launch(param.Parameterized):
             # Run review of launch args only if necessary
             if self.launch_args is not None:
                 proceed = self.review_args(self.launch_args, heading='Lancet Meta Parameters')
-                if not proceed: return None
+                if not proceed: return False
 
             for (count, lval) in enumerate(lvals):
                 proceed = all(r(access(lval)) for (access, r) in self._reviewers)
                 if not proceed:
                     print("Aborting launch.")
-                    return None
+                    return False
 
                 if len(lvals)!= 1 and count < len(lvals)-1:
                     skip_remaining = self.input_options(['Y', 'n','quit'],
                                      '\nSkip remaining reviews?', default='y')
-                    if skip_remaining == 'quit': return None
+                    if skip_remaining == 'quit': return False
                     if skip_remaining == 'y': break
 
-        response = self.input_options(['y','N'], 'Execute?', default='n')
-        if response == 'y':
-            # Run configure hook. Exit if any configuration fails
-            if not all([self.configure_launch(lval) for lval in lvals]): return
+            if self.input_options(['y','N'], 'Execute?', default='n') != 'y':
+                return False
 
-            for lval in lvals:
-                launcher =  self._get_launcher(lval)
-                print("== Launching  %s ==" % launcher.batch_name)
-                launcher.launch()
+        # Run configure hook. Exit if any configuration fails
+        if not all([self.configure_launch(lval) for lval in lvals]): return False
+
+        for lval in lvals:
+            launcher =  self._get_launcher(lval)
+            print("== Launching  %s ==" % launcher.batch_name)
+            launcher.launch()
+
+        return True
 
     def review_launcher(self, launcher):
         command_template = launcher.command_template
