@@ -136,6 +136,15 @@ class BaseArgs(param.Parameterized):
         """
         raise NotImplementedError
 
+    def constant_items(self):
+        """
+        Returns the set of constant items as a list of tuples. This
+        allows easy conversion to dictionary format. Note, the items
+        should be supplied in the same key ordering as for
+        constant_keys() for consistency.
+        """
+        raise NotImplementedError
+
     def varying_keys(self):
         """
         Returns the list of parameters whose values vary as the argument
@@ -393,7 +402,11 @@ class StaticArgs(BaseArgs):
 
     def constant_keys(self):
         collection = self._collect_by_key(self._specs)
-        return [k for k in collection if (len(self._unique(collection[k])) == 1)]
+        return [k for k in sorted(collection) if (len(self._unique(collection[k])) == 1)]
+
+    def constant_items(self):
+        collection = self._collect_by_key(self._specs)
+        return [(k,collection[k][0]) for k in self.constant_keys()]
 
     def varying_keys(self):
         collection = self._collect_by_key(self._specs)
@@ -700,7 +713,7 @@ class CommandTemplate(param.Parameterized):
         Formats a single argument specification - a dictionary of argument
         name/value pairs. The info dictionary includes the root_directory,
         batch_name, batch_tag, batch_description, timestamp, varying_keys,
-        constant_keys.
+        constant_keys and constant_items.
         """
         raise NotImplementedError
 
@@ -715,7 +728,8 @@ class CommandTemplate(param.Parameterized):
                 'batch_description':  '<batch_description>',
                 'timestamp':          tuple(time.localtime()),
                 'varying_keys':       arg_specifier.varying_keys(),
-                'constant_keys':      arg_specifier.constant_keys()}
+                'constant_keys':      arg_specifier.constant_keys(),
+                'constant_items':     arg_specifier.constant_items()}
 
         if queue_cmd_only and not hasattr(self, 'queue'):
             print("Cannot show queue: CommandTemplate does not allow queueing")
@@ -887,6 +901,7 @@ class Launcher(param.Parameterized):
                 'timestamp':         self.timestamp,
                 'varying_keys':      self.arg_specifier.varying_keys(),
                 'constant_keys':     self.arg_specifier.constant_keys(),
+                'constant_items':     self.arg_specifier.constant_items(),
                 'batch_name':        self.batch_name,
                 'batch_tag':         self.tag,
                 'batch_description': self.description }
