@@ -5,7 +5,7 @@ Lancet
 
 To obtain Lancet, run::
 
-   git clone git://github.com/jlstevens/lancet.git
+   git clone git://github.com/ioam/lancet.git
 
 In common with many projects on `IOAM <https://github.com/ioam>`_, Lancet uses `param <https://github.com/ioam/param>`_, so make sure to install it with ``pip install param``.
 
