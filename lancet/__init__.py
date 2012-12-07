@@ -377,7 +377,7 @@ class StaticArgs(BaseArgs):
     def __init__(self, specs, fp_precision=None, **kwargs):
         if fp_precision is None: fp_precision = BaseArgs.fp_precision
         self._specs = list(self.round_floats(specs, fp_precision))
-        super(StaticArgs, self).__init__(dynamic=False, **kwargs)
+        super(StaticArgs, self).__init__(dynamic=False, fp_precision=fp_precision, **kwargs)
 
     def __iter__(self):
         self._exhausted = False
@@ -439,8 +439,10 @@ class StaticConcatenate(StaticArgs):
 
         self.first = first
         self.second = second
+        max_precision = max(first.fp_precision, second.fp_precision)
+
         specs = list(first.copy()(review=False)) + list(second.copy()(review=False))
-        super(StaticConcatenate, self).__init__(specs)
+        super(StaticConcatenate, self).__init__(specs, fp_precision=max_precision)
 
     def __repr__(self):
         return "(%s + %s)" % (repr(self.first), repr(self.second))
@@ -456,6 +458,7 @@ class StaticCartesianProduct(StaticArgs):
 
         self.first = first
         self.second = second
+        max_precision = max(first.fp_precision, second.fp_precision)
 
         specs = self._cartesian_product(list(first.copy()(review=False)),
                                         list(second.copy()(review=False)))
@@ -463,7 +466,7 @@ class StaticCartesianProduct(StaticArgs):
         overlap = (set(self.first.varying_keys() + self.first.constant_keys())
                    &  set(self.second.varying_keys() + self.second.constant_keys()))
         assert overlap == set(), 'Sets of keys cannot overlap between argument specifiers in cartesian product.'
-        super(StaticCartesianProduct, self).__init__(specs)
+        super(StaticCartesianProduct, self).__init__(specs, fp_precision=max_precision)
 
     def __repr__(self):   return '(%s * %s)' % (repr(self.first), repr(self.second))
 
