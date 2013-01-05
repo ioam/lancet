@@ -58,6 +58,7 @@ import logging
 import param
 import numpy as np
 from collections import defaultdict
+from pprint import pformat
 
 float_types = [float] + np.sctypes['float']
 def identityfn(x): return x
@@ -120,6 +121,8 @@ class BaseArgs(param.Parameterized):
 
     def __init__(self,   **params):
         super(BaseArgs,self).__init__(**params)
+        self._pprint_args = ([],[],None,{})
+        self.pprint_args([],['fp_precision', 'dynamic'])
 
     def __iter__(self): return self
 
@@ -211,7 +214,6 @@ class BaseArgs(param.Parameterized):
         human-readable format. When dynamic, not all argument values may be
         available.
         """
-
         copied = self.copy()
         enumerated = [el for el in enumerate(copied)]
         for (group_ind, specs) in enumerated:
@@ -223,14 +225,6 @@ class BaseArgs(param.Parameterized):
 
         if self.dynamic:
             print('Remaining arguments not available for %s' % self.__class__.__name__)
-
-    def __str__(self):
-        """
-        Argument specifiers are expected to have a succinct representation that
-        is both human-readable but correctly functions as a proper object
-        representation ie. repr.
-        """
-        return repr(self)
 
     def __add__(self, other):
         """
@@ -348,6 +342,62 @@ class BaseArgs(param.Parameterized):
 
         if log_file is not None: log_file.close()
 
+    def pprint_args(self, pos_args, keyword_args, infix_operator=None, extra_params={}):
+        if infix_operator and not (len(pos_args)==2 and keyword_args==[]):
+            raise Exception('Infix format requires exactly two positional arguments and no keywords')
+        (kwargs,_,_,_) = self._pprint_args
+        self._pprint_args = (keyword_args + kwargs, pos_args, infix_operator, extra_params)
+
+    def _pprint(self, cycle=False, flat=False, level=1, tab = '   '):
+        """
+        Pretty printer that handles params and IPython pretty printing.
+        """
+        lines = []
+        (kwargs, pos_args, infix_operator, extra_params) = self._pprint_args
+        br = '' if flat else '\n'
+        prettyfn = repr if flat else lambda x: x._pprint(flat=flat, level=level+1) if isinstance(x, BaseArgs) else pformat(x)
+        text =        lambda x: lines.append(x)
+        pretty =      lambda x: lines.append(prettyfn(x)) # Was repr...
+
+        classname = self.__class__.__name__
+        params = dict(self.get_param_values(), **extra_params)
+        modified = dict(self.get_param_values(onlychanged=True))
+        pkwargs = [(k, modified[k])  for k in kwargs if (k in modified)] + extra_params.items()
+
+        indent =  '' if flat else tab * level
+        if cycle:
+            text('%s(...)' % classname)
+        elif infix_operator:
+            level = level - 1
+            [first_key, second_key] = pos_args
+            pretty(params[first_key])
+            text(' '+infix_operator+' ')
+            pretty(params[second_key])
+        else:
+            text('%s(' % classname)
+            for (num,k) in enumerate(pos_args):
+                last = (num ==len(pos_args)-1)
+                text(br+indent)
+                text('%s=' % k)
+                pretty(params[k])
+                text(',' if not last   else '')
+
+            text(', ' if (pkwargs and len(pos_args)>0) else '')
+            for (num,(k,v)) in enumerate(pkwargs):
+                last = (num ==len(pkwargs)-1)
+                text(br+indent)
+                text('%s=' % k)
+                pretty(v)
+                text(',' if not last   else '')
+
+            text(br+tab*(level-1)+')')
+
+        return ''.join(lines)
+
+    def _repr_pretty_(self, p, cycle):  p.text(self._pprint(cycle))
+    def __repr__(self):  return self._pprint(flat=True)
+    def __str__(self): return self._pprint()
+
 class StaticArgs(BaseArgs):
     """
     Base class for many important static argument specifiers (dynamic=False)
@@ -368,6 +418,7 @@ class StaticArgs(BaseArgs):
         if fp_precision is None: fp_precision = BaseArgs.fp_precision
         specs = list(self.round_floats(specs, fp_precision))
         super(StaticArgs, self).__init__(dynamic=False, fp_precision=fp_precision, specs=specs, **kwargs)
+        self.pprint_args(['specs'],[])
 
     def __iter__(self):
         self._exhausted = False
@@ -413,8 +464,7 @@ class StaticArgs(BaseArgs):
 
     def __len__(self): return len(self.specs)
 
-    def __repr__(self):
-        return "StaticArgs(%s)" % (self.specs)
+    def _repr_pretty_(self, p, cycle): p.text(str(self))
 
 
 class StaticConcatenate(StaticArgs):
@@ -437,9 +487,9 @@ class StaticConcatenate(StaticArgs):
         specs = first.specs + second.specs
         super(StaticConcatenate, self).__init__(specs, fp_precision=max_precision,
                                                 first=first, second=second)
+        self.pprint_args(['first', 'second'],[], infix_operator='+')
 
-    def __repr__(self):
-        return "(%s + %s)" % (repr(self.first), repr(self.second))
+    def _repr_pretty_(self, p, cycle): p.text(str(self))
 
 class StaticCartesianProduct(StaticArgs):
     """
@@ -465,8 +515,9 @@ class StaticCartesianProduct(StaticArgs):
         assert overlap == set(), 'Sets of keys cannot overlap between argument specifiers in cartesian product.'
         super(StaticCartesianProduct, self).__init__(specs, fp_precision=max_precision,
                                                      first=first, second=second)
+        self.pprint_args(['first', 'second'],[], infix_operator='*')
 
-    def __repr__(self):   return '(%s * %s)' % (repr(self.first), repr(self.second))
+    def _repr_pretty_(self, p, cycle): p.text(str(self))
 
 
 class Args(StaticArgs):
@@ -481,10 +532,9 @@ class Args(StaticArgs):
         fp_precision = kwargs.pop('fp_precision') if ('fp_precision' in kwargs) else None
         specs = [dict((k, kwargs[k]) for k in kwargs)]
         super(Args,self).__init__(specs, fp_precision=fp_precision)
+        self.pprint_args([],list(kwargs.keys()), None, dict(**kwargs))
 
-    def __repr__(self):
-        spec = self.specs[0]
-        return "Args(%s)"  % ', '.join(['%s=%s' % (k, fp_repr(v)) for (k,v) in spec.items()])
+    def _repr_pretty_(self, p, cycle): p.text(str(self))
 
 
 class LinearArgs(StaticArgs):
@@ -519,9 +569,10 @@ class LinearArgs(StaticArgs):
         super(LinearArgs, self).__init__(specs, key=key, start_value=start_value,
                                          end_value=end_value, steps=steps,
                                          mapfn=mapfn, **kwargs)
+        self.pprint_args(['key', 'start_value'], ['end_value'])
 
-    def __repr__(self):
-        return 'LinearArgs(%s, %s, %s, steps=%d)' % (self.key, self.start_value, self.end_value, self.steps)
+    def _repr_pretty_(self, p, cycle): p.text(str(self))
+
 
 class ListArgs(StaticArgs):
     """
@@ -539,10 +590,10 @@ class ListArgs(StaticArgs):
         assert list_values != [], "Empty list not allowed."
         specs = [ {list_key:val} for val in list_values]
         super(ListArgs, self).__init__(specs, list_key=list_key, list_values=list_values, **kwargs)
+        self.pprint_args(['list_key', 'list_values'], [])
 
-    def __repr__(self):
-        list_values = (fp_repr(spec[self.list_key]) for spec in self.specs)
-        return "%s('%s',[%s])" % (self.__class__.__name__, self.list_key, ', '.join(list_values))
+    def _repr_pretty_(self, p, cycle): p.text(str(self))
+
 
 class Log(StaticArgs):
     """
@@ -587,9 +638,9 @@ class Log(StaticArgs):
         else:
             log_specs = [spec for (_, spec) in log_items]
         super(Log, self).__init__(log_specs, log_path=log_path, tid_key=tid_key, **kwargs)
+        self.pprint_args(['log_path'], ['tid_key'])
 
-    def __repr__(self):
-        return 'Log(%s, tid_key=%r)' % (self.log_path, self.tid_key)
+    def _repr_pretty_(self, p, cycle): p.text(str(self))
 
 
 class Indexed(StaticArgs):
@@ -630,6 +681,7 @@ class Indexed(StaticArgs):
         specs = self._index(operand.specs, index.specs, index_key)
         super(Indexed,self).__init__(specs, fp_precision=fp_precision, index_key=index_key,
                                      index=index, operand=operand, **kwargs)
+        self.pprint_args(['operand', 'index', 'index_key'],[])
 
     def _index(self, specs, index_specs, index_key):
         keys = [spec[index_key] for spec in specs]
@@ -645,8 +697,8 @@ class Indexed(StaticArgs):
 
         return [dict(v, **index_specs[index_idxmap[k]]) for (k,v) in spec_items]
 
-    def __repr__(self):
-        return 'Indexed(%r, %r, %r)' % (self.operand, self.index, self.index_key)
+    def _repr_pretty_(self, p, cycle): p.text(str(self))
+
 
 class FilePattern(StaticArgs):
     """
@@ -707,6 +759,7 @@ class FilePattern(StaticArgs):
                                           root=root, **kwargs)
         if len(updated_specs) == 0:
             print "%r: No matches found." % self
+        self.pprint_args(['key', 'pattern'], ['root'])
 
     def fields(self):
         """
@@ -785,8 +838,7 @@ class FilePattern(StaticArgs):
 
         return globpattern, ''.join(parts).replace('\\*','.*'), list(f for f in fields if f), dict(types)
 
-    def __repr__(self):
-        return 'FilePattern(%s, %s, root=%s)' % (self.key, self.pattern, self.root)
+    def _repr_pretty_(self, p, cycle): p.text(str(self))
 
 
 class LexSorted(StaticArgs):
@@ -817,6 +869,7 @@ class LexSorted(StaticArgs):
     def __init__(self, operand, order=[], **kwargs):
         specs = self._lexsort(operand, order)
         super(LexSorted, self).__init__(specs, operand=operand, order=order, **kwargs)
+        self.pprint_args(['operand','order'],[])
 
     def _lexsort(self, operand, order=[]):
         """
@@ -840,8 +893,8 @@ class LexSorted(StaticArgs):
             specs = sorted(specs, key=lambda s: s.get(key, None), reverse=(not ascending))
         return specs
 
-    def __repr__(self):
-        return 'LexSorted(%r, order=%r)' % (self.operand, self.order)
+    def _repr_pretty_(self, p, cycle): p.text(str(self))
+
 
 
 #=============================#
@@ -860,6 +913,7 @@ class DynamicConcatenate(BaseArgs):
         self._second_cached = None
         if not first.dynamic: self._first_cached = next(first.copy())
         if not second.dynamic: self._second_cached = next(second.copy())
+        self.pprint_args(['first', 'second'],[], infix_operator='+')
 
     def schedule(self):
         if self._first_cached is None:
@@ -894,8 +948,8 @@ class DynamicConcatenate(BaseArgs):
             else:
                 return  next(self.second)
 
-    def __repr__(self):
-        return "(%s + %s)" % (repr(self.first), repr(self.second))
+    def _repr_pretty_(self, p, cycle): p.text(str(self))
+
 
 class DynamicCartesianProduct(BaseArgs):
 
@@ -913,6 +967,8 @@ class DynamicCartesianProduct(BaseArgs):
         self._second_cached = None
         if not first.dynamic: self._first_cached = next(first.copy())
         if not second.dynamic: self._second_cached = next(second.copy())
+
+        self.pprint_args(['first', 'second'],[], infix_operator='*')
 
     def constant_keys(self):
         return list(set(self.first.constant_keys()) | set(self.second.constant_keys()))
@@ -942,7 +998,7 @@ class DynamicCartesianProduct(BaseArgs):
             second_spec = next(self.second)
             return self._cartesian_product(self._first_cached, second_spec)
 
-    def __repr__(self):   return '(%s * %s)' % (repr(self.first), repr(self.second))
+    def _repr_pretty_(self, p, cycle): p.text(str(self))
 
 
 #===================#
