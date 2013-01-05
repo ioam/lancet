@@ -576,7 +576,6 @@ class batch_analysis(review_and_launch):
       print "Running reduce in directory %s" % os.path.basename(root_directory)
       log_name = "%s.log" % task_launcher.batch_name
       log_path = os.path.join(root_directory, log_name)
-      print log_path
       assert os.path.exists(log_path), 'Cannot find log file %s' % log_name
       with open(log_path,'r') as log:
          splits = (line.split() for line in log)
