@@ -502,45 +502,39 @@ class Args(StaticArgs):
 
 class LinearArgs(StaticArgs):
     """
-    LinearArgs generates an argument that has a numerically interpolated range
-    (linear by default). Values formatted to the given floating-point precision.
+    LinearArgs generates an argument from a numerically interpolated range which
+    is linear by default. An optional function can be specified to sample a
+    numeric range with regular intervals.
     """
 
-    arg_name = param.String(default='arg_name',doc='''
-         The name of the argument that is to be linearly varied over a numeric range.''')
+    key = param.String(default='', doc='''
+         The key assigned to values computed over the linear numeric range.''')
 
-    value =  param.Number(default=None, allow_None=True, constant=True, doc='''
+    start_value =  param.Number(default=None, allow_None=True, constant=True, doc='''
          The starting numeric value of the linear interpolation.''')
 
     end_value = param.Number(default=None, allow_None=True, constant=True, doc='''
-         The ending numeric value of the linear interpolation (inclusive).
-         If not specified, will return 'value' (no interpolation).''')
+         The ending numeric value of the linear interpolation (inclusive).''')
 
-    steps = param.Integer(default=1, constant=True, doc='''
-         The number of steps to use in the interpolation. Default is 1.''')
+    steps = param.Integer(default=2, constant=True, bounds=(2,None), doc='''
+         The number of steps to interpolate over. Default is 2 which returns the
+         start and end values without interpolation.''')
 
     # Can't this be a lambda?
     mapfn = param.Callable(default=identityfn, constant=True, doc='''
          The function to be mapped across the linear range. Identity  by default ''')
 
-    def __init__(self, arg_name, value, end_value=None,
-                 steps=1, mapfn=identityfn, **kwargs):
+    def __init__(self, key, start_value, end_value, steps=2, mapfn=identityfn, **kwargs):
 
-        if end_value is not None:
-            values = np.linspace(value, end_value, steps, endpoint=True)
-            specs = [{arg_name:mapfn(val)} for val in values ]
-        else:
-            specs = [{arg_name:mapfn(value)}]
-        self._pparams = ['end_value', 'steps', 'fp_precision', 'mapfn']
+        values = np.linspace(start_value, end_value, steps, endpoint=True)
+        specs = [{key:mapfn(val)} for val in values ]
 
-        super(LinearArgs, self).__init__(specs, arg_name=arg_name, value=value,
+        super(LinearArgs, self).__init__(specs, key=key, start_value=start_value,
                                          end_value=end_value, steps=steps,
                                          mapfn=mapfn, **kwargs)
 
     def __repr__(self):
-        modified = dict(self.get_param_values(onlychanged=True))
-        pstr = ', '.join(['%s=%s' % (k, modified[k]) for k in self._pparams if k in modified])
-        return "%s('%s', %s, %s)" % (self.__class__.__name__, self.arg_name, self.value, pstr)
+        return 'LinearArgs(%s, %s, %s, steps=%d)' % (self.key, self.start_value, self.end_value, self.steps)
 
 class ListArgs(StaticArgs):
     """
