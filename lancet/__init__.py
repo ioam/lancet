@@ -525,11 +525,11 @@ class ListArgs(StaticArgs):
     An argument specifier that takes its values from a given list.
     """
 
-    list_key = param.String(default='default', constant=True, doc='''
-         The key assigned to the elements of the given list.''')
-
     list_values = param.List(default=[], constant=True, doc='''
          The list values that are to be returned by the specifier''')
+
+    list_key = param.String(default='default', constant=True, doc='''
+         The key assigned to the elements of the given list.''')
 
     def __init__(self, list_key, list_values, **kwargs):
 
@@ -603,11 +603,18 @@ class Indexed(StaticArgs):
     By default, fp_precision is the maximum of that used by the
     operand and index.
     """
-    operand = param.ClassSelector(default=None, class_=StaticArgs, allow_None=True, constant=True)
+    operand = param.ClassSelector(default=None, class_=StaticArgs, allow_None=True, constant=True, doc='''
+              The source specifier from which the index_key is extracted for
+              looking up the corresponding value in the index.''')
 
-    index = param.ClassSelector(default=None, class_=StaticArgs, allow_None=True, constant=True)
+    index = param.ClassSelector(default=None, class_=StaticArgs, allow_None=True, constant=True, doc='''
+             The specifier in which a lookup is performed to find the unique
+             matching specification. The index must be longer than the operand
+             and the values of the index_key must be unique.''')
 
-    index_key  = param.String(default=None, allow_None=True, constant=True)
+    index_key  = param.String(default=None, allow_None=True, constant=True, doc='''
+             The common key in both the index and the operand used to
+             index the former specifications into the latter.''')
 
     def __init__(self, operand, index, index_key, fp_precision=None, **kwargs):
 
@@ -777,6 +784,61 @@ class FilePattern(StaticArgs):
 
     def __repr__(self):
         return 'FilePattern(%s, %s, root=%s)' % (self.key, self.pattern, self.root)
+
+
+class LexSorted(StaticArgs):
+    """
+    Argument specifiers normally have a clearly defined but implicit, default
+    orderings. Sometimes a different ordering is desired, typically for
+    inspecting the structure of the specifier in some way
+    (ie. viewing). Applying LexSorted to a specifier allows the desired
+    ordering to be achieved.
+
+    The lexical sort order is specified in the 'order' parameter which takes a
+    list of strings. Each string is a key name prefixed by '+' or '-' for
+    ascending and descending sort respectively. If the key is not found in the
+    operand's set of varying keys, it is ignored.
+
+    To illustrate, if order=['+id', '-time'] then the specifier would be sorted
+    by ascending by 'id'value but where id values are equal, it would be sorted
+    by descending 'time' value.
+    """
+    operand = param.ClassSelector(default=None, class_=StaticArgs, allow_None=True, constant=True, doc='''
+              The source specifier which is to be lexically sorted.''')
+
+    order = param.List(default=[], constant=True, doc='''
+             An ordered list of annotated keys for lexical sorting. An annotated
+             key is the usual key name prefixed with either '+' (for ascending
+             sort) or '-' (for descending sort). By default, no sorting is applied.''')
+
+    def __init__(self, operand, order=[], **kwargs):
+        specs = self._lexsort(operand, order)
+        super(LexSorted, self).__init__(specs, operand=operand, order=order, **kwargs)
+
+    def _lexsort(self, operand, order=[]):
+        """
+        A lexsort is specified using normal key string prefixed by '+' (for
+        ascending) or '-' for (for descending).
+
+        Note that in Python 2, if a key is missing, None is returned (smallest
+        Python value). In Python 3, an Exception will be raised regarding
+        comparison of heterogenous types.
+        """
+
+        specs = operand.specs[:]
+        if not all(el[0] in ['+', '-'] for el in order):
+            raise Exception("Please prefix sort keys with either '+' (for ascending) or '-' for descending")
+
+        sort_cycles = [(el[1:], True if el[0]=='+' else False) for el in reversed(order)
+                       if el[1:] in operand.varying_keys()]
+
+
+        for (key, ascending) in sort_cycles:
+            specs = sorted(specs, key=lambda s: s.get(key, None), reverse=(not ascending))
+        return specs
+
+    def __repr__(self):
+        return 'LexSorted(%r, order=%r)' % (self.operand, self.order)
 
 
 #=============================#
