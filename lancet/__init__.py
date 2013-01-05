@@ -475,7 +475,7 @@ class Args(StaticArgs):
 
     def __init__(self, **kwargs):
         assert kwargs != {}, "Empty specification not allowed."
-        fp_precision = kwargs.pop('fp_precision') if ('fp_precision' in kwargs) else BaseArgs.fp_precision
+        fp_precision = kwargs.pop('fp_precision') if ('fp_precision' in kwargs) else None
         specs = [dict((k, kwargs[k]) for k in kwargs)]
         super(Args,self).__init__(specs, fp_precision=fp_precision)
 
@@ -583,11 +583,60 @@ class Log(StaticArgs):
             log_specs = [dict(spec.items()+[(tid_key,idx)]) for (idx, spec) in log_items]
         else:
             log_specs = [spec for (_, spec) in log_items]
-
         super(Log, self).__init__(log_specs, log_path=log_path, tid_key=tid_key, **kwargs)
 
     def __repr__(self):
         return 'Log(%s, tid_key=%r)' % (self.log_path, self.tid_key)
+
+
+class Indexed(StaticArgs):
+    """
+    Given two StaticArgs, link the arguments of via an index value.
+    The index value of the given key must have a matching entry in the
+    index. Once a match is found, the results are merged with the
+    resulting ordering identical to that of the input operand.
+
+    The value used for matching is specified by the key
+    name. Uniqueness of keys in the index is enforced and these keys
+    must be a superset of those expressed by the operand.
+
+    By default, fp_precision is the maximum of that used by the
+    operand and index.
+    """
+    operand = param.ClassSelector(default=None, class_=StaticArgs, allow_None=True, constant=True)
+
+    index = param.ClassSelector(default=None, class_=StaticArgs, allow_None=True, constant=True)
+
+    index_key  = param.String(default=None, allow_None=True, constant=True)
+
+    def __init__(self, operand, index, index_key, fp_precision=None, **kwargs):
+
+        if False in [isinstance(operand, StaticArgs), isinstance(index, StaticArgs)]:
+            raise Exception('Can only index two Static Argument specifiers')
+
+        max_precision = max(operand.fp_precision, index.fp_precision)
+        fp_precision =  max_precision if fp_precision is None else fp_precision
+
+        specs = self._index(operand.specs, index.specs, index_key)
+        super(Indexed,self).__init__(specs, fp_precision=fp_precision, index_key=index_key,
+                                     index=index, operand=operand, **kwargs)
+
+    def _index(self, specs, index_specs, index_key):
+        keys = [spec[index_key] for spec in specs]
+        index_keys = [spec[index_key] for spec in index_specs]
+
+        if len(index_keys) != len(set(index_keys)):
+            raise Exception("Keys in index must all be unique")
+        if not set(keys).issubset(set(index_keys)):
+            raise Exception("Keys in specifier must be subset of keys in index.")
+
+        spec_items = zip(keys, specs)
+        index_idxmap = dict(zip(index_keys, range(len(index_keys))))
+
+        return [dict(v, **index_specs[index_idxmap[k]]) for (k,v) in spec_items]
+
+    def __repr__(self):
+        return 'Indexed(%r, %r, %r)' % (self.operand, self.index, self.index_key)
 
 
 #=============================#
