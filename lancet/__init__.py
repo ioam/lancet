@@ -438,14 +438,18 @@ class StaticConcatenate(StaticArgs):
     second.
     """
 
+    first = param.ClassSelector(default=None, class_=StaticArgs, allow_None=True, constant=True, doc='''
+            The first static specifier used to generate the concatenation.''')
+
+    second = param.ClassSelector(default=None, class_=StaticArgs, allow_None=True, constant=True, doc='''
+            The second static specifier used to generate the concatenation.''')
+
     def __init__(self, first, second):
 
-        self.first = first
-        self.second = second
         max_precision = max(first.fp_precision, second.fp_precision)
-
-        specs = list(first.copy()(review=False)) + list(second.copy()(review=False))
-        super(StaticConcatenate, self).__init__(specs, fp_precision=max_precision)
+        specs = first.specs + second.specs
+        super(StaticConcatenate, self).__init__(specs, fp_precision=max_precision,
+                                                first=first, second=second)
 
     def __repr__(self):
         return "(%s + %s)" % (repr(self.first), repr(self.second))
@@ -457,19 +461,23 @@ class StaticCartesianProduct(StaticArgs):
     generates the cartesian produce of the arguments in first followed by the
     arguments in second. Note that len(first * second) = len(first)*len(second)
     """
+
+    first = param.ClassSelector(default=None, class_=StaticArgs, allow_None=True, constant=True, doc='''
+            The first static specifier used to generate the Cartesian product.''')
+
+    second = param.ClassSelector(default=None, class_=StaticArgs, allow_None=True, constant=True, doc='''
+            The second static specifier used to generate the Cartesian product.''')
+
     def __init__(self, first, second):
 
-        self.first = first
-        self.second = second
         max_precision = max(first.fp_precision, second.fp_precision)
+        specs = self._cartesian_product(first.specs, second.specs)
 
-        specs = self._cartesian_product(list(first.copy()(review=False)),
-                                        list(second.copy()(review=False)))
-
-        overlap = (set(self.first.varying_keys() + self.first.constant_keys())
-                   &  set(self.second.varying_keys() + self.second.constant_keys()))
+        overlap = (set(first.varying_keys() + first.constant_keys())
+                   &  set(second.varying_keys() + second.constant_keys()))
         assert overlap == set(), 'Sets of keys cannot overlap between argument specifiers in cartesian product.'
-        super(StaticCartesianProduct, self).__init__(specs, fp_precision=max_precision)
+        super(StaticCartesianProduct, self).__init__(specs, fp_precision=max_precision,
+                                                     first=first, second=second)
 
     def __repr__(self):   return '(%s * %s)' % (repr(self.first), repr(self.second))
 
