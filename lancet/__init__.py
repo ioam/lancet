@@ -123,6 +123,9 @@ class BaseArgs(param.Parameterized):
 
     def __iter__(self): return self
 
+    def __contains__(self, value):
+        return value in (self.constant_keys() +  self.constant_keys())
+
     def spec_formatter(self, spec):
         " Formats the elements of an argument set appropriately"
         return dict((k, str(v)) for (k,v) in spec.items())
