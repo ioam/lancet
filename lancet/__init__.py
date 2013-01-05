@@ -638,6 +638,146 @@ class Indexed(StaticArgs):
     def __repr__(self):
         return 'Indexed(%r, %r, %r)' % (self.operand, self.index, self.index_key)
 
+class FilePattern(StaticArgs):
+    """
+    A FilePattern specifier allows files to be located via an extended form of
+    globbing. For example, you can find the absolute filenames of all npz files
+    in the data subdirectory (relative to the root) that start with the filename
+    'timeseries' use the pattern 'data/timeseries*.npz'.
+
+    In addition to globbing supported by the glob module, patterns can extract
+    metadata from filenames using a subset of the Python format specification
+    syntax. To illustrate, you can use 'data/timeseries-{date}.npz' to record
+    the date strings associated with matched files. Note that a particular named
+    fields can only be used in a particular pattern once.
+
+    By default metadata is extracted as strings but format types are supported
+    in the usual manner eg. 'data/timeseries-{day:d}-{month:d}.npz' will extract
+    the day and month from the filename as integers. Only field names and types
+    are recognised with all other format specification ignored. Type codes
+    supported: 'd', 'b', 'o', 'x', 'e','E','f', 'F','g', 'G', 'n' (otherwise
+    result is a string).
+
+    Note that ordering is determined via ascending alphanumeric sort and that
+    actual filenames should not include any globbing characters, namely: '?','*','['
+    and ']' (general good practice for filenames).
+    """
+
+    key = param.String(default=None, allow_None=True, constant=True, doc='''
+             The key name given to the matched file path strings.''')
+
+    pattern = param.String(default=None, allow_None=True, constant=True,
+              doc='''The pattern files are to be searched against.''')
+
+    root = param.String(default=None, allow_None=True, constant=True, doc='''
+             The root directory from which patterns are to be loaded.  If set to
+             None, normalize_path.prefix is used (os.getcwd() by default).''')
+
+    @classmethod
+    def directory(cls, directory, root=None, extension=None, **kwargs):
+        """
+        Load all the files in a given directory. Only files with the given file
+        extension are loaded if the extension is specified. The given kwargs are
+        passed through to the normal constructor.
+        """
+        root = param.normalize_path.prefix if root is None else root
+        suffix = '' if extension is None else '.' + extension.rsplit('.')[-1]
+        pattern = directory + os.sep + '*' + suffix
+        key = os.path.join(root, directory,'*').rsplit(os.sep)[-2]
+        format_parse = list(string.Formatter().parse(key))
+        if not all([el is None for el in zip(*format_parse)[1]]):
+            raise Exception('Directory cannot contain format field specifications')
+        return cls(key, pattern, root, **kwargs)
+
+    def __init__(self, key, pattern, root=None, **kwargs):
+        root = param.normalize_path.prefix if root is None else root
+        specs = self._load_expansion(key, root, pattern)
+        updated_specs = self._load_file_metadata(specs, key, **kwargs)
+        super(FilePattern, self).__init__(updated_specs, key=key, pattern=pattern,
+                                          root=root, **kwargs)
+        if len(updated_specs) == 0:
+            print "%r: No matches found." % self
+
+    def fields(self):
+        """
+        Return the fields specified in the pattern using Python's formatting
+        mini-language.
+        """
+        parse = list(string.Formatter().parse(self.pattern))
+        return [f for f in zip(*parse)[1] if f is not None]
+
+    def _load_file_metadata(self, specs, key, **kwargs):
+        """
+        Hook to allow a subclass to load metadata from the located files.
+        """
+        return specs
+
+    def _load_expansion(self, key, root, pattern):#, lexsort):
+        """
+        Loads the files that match the given pattern.
+        """
+        path_pattern = os.path.join(root, pattern)
+        expanded_paths = self._expand_pattern(path_pattern)
+
+        specs=[]
+        for (path, tags) in expanded_paths:
+            rootdir = path if os.path.isdir(path) else os.path.split(path)[0]
+            filelist = [os.path.join(path,f) for f in os.listdir(path)] if os.path.isdir(path) else [path]
+            for filepath in filelist:
+                specs.append(dict(tags,**{key:filepath}))
+
+        return sorted(specs, key=lambda s: s[key])
+
+    def _expand_pattern(self, pattern):
+        """
+        From the pattern decomposition, finds the absolute paths matching the pattern.
+        """
+        (globpattern, regexp, fields, types) = self._decompose_pattern(pattern)
+        filelist = glob.glob(globpattern)
+        expansion = []
+
+        for fname in filelist:
+            if fields == []:
+                expansion.append((fname, {}))
+                continue
+            match = re.match(regexp, fname)
+            if match is None: continue
+            match_items = match.groupdict().items()
+            tags = dict((k,types.get(k, str)(v)) for (k,v) in match_items)
+            expansion.append((fname, tags))
+
+        return expansion
+
+    def _decompose_pattern(self, pattern):
+        """
+        Given a path pattern with format declaration, generates a four-tuple
+        (glob_pattern, regexp pattern, fields, type map)
+        """
+        sep='~lancet~sep~'
+        float_codes = ['e','E','f', 'F','g', 'G', 'n']
+        typecodes = dict([(k,float) for k in float_codes] + [('b',bin), ('d',int), ('o',oct), ('x',hex)])
+        parse = list(string.Formatter().parse(pattern))
+        text, fields, codes, _ = zip(*parse)
+
+        # Finding the field types from format string
+        types = []
+        for (field, code) in zip(fields, codes):
+            if code in ['', None]: continue
+            constructor =  typecodes.get(code[-1], None)
+            if constructor: types += [(field, constructor)]
+
+        stars =  ['' if not f else '*' for f in fields]
+        globpattern = ''.join(text+star for (text,star) in zip(text, stars))
+
+        refields = ['' if not f else sep+('(?P<%s>.*?)'% f)+sep for f in fields]
+        parts = ''.join(text+group for (text,group) in zip(text, refields)).split(sep)
+        for i in range(0, len(parts), 2): parts[i] = re.escape(parts[i])
+
+        return globpattern, ''.join(parts).replace('\\*','.*'), list(f for f in fields if f), dict(types)
+
+    def __repr__(self):
+        return 'FilePattern(%s, %s, root=%s)' % (self.key, self.pattern, self.root)
+
 
 #=============================#
 # Dynamic argument specifiers #
