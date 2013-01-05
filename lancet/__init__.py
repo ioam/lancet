@@ -358,6 +358,11 @@ class StaticArgs(BaseArgs):
     support for len().
     """
 
+    specs = param.List(default=[], constant=True, doc='''
+          The static list of specifications (ie. dictionaries) to be
+          returned by the specifier. Float values are rounded to
+          fp_precision.''')
+
     @staticmethod
     def extract_log_specification(log_path, dict_type=dict):
         """
@@ -376,8 +381,8 @@ class StaticArgs(BaseArgs):
 
     def __init__(self, specs, fp_precision=None, **kwargs):
         if fp_precision is None: fp_precision = BaseArgs.fp_precision
-        self._specs = list(self.round_floats(specs, fp_precision))
-        super(StaticArgs, self).__init__(dynamic=False, fp_precision=fp_precision, **kwargs)
+        specs = list(self.round_floats(specs, fp_precision))
+        super(StaticArgs, self).__init__(dynamic=False, fp_precision=fp_precision, specs=specs, **kwargs)
 
     def __iter__(self):
         self._exhausted = False
@@ -388,7 +393,7 @@ class StaticArgs(BaseArgs):
             raise StopIteration
         else:
             self._exhausted=True
-            return self._specs
+            return self.specs
 
     def _unique(self, sequence, idfun=repr):
         """
@@ -401,15 +406,15 @@ class StaticArgs(BaseArgs):
                 if idfun(e) not in seen]
 
     def constant_keys(self):
-        collection = self._collect_by_key(self._specs)
+        collection = self._collect_by_key(self.specs)
         return [k for k in sorted(collection) if (len(self._unique(collection[k])) == 1)]
 
     def constant_items(self):
-        collection = self._collect_by_key(self._specs)
+        collection = self._collect_by_key(self.specs)
         return [(k,collection[k][0]) for k in self.constant_keys()]
 
     def varying_keys(self):
-        collection = self._collect_by_key(self._specs)
+        collection = self._collect_by_key(self.specs)
         constant_set = set(self.constant_keys())
         unordered_varying = set(collection.keys()).difference(constant_set)
         # Finding out how fast keys are varying
@@ -421,10 +426,10 @@ class StaticArgs(BaseArgs):
         alphagroups = [sorted(ddict[k]) for k in sorted(ddict)]
         return [el for group in alphagroups for el in group]
 
-    def __len__(self): return len(self._specs)
+    def __len__(self): return len(self.specs)
 
     def __repr__(self):
-        return "StaticArgs(%s)" % (self._specs)
+        return "StaticArgs(%s)" % (self.specs)
 
 
 class StaticConcatenate(StaticArgs):
@@ -485,7 +490,7 @@ class Args(StaticArgs):
         super(Args,self).__init__(specs, fp_precision=fp_precision)
 
     def __repr__(self):
-        spec = self._specs[0]
+        spec = self.specs[0]
         return "Args(%s)"  % ', '.join(['%s=%s' % (k, fp_repr(v)) for (k,v) in spec.items()])
 
 
@@ -546,7 +551,7 @@ class ListArgs(StaticArgs):
         super(ListArgs, self).__init__(specs, arg_name=arg_name, **kwargs)
 
     def __repr__(self):
-        value_list = (fp_repr(spec[self.arg_name]) for spec in self._specs)
+        value_list = (fp_repr(spec[self.arg_name]) for spec in self.specs)
         return "%s('%s',[%s])" % (self.__class__.__name__, self.arg_name, ', '.join(value_list))
 
 #=============================#
