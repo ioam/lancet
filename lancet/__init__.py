@@ -412,9 +412,9 @@ class StaticArgs(BaseArgs):
     HTML = param.Callable(default=str, doc='''
            Callable to process HTML markup as returned by the 'html'
            method.  Default behaviour is to return the markup as a
-           string but if set to IPython.display.HTML, specifiers will
-           automatically displayed in tabular form in IPython notebook
-           when when the html method is called.''')
+           string but if set to the HTML class in IPython.display.,
+           specifiers will automatically displayed in tabular form in
+           IPython notebook when when the html method is called.''')
 
     specs = param.List(default=[], constant=True, doc='''
           The static list of specifications (ie. dictionaries) to be
