@@ -409,6 +409,13 @@ class StaticArgs(BaseArgs):
     support for len().
     """
 
+    HTML = param.Callable(default=str, doc='''
+           Callable to process HTML markup as returned by the 'html'
+           method.  Default behaviour is to return the markup as a
+           string but if set to IPython.display.HTML, specifiers will
+           automatically displayed in tabular form in IPython notebook
+           when when the html method is called.''')
+
     specs = param.List(default=[], constant=True, doc='''
           The static list of specifications (ie. dictionaries) to be
           returned by the specifier. Float values are rounded to
@@ -461,6 +468,39 @@ class StaticArgs(BaseArgs):
         for (n,k) in varying_counts: ddict[n].append(k)
         alphagroups = [sorted(ddict[k]) for k in sorted(ddict)]
         return [el for group in alphagroups for el in group]
+
+    def _html_row(self, spec, columns):
+        row_strings = []
+        for value in [spec[col] for col in columns]:
+            html_repr = value.html(html_fn=str) if hasattr(value, 'html') else str(value)
+            row_strings.append('<td>'+html_repr+'</td>')
+        return ' '.join(['<tr>'] + row_strings + ['</tr>'])
+
+    def html(self, cols=None, html_fn=None, max_rows=None):
+        """
+        Generate a HTML table for the specifier.
+        """
+        html_fn = self.HTML if html_fn is None else html_fn
+        max_rows = len(self) if max_rows is None else max_rows
+        columns = self.varying_keys() if cols is None else cols
+
+        all_varying = self.varying_keys()
+        if not all(col in all_varying for col in columns):
+            raise Exception('Columns must belong to the varying keys')
+
+        summary = '<tr><td><b>%r<br>[%d items]</b></td></tr>' % (self.__class__.__name__, len(self))
+        cspecs = [{'Key':k, 'Value':v} for (k,v) in self.constant_items()]
+        crows = [self._html_row(spec, ['Key', 'Value']) for spec in cspecs]
+        cheader_str = '<tr><td><b>Constant Key</b></td><td><b>Value</b></td></tr>'
+
+        vrows = [self._html_row(spec,columns) for spec in self.specs[:max_rows]]
+        vheader_str= ' '.join(['<tr>'] + ['<td><b>'+str(col)+'</b></td>' for col in columns ] +['</tr>'])
+        ellipses = ' '.join(['<tr>'] + ['<td>...</td>' for col in columns ] +['</tr>'])
+        ellipse_str = ellipses  if (max_rows < len(self)) else ''
+
+        html_elements = ['<table>', summary, cheader_str] + crows + [vheader_str] + vrows + [ellipse_str, '</table>']
+        html = '\n'.join(html_elements)
+        return html_fn(html)
 
     def __len__(self): return len(self.specs)
 
