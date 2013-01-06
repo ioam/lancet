@@ -669,6 +669,36 @@ class Log(StaticArgs):
             szipped = [(i, dict((str(k),v) for (k,v) in d.items())) for (i,d) in uzipped]
         return dict_type(szipped)
 
+    @staticmethod
+    def write_log(log_path, data, allow_append=True):
+        """
+        Writes the supplied specifications to the log path. The data may be
+        supplied as either as a StaticSpecifier or as a list of dictionaries.
+
+        By default, specifications will be appropriately appended to an existing
+        log file. This can be disabled by setting allow_append to False.
+        """
+        append = os.path.isfile(log_path)
+        listing = isinstance(data, list)
+
+        if append and not allow_append:
+            raise Exception('Appending has been disabled and file %s exists' % log_path)
+
+        if not (listing or isinstance(data, StaticArgs)):
+            raise Exception('Can only write static specifiers or dictionary lists to log file.')
+
+        specs = data if listing else data.specs
+        if not all(isinstance(el,dict) for el in specs):
+            raise Exception('List elements must be dictionaries.')
+
+        log_file = open(log_path, 'r+') if append else open(log_path, 'w')
+        start = int(log_file.readlines()[-1].split()[0])+1 if append else 0
+        ascending_indices = range(start, start+len(data))
+
+        log_str = '\n'.join(['%d %s' % (tid, json.dumps(el)) for (tid, el) in zip(ascending_indices, specs)])
+        log_file.write("\n"+log_str if append else log_str)
+        log_file.close()
+
     def __init__(self, log_path, tid_key='tid', **kwargs):
 
         log_items = sorted(Log.extract_log(log_path).iteritems())
@@ -1242,12 +1272,9 @@ class Launcher(param.Parameterized):
         The log contains the tids and corresponding specifications used during
         launch with the specifications in json format.
         """
-
-        self._spec_log += specs
-        with open(os.path.join(self.root_directory,
-                               ("%s.log" % self.batch_name)), 'a') as log:
-            lines = ['%d %s' % (tid, json.dumps(spec)) for (tid, spec) in specs]
-            log.write('\n'.join(lines))
+        self._spec_log += specs # This should be removed
+        log_path = os.path.join(self.root_directory, ("%s.log" % self.batch_name))
+        Log.write_log(log_path, [spec for (_, spec) in specs], allow_append=True)
 
     def record_info(self, setup_info=None):
         """
