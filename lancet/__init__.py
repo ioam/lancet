@@ -268,80 +268,6 @@ class BaseArgs(param.Parameterized):
                       ))
                  for s1 in first_specs for s2 in second_specs ]
 
-    def _args_kwargs(self, spec, args):
-        """
-        Separates out args from kwargs given a list of non-kwarg arguments. When
-         args list is empty, kwargs alone are returned.
-        """
-        if args ==[]: return spec
-        arg_list = [v for (k,v) in spec.items() if k in args]
-        kwarg_dict = dict((k,v) for (k,v) in spec.items() if (k not in args))
-        return (arg_list, kwarg_dict)
-
-    def _setup_generator(self, args, review, log_file):
-        """
-        Basic setup before returning the arg-kwarg generator. Allows review and
-        logging to be consistent with other useage.
-        """
-        all_keys =  self.constant_keys() + self.varying_keys()
-        assert set(args) <= set(all_keys), 'Specified args must belong to the set of keys'
-
-        if review:
-            self.show()
-            response =  None
-            while response not in ['y','N', '']:
-                response = raw_input('Continue? [y, N]: ')
-            if response != 'y': return False
-
-        if log_file is not None:
-            try: log_file = open(os.path.abspath(log_file), 'w')
-            except: raise Exception('Could not create log file at log_path')
-
-        return log_file
-
-    def _write_log(self, log_file, specs, line_no):
-        """
-        Writes out a log file to the root directory consistent Launcher useage.
-        """
-        lines = ['%d %s\n' % (line_no+i, json.dumps(spec)) for (i, spec) in enumerate(specs)]
-        log_file.write('\n'.join(lines))
-        return line_no + len(specs)
-
-    def __call__(self, args=[], review=True, log_file=None):
-        """
-        A generator that allows argument specifiers to be used nicely with
-        Python. For static specifiers, the args and kwargs are returned directly
-        allowing iteration without unpacking. For dynamic specifiers, they are
-        returned as lists for each concurrent group. By default all parameters
-        are returned as kwargs but they can also returned as (args, kwargs) if
-        the the arg keys are specified.
-        """
-        log_file = self._setup_generator(args, review, log_file)
-        if log_file is False: return
-        accumulator = []
-        line_no = 0
-        spec_iter = iter(self)
-        while True:
-            if self.dynamic:
-                try:
-                    specs = next(spec_iter)
-                    retval = [self._args_kwargs(spec, args) for spec in specs]
-                except: break
-            if not self.dynamic and accumulator==[]:
-                try:
-                    accumulator = next(spec_iter)
-                except: break
-            if not self.dynamic:
-                specs = accumulator[:1]
-                retval = self._args_kwargs(specs[0], args)
-                accumulator=accumulator[1:]
-
-            if log_file is not None:
-                line_no = self._write_log(log_file, specs, line_no)
-            yield retval
-
-        if log_file is not None: log_file.close()
-
     def pprint_args(self, pos_args, keyword_args, infix_operator=None, extra_params={}):
         if infix_operator and not (len(pos_args)==2 and keyword_args==[]):
             raise Exception('Infix format requires exactly two positional arguments and no keywords')
@@ -1716,6 +1642,90 @@ class QLauncher(Launcher):
 # Launch Helper #
 #===============#
 
+class caller(param.Parameterized):
+    """
+    Utility to invoke Python callables using a specifier, optionally creating a
+    log of the arguments used.  By default data is passed in as keywords but
+    positional arguments can be specified using the 'args' parameter.
+
+    Accumulate the return values of any callable (functions or classes) as
+    follows: incremented = caller(LinearArgs('value', 1, 10))(add_one)
+
+    May also be used as a function decorator that are called for their
+    side-effects:
+
+    @caller(LinearArgs('value', 1, 10))
+    def add_one(value=None):
+        print "%d + 1 = %d" % (value, value+1)
+    ... 1 + 1 = 2
+    ... 1 + 10 = 11
+
+    Dynamic specifiers may be updated as necessary with the update_fn parameter.
+    """
+
+    specifier = param.ClassSelector(default=None, allow_None=True, class_=StaticArgs, doc='''
+                The specifier from which the positional and keyword arguments
+                are to be derived.''')
+
+    args = param.List(default=[], doc='''The list of positional arguments to be passed in first.''')
+
+    log_path = param.String(default=None, allow_None=True, doc='''
+              Optional path to a log file for recording the list of arguments used.''')
+
+    update_fn = param.Callable(default=lambda spec, values: None, doc='''
+                 Hook to call to update dynamic specifiers as necessary.  This
+                 callable takes two arguments, first the specifier that needs
+                 updating and the list of accumulated values from the current
+                 group of results.''')
+
+    def __init__(self, specifier, **kwargs):
+        super(caller, self).__init__(specifier=specifier, **kwargs)
+
+    @property
+    def kwargs(self):
+        all_keys = self.specifier.constant_keys() + self.specifier.varying_keys()
+        return [k for k in all_keys if k not in self.args]
+
+    def _args_kwargs(self, specs, args):
+        """
+        Separates out args from kwargs given a list of non-kwarg arguments.
+        When the args list is empty, kwargs alone are returned.
+        """
+        if args ==[]: return specs
+        arg_list = [v for (k,v) in specs.items() if k in args]
+        kwarg_dict = dict((k,v) for (k,v) in specs.items() if (k not in args))
+        return (arg_list, kwarg_dict)
+
+    def __call__(self, fn):
+
+        if self.log_path and os.path.isfile(self.log_path):
+            raise Exception('Log %r already exists.' % self.log_path)
+
+        accumulator, log = [], []
+        for concurrent_group in self.specifier:
+            concurrent_values = []
+            for specs in concurrent_group:
+                value = fn(**specs)
+                concurrent_values.append(value)
+                log.append(specs)
+
+            self.update_fn(self.specifier, concurrent_values)
+            accumulator.extend(concurrent_values)
+
+        if self.log_path:
+            Log.write_log(self.log_path, log, allow_append=False)
+        return accumulator
+
+    def __repr__(self):
+        return 'caller(%r%s)' % (self.specifier, ', args=%r' % self.args if self.args else '')
+
+    def __str__(self):
+        arg_str = ',\n   args=%r' % self.args if self.args else ''
+        return 'caller(\n   specifier=%s%s\n)' % (self.specifier._pprint(level=2), arg_str)
+
+    def _repr_pretty_(self, p, cycle):
+        p.text(str(self))
+
 class review_and_launch(param.Parameterized):
     """
     The basic example of the sort of helper that is highly recommended for
@@ -1833,7 +1843,7 @@ class review_and_launch(param.Parameterized):
             param.normalize_path.prefix = self.output_directory
 
         # Calling the wrapped function with appropriate arguments
-        kwargs_list = [{}] if (self.launch_args is None) else list(self.launch_args(review=False))
+        kwargs_list = [{}] if (self.launch_args is None) else self.launch_args.specs
         lvals = [f(**kwargs_list[0])]
         if self.launch_args is not None:
             self.launcher_class.timestamp = self._get_launcher(lvals[0]).timestamp
