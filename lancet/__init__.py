@@ -58,7 +58,6 @@ import logging
 import param
 import numpy as np
 from collections import defaultdict
-from pprint import pformat
 
 float_types = [float] + np.sctypes['float']
 def identityfn(x): return x
@@ -281,7 +280,7 @@ class BaseArgs(param.Parameterized):
         lines = []
         (kwargs, pos_args, infix_operator, extra_params) = self._pprint_args
         br = '' if flat else '\n'
-        prettyfn = repr if flat else lambda x: x._pprint(flat=flat, level=level+1) if isinstance(x, BaseArgs) else pformat(x)
+        prettyfn = repr if flat else lambda x: x._pprint(flat=flat, level=level+1) if isinstance(x, BaseArgs) else repr(x)
         text =        lambda x: lines.append(x)
         pretty =      lambda x: lines.append(prettyfn(x)) # Was repr...
 
@@ -535,7 +534,7 @@ class LinearArgs(StaticArgs):
         super(LinearArgs, self).__init__(specs, key=key, start_value=start_value,
                                          end_value=end_value, steps=steps,
                                          mapfn=mapfn, **kwargs)
-        self.pprint_args(['key', 'start_value'], ['end_value'])
+        self.pprint_args(['key', 'start_value'], ['end_value', 'steps'])
 
     def _repr_pretty_(self, p, cycle): p.text(str(self))
 
@@ -1910,8 +1909,9 @@ class review_and_launch(param.Parameterized):
         print("Type: %s (dynamic=%s)" %
               (arg_specifier.__class__.__name__, arg_specifier.dynamic))
         print("Varying Keys: %s" % arg_specifier.varying_keys())
-        print("Constant Keys: %s" % arg_specifier.constant_keys())
-        print("Definition: %s" % arg_specifier)
+        items = '\n'.join(['%s = %r' % (k,v) for (k,v) in arg_specifier.constant_items()])
+        print("Constant Items:\n\n%s\n" % items)
+        print("Definition:\n%s" % arg_specifier)
 
         response = self.input_options(['Y', 'n','quit'],
                 '\nShow available argument specifier entries?', default='y')
