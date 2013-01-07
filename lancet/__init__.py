@@ -59,6 +59,11 @@ import param
 import numpy as np
 from collections import defaultdict
 
+try:
+    import IPython
+except:  IPython = None
+
+
 float_types = [float] + np.sctypes['float']
 def identityfn(x): return x
 def fp_repr(x):    return str(x) if (type(x) in float_types) else repr(x)
@@ -1870,6 +1875,8 @@ class review_and_launch(param.Parameterized):
                     if skip_remaining == 'quit': return False
                     if skip_remaining == 'y': break
 
+            if IPython: self.save_notebook(lvals)
+
             if self.input_options(['y','N'], 'Execute?', default='n') != 'y':
                 return False
 
@@ -1882,6 +1889,41 @@ class review_and_launch(param.Parameterized):
             launcher.launch()
 
         return True
+
+    def save_notebook(self, lvals):
+        """
+        Saves the launch specifiers together in an IPython notebook for
+        convenient viewing. Only offered as an option if IPython is available.
+        """
+
+        from IPython.nbformat import current
+        notebook_dir = os.environ.get('LANCET_NB_DIR',None)
+        notebook_dir = notebook_dir if notebook_dir else os.getcwd()
+
+        if self.input_options(['y','N'], 'Save IPython notebook?', default='n') == 'y':
+            print 'Notebook directory ($LANCET_NB_DIR): %s' % notebook_dir
+            isdir = False
+            while not isdir:
+                fname = raw_input('Filename: ').replace(' ','_')
+                fname = fname if fname.endswith('.ipynb') else fname+'.ipynb'
+                nb_path = os.path.abspath(os.path.join(notebook_dir, fname))
+                isdir = os.path.isdir(os.path.split(nb_path)[0])
+                if not isdir:  print 'Invalid directory %s' % os.path.split(nb_path)[0]
+
+            ccell = '\n# <codecell>\n'; mcell='\n# <markdowncell>\n'
+            header = ['# -*- coding: utf-8 -*-','# <nbformat>3.0</nbformat>']
+            prelude = ['from lancet import *',
+                       'from IPython.display import HTML',
+                       'StaticArgs.HTML = HTML']
+            header_str =  '\n'.join(header) + ccell + ccell.join(prelude)
+
+            html_reprs = [ccell+'(%r).html()' % lval[0].arg_specifier for lval in lvals]
+            zipped = [(mcell+'# #### Launch %d' %i, r) for (i,r) in enumerate(html_reprs)]
+            body_str = ''.join([val for pair in zipped for val in pair])
+            node = current.reads(header_str + body_str, 'py')
+            current.write(node, open(nb_path, 'w'), 'ipynb')
+            print "Saved to %s " % nb_path
+
 
     def review_launcher(self, launcher):
         command_template = launcher.command_template
