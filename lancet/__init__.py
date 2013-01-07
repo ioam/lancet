@@ -63,7 +63,6 @@ try:
     import IPython
 except:  IPython = None
 
-
 float_types = [float] + np.sctypes['float']
 def identityfn(x): return x
 def fp_repr(x):    return str(x) if (type(x) in float_types) else repr(x)
@@ -273,58 +272,52 @@ class BaseArgs(param.Parameterized):
                  for s1 in first_specs for s2 in second_specs ]
 
     def pprint_args(self, pos_args, keyword_args, infix_operator=None, extra_params={}):
+        """
+        Method to define the positional arguments and keyword order for pretty printing.
+        """
         if infix_operator and not (len(pos_args)==2 and keyword_args==[]):
             raise Exception('Infix format requires exactly two positional arguments and no keywords')
         (kwargs,_,_,_) = self._pprint_args
         self._pprint_args = (keyword_args + kwargs, pos_args, infix_operator, extra_params)
 
-    def _pprint(self, cycle=False, flat=False, level=1, tab = '   '):
+    def _pprint(self, cycle=False, flat=False, annotate=False, level=1, tab = '   '):
         """
-        Pretty printer that handles params and IPython pretty printing.
+        Pretty printer that prints only the modified keywords and generates flat
+        representations (for repr) and optionally annotates with a comment.
         """
-        lines = []
         (kwargs, pos_args, infix_operator, extra_params) = self._pprint_args
-        br = '' if flat else '\n'
-        prettyfn = repr if flat else lambda x: x._pprint(flat=flat, level=level+1) if isinstance(x, BaseArgs) else repr(x)
-        text =        lambda x: lines.append(x)
-        pretty =      lambda x: lines.append(prettyfn(x)) # Was repr...
+        (br, indent)  = ('' if flat else '\n', '' if flat else tab * level)
+        prettify = lambda x: isinstance(x, BaseArgs) and not flat
+        pretty = lambda x: x._pprint(flat=flat, level=level+1) if prettify(x) else repr(x)
 
-        classname = self.__class__.__name__
-        params = dict(self.get_param_values(), **extra_params)
-        modified = dict(self.get_param_values(onlychanged=True))
-        pkwargs = [(k, modified[k])  for k in kwargs if (k in modified)] + extra_params.items()
+        params = dict(self.get_param_values())
+        modified = [k for (k,v) in self.get_param_values(onlychanged=True)]
+        pkwargs = [(k, params[k])  for k in kwargs if (k in modified)] + extra_params.items()
+        arg_list = [(k,params[k]) for k in pos_args] + pkwargs
 
-        indent =  '' if flat else tab * level
+        len_ckeys, len_vkeys = len(self.constant_keys()), len(self.varying_keys())
+        info_triple = (len(self),
+                       ', %d constant key(s)' % len_ckeys if len_ckeys else '',
+                       ', %d varying key(s)'  % len_vkeys if len_vkeys else '')
+        annotation = '# == %d items%s%s ==\n' % info_triple
+        lines = [annotation] if annotate else []    # Optional annotating comment
+
         if cycle:
-            text('%s(...)' % classname)
+            lines.append('%s(...)' % self.__class__.__name__)
         elif infix_operator:
             level = level - 1
-            [first_key, second_key] = pos_args
-            pretty(params[first_key])
-            text(' '+infix_operator+' ')
-            pretty(params[second_key])
+            triple = (pretty(params[pos_args[0]]), infix_operator, pretty(params[pos_args[1]]))
+            lines.append('%s %s %s' % triple)
         else:
-            text('%s(' % classname)
-            for (num,k) in enumerate(pos_args):
-                last = (num ==len(pos_args)-1)
-                text(br+indent)
-                text('%s=' % k)
-                pretty(params[k])
-                text(',' if not last   else '')
-
-            text(', ' if (pkwargs and len(pos_args)>0) else '')
-            for (num,(k,v)) in enumerate(pkwargs):
-                last = (num ==len(pkwargs)-1)
-                text(br+indent)
-                text('%s=' % k)
-                pretty(v)
-                text(',' if not last   else '')
-
-            text(br+tab*(level-1)+')')
+            lines.append('%s(' % self.__class__.__name__)
+            for (k,v) in arg_list:
+                lines.append('%s%s=%s' %  (br+indent, k, pretty(v)))
+                lines.append(',')
+            lines = lines[:-1] +[br+(tab*(level-1))+')'] # Remove trailing comma
 
         return ''.join(lines)
 
-    def _repr_pretty_(self, p, cycle):  p.text(self._pprint(cycle))
+    def _repr_pretty_(self, p, cycle):  p.text(self._pprint(cycle, annotate=True))
     def __repr__(self):  return self._pprint(flat=True)
     def __str__(self): return self._pprint()
 
@@ -434,7 +427,7 @@ class StaticArgs(BaseArgs):
 
     def __len__(self): return len(self.specs)
 
-    def _repr_pretty_(self, p, cycle): p.text(str(self))
+    def _repr_pretty_(self, p, cycle): p.text(self._pprint(cycle, annotate=True))
 
 
 class StaticConcatenate(StaticArgs):
@@ -459,7 +452,7 @@ class StaticConcatenate(StaticArgs):
                                                 first=first, second=second)
         self.pprint_args(['first', 'second'],[], infix_operator='+')
 
-    def _repr_pretty_(self, p, cycle): p.text(str(self))
+    def _repr_pretty_(self, p, cycle): p.text(self._pprint(cycle, annotate=True))
 
 class StaticCartesianProduct(StaticArgs):
     """
@@ -487,7 +480,7 @@ class StaticCartesianProduct(StaticArgs):
                                                      first=first, second=second)
         self.pprint_args(['first', 'second'],[], infix_operator='*')
 
-    def _repr_pretty_(self, p, cycle): p.text(str(self))
+    def _repr_pretty_(self, p, cycle): p.text(self._pprint(cycle, annotate=True))
 
 
 class Args(StaticArgs):
@@ -504,7 +497,7 @@ class Args(StaticArgs):
         super(Args,self).__init__(specs, fp_precision=fp_precision)
         self.pprint_args([],list(kwargs.keys()), None, dict(**kwargs))
 
-    def _repr_pretty_(self, p, cycle): p.text(str(self))
+    def _repr_pretty_(self, p, cycle): p.text(self._pprint(cycle, annotate=True))
 
 
 class LinearArgs(StaticArgs):
@@ -541,7 +534,7 @@ class LinearArgs(StaticArgs):
                                          mapfn=mapfn, **kwargs)
         self.pprint_args(['key', 'start_value'], ['end_value', 'steps'])
 
-    def _repr_pretty_(self, p, cycle): p.text(str(self))
+    def _repr_pretty_(self, p, cycle): p.text(self._pprint(cycle, annotate=True))
 
 
 class ListArgs(StaticArgs):
@@ -562,7 +555,7 @@ class ListArgs(StaticArgs):
         super(ListArgs, self).__init__(specs, list_key=list_key, list_values=list_values, **kwargs)
         self.pprint_args(['list_key', 'list_values'], [])
 
-    def _repr_pretty_(self, p, cycle): p.text(str(self))
+    def _repr_pretty_(self, p, cycle): p.text(self._pprint(cycle, annotate=True))
 
 
 class Log(StaticArgs):
@@ -640,7 +633,7 @@ class Log(StaticArgs):
         super(Log, self).__init__(log_specs, log_path=log_path, tid_key=tid_key, **kwargs)
         self.pprint_args(['log_path'], ['tid_key'])
 
-    def _repr_pretty_(self, p, cycle): p.text(str(self))
+    def _repr_pretty_(self, p, cycle): p.text(self._pprint(cycle, annotate=True))
 
 
 class Indexed(StaticArgs):
@@ -697,7 +690,7 @@ class Indexed(StaticArgs):
 
         return [dict(v, **index_specs[index_idxmap[k]]) for (k,v) in spec_items]
 
-    def _repr_pretty_(self, p, cycle): p.text(str(self))
+    def _repr_pretty_(self, p, cycle): p.text(self._pprint(cycle, annotate=True))
 
 
 class FilePattern(StaticArgs):
@@ -838,7 +831,7 @@ class FilePattern(StaticArgs):
 
         return globpattern, ''.join(parts).replace('\\*','.*'), list(f for f in fields if f), dict(types)
 
-    def _repr_pretty_(self, p, cycle): p.text(str(self))
+    def _repr_pretty_(self, p, cycle): p.text(self._pprint(cycle, annotate=True))
 
 
 class LexSorted(StaticArgs):
@@ -893,7 +886,7 @@ class LexSorted(StaticArgs):
             specs = sorted(specs, key=lambda s: s.get(key, None), reverse=(not ascending))
         return specs
 
-    def _repr_pretty_(self, p, cycle): p.text(str(self))
+    def _repr_pretty_(self, p, cycle): p.text(self._pprint(cycle, annotate=True))
 
 
 
@@ -948,7 +941,7 @@ class DynamicConcatenate(BaseArgs):
             else:
                 return  next(self.second)
 
-    def _repr_pretty_(self, p, cycle): p.text(str(self))
+    def _repr_pretty_(self, p, cycle): p.text(self._pprint(cycle, annotate=True))
 
 
 class DynamicCartesianProduct(BaseArgs):
@@ -998,7 +991,7 @@ class DynamicCartesianProduct(BaseArgs):
             second_spec = next(self.second)
             return self._cartesian_product(self._first_cached, second_spec)
 
-    def _repr_pretty_(self, p, cycle): p.text(str(self))
+    def _repr_pretty_(self, p, cycle): p.text(self._pprint(cycle, annotate=True))
 
 
 #===================#
@@ -1728,7 +1721,7 @@ class using(param.Parameterized):
         return 'using(\n   specifier=%s%s\n)' % (self.specifier._pprint(level=2), arg_str)
 
     def _repr_pretty_(self, p, cycle):
-        p.text(str(self))
+        p.text(self._pprint(cycle, annotate=True))
 
 class review_and_launch(param.Parameterized):
     """
