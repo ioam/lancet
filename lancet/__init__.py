@@ -1639,19 +1639,19 @@ class QLauncher(Launcher):
 # Launch Helper #
 #===============#
 
-class using(param.Parameterized):
+class applying(param.Parameterized):
     """
     Utility to use Python code (callables) with a specifier, optionally creating
     a log of the arguments used.  By default data is passed in as keywords but
     positional arguments can be specified using the 'args' parameter.
 
     Accumulate the return values of any callable (functions or classes) as
-    follows: incremented = using(LinearArgs('value', 1, 10))(add_one)
+    follows: incremented = applying(LinearArgs('value', 1, 10))(add_one)
 
     May also be used as a function decorator that are called for their
     side-effects:
 
-    @using(LinearArgs('value', 1, 10))
+    @applying(LinearArgs('value', 1, 10))
     def add_one(value=None):
         print "%d + 1 = %d" % (value, value+1)
     ... 1 + 1 = 2
@@ -1676,7 +1676,7 @@ class using(param.Parameterized):
                  group of results.''')
 
     def __init__(self, specifier, **kwargs):
-        super(using, self).__init__(specifier=specifier, **kwargs)
+        super(applying, self).__init__(specifier=specifier, **kwargs)
 
     @property
     def kwargs(self):
@@ -1714,14 +1714,14 @@ class using(param.Parameterized):
         return accumulator
 
     def __repr__(self):
-        return 'using(%r%s)' % (self.specifier, ', args=%r' % self.args if self.args else '')
+        return 'applying(%r%s)' % (self.specifier, ', args=%r' % self.args if self.args else '')
 
     def __str__(self):
         arg_str = ',\n   args=%r' % self.args if self.args else ''
-        return 'using(\n   specifier=%s%s\n)' % (self.specifier._pprint(level=2), arg_str)
+        return 'applying(\n   specifier=%s%s\n)' % (self.specifier._pprint(level=2), arg_str)
 
     def _repr_pretty_(self, p, cycle):
-        p.text(self._pprint(cycle, annotate=True))
+        p.text(str(self))
 
 class review_and_launch(param.Parameterized):
     """
