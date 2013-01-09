@@ -1641,30 +1641,44 @@ class QLauncher(Launcher):
 
 class applying(param.Parameterized):
     """
-    Utility to use Python code (callables) with a specifier, optionally creating
-    a log of the arguments used.  By default data is passed in as keywords but
-    positional arguments can be specified using the 'args' parameter.
+    Decorator to invoke Python code (callables) with a specifier, optionally
+    creating a log of the arguments used.  By default data is passed in as
+    keywords but positional arguments can be specified using the 'args'
+    parameter.
 
-    Accumulate the return values of any callable (functions or classes) as
-    follows: incremented = applying(LinearArgs('value', 1, 10))(add_one)
+    Automatically accumulates the return values of any callable (functions or
+    classes). The return value is an instance of this class which may be called
+    without arguments to repeat the last operation or bound to another function
+    with the same call signature to call that instead.
 
-    May also be used as a function decorator that are called for their
-    side-effects:
+    values = applying(ListArgs('value',[1,2,3]))
 
-    @applying(LinearArgs('value', 1, 10))
+    values(lambda value: value +1)
+    values(lambda value: value**2)
+    values() # Repeats the last function set
+
+    values.accumulator
+    ... [2, 3, 4, 1, 4, 9, 1, 4, 9]
+
+    May also be used as a decorator to wrap a single function:
+
+    @applying(ListArgs('value',[1,2,3,4]))
     def add_one(value=None):
-        print "%d + 1 = %d" % (value, value+1)
-    ... 1 + 1 = 2
-    ... 1 + 10 = 11
+        return value +1
+
+    add_one.accumulator
+    ... [2, 3, 4]
 
     Dynamic specifiers may be updated as necessary with the update_fn parameter.
     """
 
-    specifier = param.ClassSelector(default=None, allow_None=True, class_=StaticArgs, doc='''
-                The specifier from which the positional and keyword arguments
-                are to be derived.''')
+    specifier = param.ClassSelector(default=None, allow_None=True, constant=True, class_=StaticArgs,
+               doc='''The specifier from which the positional and keyword
+                arguments are to be derived.''')
 
-    args = param.List(default=[], doc='''The list of positional arguments to be passed in first.''')
+    args = param.List(default=[], constant=True, doc='''The list of positional arguments to generate.''')
+
+    callee = param.Callable(doc='''The function that is to be applied.''')
 
     log_path = param.String(default=None, allow_None=True, doc='''
               Optional path to a log file for recording the list of arguments used.''')
@@ -1674,6 +1688,8 @@ class applying(param.Parameterized):
                  callable takes two arguments, first the specifier that needs
                  updating and the list of accumulated values from the current
                  group of results.''')
+
+    accumulator = param.List(default=[], doc='''Accumulates the return values of the callable.''')
 
     def __init__(self, specifier, **kwargs):
         super(applying, self).__init__(specifier=specifier, **kwargs)
@@ -1693,12 +1709,19 @@ class applying(param.Parameterized):
         kwarg_dict = dict((k,v) for (k,v) in specs.items() if (k not in args))
         return (arg_list, kwarg_dict)
 
-    def __call__(self, fn):
+    def __call__(self, fn=None):
+
+        if fn is not None: self.callee = fn
+        fn = self.callee if (fn is None) else fn
+
+        if not callable(fn):
+            print 'Argument %r is not callable.' % repr(fn)
+            return self
 
         if self.log_path and os.path.isfile(self.log_path):
             raise Exception('Log %r already exists.' % self.log_path)
 
-        accumulator, log = [], []
+        log = []
         for concurrent_group in self.specifier:
             concurrent_values = []
             for specs in concurrent_group:
@@ -1707,21 +1730,31 @@ class applying(param.Parameterized):
                 log.append(specs)
 
             self.update_fn(self.specifier, concurrent_values)
-            accumulator.extend(concurrent_values)
+            self.accumulator.extend(concurrent_values)
 
         if self.log_path:
             Log.write_log(self.log_path, log, allow_append=False)
-        return accumulator
+        return self
 
     def __repr__(self):
-        return 'applying(%r%s)' % (self.specifier, ', args=%r' % self.args if self.args else '')
+        arg_list = ['%r' % self.specifier,
+                'args=%s' % self.args if self.args else None,
+                'accumulator=%s' % self.accumulator]
+        arg_str = ','.join(el for el in arg_list if el is not None)
+        return 'applying(%s)' % arg_str
 
     def __str__(self):
-        arg_str = ',\n   args=%r' % self.args if self.args else ''
+
+        arg_list = ['args=%r' % self.args if self.args else None,
+                    'accumulator=%r' % self.accumulator]
+        arg_str = ',\n    ' + ',\n    '.join(el for el in arg_list if el is not None)
         return 'applying(\n   specifier=%s%s\n)' % (self.specifier._pprint(level=2), arg_str)
 
     def _repr_pretty_(self, p, cycle):
-        p.text(str(self))
+        annotation = ('# == %d items accumulated, callee=%r ==\n' %
+                      (len(self.accumulator),
+                       self.callee.__name__ if hasattr(self.callee, '__name__') else 'None'))
+        p.text( annotation+ str(self))
 
 class review_and_launch(param.Parameterized):
     """
