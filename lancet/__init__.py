@@ -56,14 +56,19 @@ import json, pickle
 import logging
 
 import param
-import numpy as np
+try:
+    import numpy as np
+    np_ftypes = np.sctypes['float']
+except:
+    np, np_ftypes = None,[]
+
 from collections import defaultdict
 
 try:
     import IPython
 except:  IPython = None
 
-float_types = [float] + np.sctypes['float']
+float_types = [float] + np_ftypes
 def identityfn(x): return x
 def fp_repr(x):    return str(x) if (type(x) in float_types) else repr(x)
 
@@ -162,7 +167,7 @@ class BaseArgs(param.Parameterized):
         raise NotImplementedError
 
     def round_floats(self, specs, fp_precision):
-        _round = lambda v, fp: np.round(v, fp) if (type(v) in np.sctypes['float']) else round(v, fp)
+        _round = lambda v, fp: np.round(v, fp) if (type(v) in np_ftypes) else round(v, fp)
         return (dict((k, _round(v, fp_precision) if (type(v) in float_types) else v)
                      for (k,v) in spec.items()) for spec in specs)
 
@@ -526,13 +531,22 @@ class LinearArgs(StaticArgs):
 
     def __init__(self, key, start_value, end_value, steps=2, mapfn=identityfn, **kwargs):
 
-        values = np.linspace(start_value, end_value, steps, endpoint=True)
+        values = self.linspace(start_value, end_value, steps)
         specs = [{key:mapfn(val)} for val in values ]
 
         super(LinearArgs, self).__init__(specs, key=key, start_value=start_value,
                                          end_value=end_value, steps=steps,
                                          mapfn=mapfn, **kwargs)
         self.pprint_args(['key', 'start_value'], ['end_value', 'steps'])
+
+    def linspace(self, start, stop, n):
+        """ Nice simple replacement for numpy linspace"""
+        L = [0.0] * n
+        nm1 = n - 1
+        nm1inv = 1.0 / nm1
+        for i in range(n):
+            L[i] = nm1inv * (start*(nm1 - i) + stop*i)
+        return L
 
     def _repr_pretty_(self, p, cycle): p.text(self._pprint(cycle, annotate=True))
 
@@ -1714,8 +1728,8 @@ class applying(param.Parameterized):
         if fn is not None: self.callee = fn
         fn = self.callee if (fn is None) else fn
 
-        if not callable(fn):
-            print 'Argument %r is not callable.' % repr(fn)
+        if fn is None:
+            print 'No callable specified.'
             return self
 
         if self.log_path and os.path.isfile(self.log_path):
