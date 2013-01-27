@@ -1725,10 +1725,11 @@ class applying(param.Parameterized):
 
     def __call__(self, fn=None):
 
-        if fn is not None: self.callee = fn
-        fn = self.callee if (fn is None) else fn
+        if fn is not None:
+            self.callee = fn
+            return self
 
-        if fn is None:
+        if self.callee is None:
             print 'No callable specified.'
             return self
 
@@ -1739,7 +1740,7 @@ class applying(param.Parameterized):
         for concurrent_group in self.specifier:
             concurrent_values = []
             for specs in concurrent_group:
-                value = fn(**specs)
+                value = self.callee(**specs)
                 concurrent_values.append(value)
                 log.append(specs)
 
@@ -1761,7 +1762,7 @@ class applying(param.Parameterized):
 
         arg_list = ['args=%r' % self.args if self.args else None,
                     'accumulator=%r' % self.accumulator]
-        arg_str = ',\n    ' + ',\n    '.join(el for el in arg_list if el is not None)
+        arg_str = ',\n   ' + ',\n    '.join(el for el in arg_list if el is not None)
         return 'applying(\n   specifier=%s%s\n)' % (self.specifier._pprint(level=2), arg_str)
 
     def _repr_pretty_(self, p, cycle):
@@ -1807,6 +1808,8 @@ class review_and_launch(param.Parameterized):
                  allowing multi-launch scripts.  Useful for collecting
                  statistics over runs that are not deterministic or are affected
                  by a random seed for example.''')
+
+    launch_fn = param.Callable(doc='''The function that is to be applied.''')
 
     def __init__(self, launcher_class, output_directory='.', **kwargs):
 
@@ -1876,8 +1879,13 @@ class review_and_launch(param.Parameterized):
 
         if clashes != []: raise Exception("Keys %s not in CommandTemplate allowed list" % list(clashes[0]))
 
-    def __call__(self, f):
-        if self.main_script and f.__module__ != '__main__': return False
+    def __call__(self, fn=None):
+
+        if fn is not None:
+            self.launch_fn = fn
+            return self
+
+        if self.main_script and self.launch_fn.__module__ != '__main__': return False
 
         # Resuming launch as necessary
         if self.launcher_class.resume_launch(): return False
@@ -1888,10 +1896,10 @@ class review_and_launch(param.Parameterized):
 
         # Calling the wrapped function with appropriate arguments
         kwargs_list = [{}] if (self.launch_args is None) else self.launch_args.specs
-        lvals = [f(**kwargs_list[0])]
+        lvals = [self.launch_fn(**kwargs_list[0])]
         if self.launch_args is not None:
             self.launcher_class.timestamp = self._get_launcher(lvals[0]).timestamp
-            lvals += [f(**kwargs) for kwargs in kwargs_list[1:]]
+            lvals += [self.launch_fn(**kwargs) for kwargs in kwargs_list[1:]]
 
         # Cross checks
         for (accessor, checker) in self._cross_checks:
@@ -2022,3 +2030,26 @@ class review_and_launch(param.Parameterized):
                 command_template.show(arg_specifier, file_handle=f)
         print
         return True
+
+    def __repr__(self):
+        arg_list = ['%s' % self.launcher_class.__name__,
+                    '%r' % self.output_directory,
+                    'launch_args=%r' % self.launch_args if self.launch_args else None,
+                    'review=False' if not self.review else None,
+                    'main_script=False' if not self.main_script else None ]
+        arg_str = ','.join(el for el in arg_list if el is not None)
+        return 'review_and_launch(%s)' % arg_str
+
+    def __str__(self):
+        arg_list = ['launcher_class=%s' % self.launcher_class.__name__,
+                    'output_directory=%r' % self.output_directory,
+                    'launch_args=%s' % self.launch_args._pprint(level=2) if self.launch_args else None,
+                    'review=False' if not self.review else None,
+                    'main_script=False' if not self.main_script else None ]
+        arg_str = ',\n   '.join(el for el in arg_list if el is not None)
+        return 'review_and_launch(\n   %s\n)' % arg_str
+
+    def _repr_pretty_(self, p, cycle):
+        annotation = ('# == launch_fn=%r ==\n' %
+                      (self.launch_fn.__name__ if hasattr(self.launch_fn, '__name__') else 'None',))
+        p.text( annotation+ str(self))
