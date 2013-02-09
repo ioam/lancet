@@ -60,13 +60,12 @@ try:
     import numpy as np
     np_ftypes = np.sctypes['float']
 except:
-    np, np_ftypes = None,[]
+    np, np_ftypes = None, []
 
 from collections import defaultdict
 
-try:
-    import IPython
-except:  IPython = None
+try:    import IPython
+except: IPython = None
 
 float_types = [float] + np_ftypes
 def identityfn(x): return x
@@ -228,8 +227,8 @@ class BaseArgs(param.Parameterized):
             if len(enumerated) > 1: print("Group %d" % group_ind)
             ordering = self.constant_keys() + self.varying_keys()
             # Ordered nicely by varying_keys definition.
-            spec_lines = [ ', '.join(['%s=%s' % (k, s[k]) for k in ordering]) for s in specs]
-            print('\n'.join([ '%d: %s' % (i,l) for (i,l) in enumerate(spec_lines)]))
+            spec_lines = [', '.join(['%s=%s' % (k, s[k]) for k in ordering]) for s in specs]
+            print('\n'.join(['%d: %s' % (i,l) for (i,l) in enumerate(spec_lines)]))
 
         if self.dynamic:
             print('Remaining arguments not available for %s' % self.__class__.__name__)
@@ -390,7 +389,7 @@ class StaticArgs(BaseArgs):
         unordered_varying = set(collection.keys()).difference(constant_set)
         # Finding out how fast keys are varying
         grouplens = [(len([len(list(y)) for (_,y) in itertools.groupby(collection[k])]),k) for k in collection]
-        varying_counts = [ (n,k) for (n,k) in sorted(grouplens) if (k in unordered_varying)]
+        varying_counts = [(n,k) for (n,k) in sorted(grouplens) if (k in unordered_varying)]
         # Grouping keys with common frequency alphanumerically (desired behaviour).
         ddict = defaultdict(list)
         for (n,k) in varying_counts: ddict[n].append(k)
@@ -565,12 +564,11 @@ class ListArgs(StaticArgs):
     def __init__(self, list_key, list_values, **kwargs):
 
         assert list_values != [], "Empty list not allowed."
-        specs = [ {list_key:val} for val in list_values]
+        specs = [{list_key:val} for val in list_values]
         super(ListArgs, self).__init__(specs, list_key=list_key, list_values=list_values, **kwargs)
         self.pprint_args(['list_key', 'list_values'], [])
 
     def _repr_pretty_(self, p, cycle): p.text(self._pprint(cycle, annotate=True))
-
 
 class Log(StaticArgs):
     """
@@ -765,7 +763,7 @@ class FilePattern(StaticArgs):
         super(FilePattern, self).__init__(updated_specs, key=key, pattern=pattern,
                                           root=root, **kwargs)
         if len(updated_specs) == 0:
-            print "%r: No matches found." % self
+            print("%r: No matches found." % self)
         self.pprint_args(['key', 'pattern'], ['root'])
 
     def fields(self):
@@ -823,7 +821,7 @@ class FilePattern(StaticArgs):
         Given a path pattern with format declaration, generates a four-tuple
         (glob_pattern, regexp pattern, fields, type map)
         """
-        sep='~lancet~sep~'
+        sep = '~lancet~sep~'
         float_codes = ['e','E','f', 'F','g', 'G', 'n']
         typecodes = dict([(k,float) for k in float_codes] + [('b',bin), ('d',int), ('o',oct), ('x',hex)])
         parse = list(string.Formatter().parse(pattern))
@@ -1106,7 +1104,7 @@ class CommandTemplate(param.Parameterized):
                 quoted_cmds = [[pipes.quote(el) \
                                     for el in self(self._formatter(copied, s),'<tid>',info)] \
                               for s in specs]
-                cmd_lines = [ '%d: %s\n' % (i, ' '.join(qcmds)) for (i,qcmds) in enumerate(quoted_cmds)]
+                cmd_lines = ['%d: %s\n' % (i, ' '.join(qcmds)) for (i,qcmds) in enumerate(quoted_cmds)]
                 full_string += ''.join(cmd_lines)
 
         file_handle.write(full_string)
@@ -1724,13 +1722,12 @@ class applying(param.Parameterized):
         return (arg_list, kwarg_dict)
 
     def __call__(self, fn=None):
-
         if fn is not None:
             self.callee = fn
             return self
 
         if self.callee is None:
-            print 'No callable specified.'
+            print('No callable specified.')
             return self
 
         if self.log_path and os.path.isfile(self.log_path):
@@ -1759,7 +1756,6 @@ class applying(param.Parameterized):
         return 'applying(%s)' % arg_str
 
     def __str__(self):
-
         arg_list = ['args=%r' % self.args if self.args else None,
                     'accumulator=%r' % self.accumulator]
         arg_str = ',\n   ' + ',\n    '.join(el for el in arg_list if el is not None)
@@ -1769,7 +1765,7 @@ class applying(param.Parameterized):
         annotation = ('# == %d items accumulated, callee=%r ==\n' %
                       (len(self.accumulator),
                        self.callee.__name__ if hasattr(self.callee, '__name__') else 'None'))
-        p.text( annotation+ str(self))
+        p.text(annotation+ str(self))
 
 class review_and_launch(param.Parameterized):
     """
@@ -1786,7 +1782,8 @@ class review_and_launch(param.Parameterized):
     guaranteed to execute *after* all tasks are complete (eg. due to forking,
     subprocess, qsub etc). This decorator helps solves this issue, making sure
     launch is the last thing in the definition function. The reduction_fn
-    parameter is the proper way of executing code after the Launcher exits."""
+    parameter is the proper way of executing code after the Launcher exits.
+    """
 
     launcher_class = param.Parameter(doc='''
          The launcher class used for this lancet script.  Necessary to access
@@ -1949,14 +1946,14 @@ class review_and_launch(param.Parameterized):
         notebook_dir = notebook_dir if notebook_dir else os.getcwd()
 
         if self.input_options(['y','N'], 'Save IPython notebook?', default='n') == 'y':
-            print 'Notebook directory ($LANCET_NB_DIR): %s' % notebook_dir
+            print('Notebook directory ($LANCET_NB_DIR): %s' % notebook_dir)
             isdir = False
             while not isdir:
                 fname = raw_input('Filename: ').replace(' ','_')
                 fname = fname if fname.endswith('.ipynb') else fname+'.ipynb'
                 nb_path = os.path.abspath(os.path.join(notebook_dir, fname))
                 isdir = os.path.isdir(os.path.split(nb_path)[0])
-                if not isdir:  print 'Invalid directory %s' % os.path.split(nb_path)[0]
+                if not isdir:  print('Invalid directory %s' % os.path.split(nb_path)[0])
 
             ccell = '\n# <codecell>\n'; mcell='\n# <markdowncell>\n'
             header = ['# -*- coding: utf-8 -*-','# <nbformat>3.0</nbformat>']
@@ -1970,8 +1967,7 @@ class review_and_launch(param.Parameterized):
             body_str = ''.join([val for pair in zipped for val in pair])
             node = current.reads(header_str + body_str, 'py')
             current.write(node, open(nb_path, 'w'), 'ipynb')
-            print "Saved to %s " % nb_path
-
+            print("Saved to %s " % nb_path)
 
     def review_launcher(self, launcher):
         command_template = launcher.command_template
@@ -2052,4 +2048,4 @@ class review_and_launch(param.Parameterized):
     def _repr_pretty_(self, p, cycle):
         annotation = ('# == launch_fn=%r ==\n' %
                       (self.launch_fn.__name__ if hasattr(self.launch_fn, '__name__') else 'None',))
-        p.text( annotation+ str(self))
+        p.text(annotation+ str(self))
