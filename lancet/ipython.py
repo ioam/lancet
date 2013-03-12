@@ -2,7 +2,7 @@
 # Lancet IPython support
 #
 
-import sys
+import os, sys
 import IPython
 from IPython.display import HTML
 import param
