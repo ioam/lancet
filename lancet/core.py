@@ -16,6 +16,12 @@ except:
 
 from collections import defaultdict
 
+# Points to lancet.core or lancet.ipython as appropriate
+# Necessary for functions that refer to classes with alternative
+# implementations provided by lancet.ipython
+import lancet
+lancet._module = sys.modules[__name__]
+
 float_types = [float] + np_ftypes
 def identityfn(x): return x
 def fp_repr(x):    return str(x) if (type(x) in float_types) else repr(x)
@@ -190,8 +196,8 @@ class BaseArgs(param.Parameterized):
         if not other: return self
         assert not (self.dynamic and other.dynamic), 'Cannot concatenate two dynamic specifiers.'
 
-        if self.dynamic or other.dynamic: return DynamicConcatenate(self,other)
-        else:                             return StaticConcatenate(self,other)
+        if self.dynamic or other.dynamic: return lancet._module.DynamicConcatenate(self,other)
+        else:                             return lancet._module.StaticConcatenate(self,other)
 
     def __mul__(self, other):
         """
@@ -202,8 +208,8 @@ class BaseArgs(param.Parameterized):
         assert not (self.dynamic and other.dynamic), \
             'Cannot take Cartesian product two dynamic specifiers.'
 
-        if self.dynamic or other.dynamic: return DynamicCartesianProduct(self, other)
-        else:                             return StaticCartesianProduct(self, other)
+        if self.dynamic or other.dynamic: return lancet._module.DynamicCartesianProduct(self, other)
+        else:                             return lancet._module.StaticCartesianProduct(self, other)
 
     def __radd__(self, other):
         if not other: return self

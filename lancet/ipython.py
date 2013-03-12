@@ -2,6 +2,7 @@
 # Lancet IPython support
 #
 
+import sys
 import IPython
 from IPython.display import HTML
 import param
@@ -10,6 +11,9 @@ import lancet.core as core
 # Provide default versions from core
 from lancet.core import set_fp_precision, BaseArgs, CommandTemplate, \
         Launcher, QLauncher
+
+import lancet
+lancet._module = sys.modules[__name__]
 
 class IPythonHTMLArgs(param.Parameterized):
     """
