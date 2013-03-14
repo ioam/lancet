@@ -214,7 +214,7 @@ class Launcher(param.Parameterized):
         """
         self._spec_log += specs # This should be removed
         log_path = os.path.join(self.root_directory, ("%s.log" % self.batch_name))
-        Log.write_log(log_path, [spec for (_, spec) in specs], allow_append=True)
+        core.Log.write_log(log_path, [spec for (_, spec) in specs], allow_append=True)
 
     def record_info(self, setup_info=None):
         """
