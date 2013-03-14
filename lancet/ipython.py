@@ -8,7 +8,10 @@ import os
 import lancet.core as core
 import lancet.launch as launch
 
-def StaticArgs_repr_html(obj, cols=None, max_rows=None):
+TABLE_MAX_COLS = None
+TABLE_MAX_ROWS = None
+
+def repr_html_StaticArgs(obj):
     """
     Generate a HTML table for the specifier.
     """
@@ -24,8 +27,8 @@ def StaticArgs_repr_html(obj, cols=None, max_rows=None):
             row_strings.append('<td>'+html_repr(value)+'</td>')
         return ' '.join(['<tr>'] + row_strings + ['</tr>'])
 
-    max_rows = len(obj) if max_rows is None else max_rows
-    columns = obj.varying_keys() if cols is None else cols
+    max_rows = len(obj) if TABLE_MAX_ROWS is None else TABLE_MAX_ROWS
+    columns = obj.varying_keys() if TABLE_MAX_COLS is None else TABLE_MAX_COLS
 
     all_varying = obj.varying_keys()
     if not all(col in all_varying for col in columns):
@@ -45,10 +48,10 @@ def StaticArgs_repr_html(obj, cols=None, max_rows=None):
     html = '\n'.join(html_elements)
     return html
 
-def StaticArgs_repr_pretty(obj, p, cycle):
+def repr_pretty_StaticArgs(obj, p, cycle):
     p.text(obj._pprint(cycle, annotate=True))
 
-def applying_repr_pretty(obj, p, cycle):
+def repr_pretty_applying(obj, p, cycle):
     annotation = ('# == %d items accumulated, callee=%r ==\n' %
                   (len(obj.accumulator),
                    obj.callee.__name__ if hasattr(obj.callee, '__name__') else 'None'))
@@ -103,10 +106,10 @@ def load_ipython_extension(ip):
         plaintext_formatter = ip.display_formatter.formatters['text/plain']
         html_formatter = ip.display_formatter.formatters['text/html']
 
-        plaintext_formatter.for_type(core.StaticArgs, StaticArgs_repr_pretty)
-        html_formatter.for_type(core.StaticArgs, StaticArgs_repr_html)
+        plaintext_formatter.for_type(core.StaticArgs, repr_pretty_StaticArgs)
+        html_formatter.for_type(core.StaticArgs, repr_html_StaticArgs)
 
-        plaintext_formatter.for_type(core.applying, applying_repr_pretty)
+        plaintext_formatter.for_type(core.applying, repr_pretty_applying)
         plaintext_formatter.for_type(launch.review_and_launch, review_and_launch._repr_pretty_)
 
         launch.review_and_launch._process_launchers = review_and_launch._process_launchers
