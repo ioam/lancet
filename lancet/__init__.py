@@ -50,9 +50,6 @@ review of all settings specified before launch. The goal is to help users
 identify mistakes early before consuming computational time and resources.
 """
 
-try:
-    import IPython
-    from lancet.ipython import *
-except:
-    from lancet.core import *
+from lancet.core import *
+from lancet.launch import *
 
