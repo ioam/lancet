@@ -4,8 +4,6 @@
 #
 
 import os
-
-import lancet.core as core
 import lancet.launch as launch
 
 TABLE_MAX_COLS = None
@@ -106,11 +104,11 @@ def load_ipython_extension(ip):
         plaintext_formatter = ip.display_formatter.formatters['text/plain']
         html_formatter = ip.display_formatter.formatters['text/html']
 
-        plaintext_formatter.for_type(core.StaticArgs, repr_pretty_StaticArgs)
-        html_formatter.for_type(core.StaticArgs, repr_html_StaticArgs)
+        plaintext_formatter.for_type_by_name('lancet.core', 'StaticArgs', repr_pretty_StaticArgs)
+        html_formatter.for_type_by_name('lancet.core', 'StaticArgs', repr_html_StaticArgs)
 
-        plaintext_formatter.for_type(core.applying, repr_pretty_applying)
-        plaintext_formatter.for_type(launch.review_and_launch, review_and_launch._repr_pretty_)
+        plaintext_formatter.for_type_by_name('lancet.core', 'applying', repr_pretty_applying)
+        plaintext_formatter.for_type_by_name('lancet.launch', 'review_and_launch', review_and_launch._repr_pretty_)
 
         launch.review_and_launch._process_launchers = review_and_launch._process_launchers
 
