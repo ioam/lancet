@@ -76,8 +76,8 @@ class BaseArgs(param.Parameterized):
          you only want to display up to the precision actually specified.''')
 
     def __init__(self, **params):
-        super(BaseArgs,self).__init__(**params)
         self._pprint_args = ([],[],None,{})
+        super(BaseArgs,self).__init__(**params)
         self.pprint_args([],['fp_precision', 'dynamic'])
 
     def __iter__(self): return self
