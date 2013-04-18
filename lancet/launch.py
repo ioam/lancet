@@ -297,15 +297,48 @@ class Launcher(param.Parameterized):
             logging.error("Cannot load required metric files. Cannot continue.")
             return None # StopIteration should be raised by the argument specifier
 
-    def limit_concurrency(self, elements):
+    def launch_process_group(self, process_commands, streams_path):
         """
-        Helper function that breaks list of elements into chunks (sublists) of
-        size self.max_concurrency.
+        Launches processes defined by process_commands, but only executes
+        max_concurrency processes at a time; if a process completes and there
+        are still outstanding processes to be executed, the next processes are
+        run until max_concurrency is reached again.
         """
-        if self.max_concurrency is None: return [elements]
+        processes = {}
+        def check_complete_processes(wait=False):
+            """
+            Returns True if a process completed, False otherwise.
+            Optionally allows waiting for better performance (avoids sleep-poll cycle if possible).
+            """
+            result = False
+            for proc in list(processes): # make list (copy) of keys, as dict is modified during iteration
+                if wait: proc.wait()
+                if proc.poll() is not None:
+                    # process is done, free up slot
+                    logging.debug("Process %d exited with code %d." % (processes[proc]['tid'], proc.poll()))
+                    processes[proc]['stdout'].close()
+                    processes[proc]['stderr'].close()
+                    del processes[proc]
+                    result = True
+            return result
 
-        return [elements[i:i+self.max_concurrency] for i in
-               range(0, len(elements), self.max_concurrency)]
+        for cmd, tid in process_commands:
+            logging.debug("Starting process %d..." % tid)
+            stdout_handle = open(os.path.join(streams_path, "%s.o.%d" % (self.batch_name, tid)), "wb")
+            stderr_handle = open(os.path.join(streams_path, "%s.e.%d" % (self.batch_name, tid)), "wb")
+            proc = subprocess.Popen(cmd, stdout=stdout_handle, stderr=stderr_handle)
+            processes[proc] = { 'tid' : tid, 'stdout' : stdout_handle, 'stderr' : stderr_handle }
+
+            if self.max_concurrency:
+                # max_concurrency reached, wait until more slots available
+                while len(processes) >= self.max_concurrency:
+                    if not check_complete_processes(len(processes)==1):
+                        time.sleep(3)
+
+        # Wait for all processes to complete
+        while len(processes) > 0:
+            if not check_complete_processes(True):
+                time.sleep(3)
 
     def launch(self):
         """
@@ -329,25 +362,9 @@ class Launcher(param.Parameterized):
                            for (spec,tid) in zip(groupspecs,tids)]
 
             self.append_log(list(zip(tids,groupspecs)))
-            batches = self.limit_concurrency(list(zip(allcommands,tids)))
-            for bid, batch in enumerate(batches):
-                processes = []
-                stdout_handles = []
-                stderr_handles = []
-                for (cmd,tid) in batch:
-                    stdout_handle = open(os.path.join(streams_path, "%s.o.%d" % (self.batch_name, tid)), "wb")
-                    stderr_handle = open(os.path.join(streams_path, "%s.e.%d" % (self.batch_name, tid)), "wb")
-                    processes.append(subprocess.Popen(cmd, stdout=stdout_handle, stderr=stderr_handle))
-                    stdout_handles.append(stdout_handle)
-                    stderr_handles.append(stderr_handle)
 
-                logging.info("Batch of %d (%d:%d/%d) subprocesses started..." % \
-                            (len(processes), gid, bid, len(batches)-1))
-
-                for p in processes: p.wait()
-
-                for stdout_handle in stdout_handles: stdout_handle.close()
-                for stderr_handle in stderr_handles: stderr_handle.close()
+            logging.info("Group %d: executing %d processes..." % (gid, len(allcommands)))
+            self.launch_process_group(zip(allcommands,tids), streams_path)
 
             last_tids = tids[:]
 
