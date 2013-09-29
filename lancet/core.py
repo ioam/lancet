@@ -123,13 +123,13 @@ class BaseArgs(param.Parameterized):
         Concatenates two argument specifiers.
         """
         if not other: return self
-        return StaticConcatenate(self,other)
+        return Concatenate(self,other)
 
     def __mul__(self, other):
         """
         Takes the Cartesian product of two argument specifiers.
         """
-        return StaticCartesianProduct(self, other)
+        return CartesianProduct(self, other)
 
     def __radd__(self, other):
         if not other: return self
@@ -282,9 +282,9 @@ class StaticArgs(BaseArgs):
 
     def __len__(self): return len(self.specs)
 
-class StaticConcatenate(StaticArgs):
+class Concatenate(StaticArgs):
     """
-    StaticConcatenate is the sequential composition of two StaticArg
+    Concatenate is the sequential composition of two StaticArg
     specifiers. The specifier created by the compositon (firsts + second)
     generates the arguments in first followed by the arguments in
     second.
@@ -300,13 +300,13 @@ class StaticConcatenate(StaticArgs):
 
         max_precision = max(first.fp_precision, second.fp_precision)
         specs = first.specs + second.specs
-        super(StaticConcatenate, self).__init__(specs, fp_precision=max_precision,
+        super(Concatenate, self).__init__(specs, fp_precision=max_precision,
                                                 first=first, second=second)
         self.pprint_args(['first', 'second'],[], infix_operator='+')
 
-class StaticCartesianProduct(StaticArgs):
+class CartesianProduct(StaticArgs):
     """
-    StaticCartesianProduct is the cartesian product of two StaticArg
+    CartesianProduct is the cartesian product of two StaticArg
     specifiers. The specifier created by the compositon (firsts * second)
     generates the cartesian produce of the arguments in first followed by the
     arguments in second. Note that len(first * second) = len(first)*len(second)
@@ -326,7 +326,7 @@ class StaticCartesianProduct(StaticArgs):
         overlap = (set(first.varying_keys + first.constant_keys)
                    &  set(second.varying_keys + second.constant_keys))
         assert overlap == set(), 'Sets of keys cannot overlap between argument specifiers in cartesian product.'
-        super(StaticCartesianProduct, self).__init__(specs, fp_precision=max_precision,
+        super(CartesianProduct, self).__init__(specs, fp_precision=max_precision,
                                                      first=first, second=second)
         self.pprint_args(['first', 'second'],[], infix_operator='*')
 

@@ -1,5 +1,5 @@
 import param
-from core import BaseArgs, StaticConcatenate, StaticCartesianProduct
+from core import BaseArgs, Concatenate, CartesianProduct
 
 class DynamicArgs(BaseArgs):
 
@@ -38,7 +38,7 @@ class DynamicArgs(BaseArgs):
 
     def __add__(self, other):
         """
-        Concatenates two argument specifiers. See StaticConcatenate and
+        Concatenates two argument specifiers. See Concatenate and
         DynamicConcatenate documentation respectively.
         """
         if not other: return self
@@ -48,12 +48,12 @@ class DynamicArgs(BaseArgs):
         elif (True in dynamic):
             return DynamicConcatenate(self,other)
         else:
-            return StaticConcatenate(self,other)
+            return Concatenate(self,other)
 
     def __mul__(self, other):
         """
         Takes the cartesian product of two argument specifiers. See
-        StaticCartesianProduct and DynamicCartesianProduct documentation.
+        CartesianProduct and DynamicCartesianProduct documentation.
         """
         if not other: return []
         dynamic = (isinstance(self, DynamicArgs),  isinstance(other, DynamicArgs))
@@ -62,7 +62,7 @@ class DynamicArgs(BaseArgs):
         elif (True in dynamic):
             return DynamicCartesianProduct(self, other)
         else:                             
-            return StaticCartesianProduct(self, other)
+            return CartesianProduct(self, other)
 
 
 
@@ -75,7 +75,7 @@ class DynamicConcatenate(DynamicArgs):
     def __init__(self, first, second):
         self.first = first
         self.second = second
-        super(StaticConcatenate, self).__init__(dynamic=True)
+        super(Concatenate, self).__init__(dynamic=True)
 
         self._exhausted = False
         self._first_sent = False
@@ -132,7 +132,7 @@ class DynamicCartesianProduct(DynamicArgs):
         overlap = set(self.first.varying_keys) &  set(self.second.varying_keys)
         assert overlap == set(), 'Sets of keys cannot overlap between argument specifiers in cartesian product.'
 
-        super(StaticCartesianProduct, self).__init__(dynamic=True)
+        super(CartesianProduct, self).__init__(dynamic=True)
 
         self._first_cached = None
         self._second_cached = None
