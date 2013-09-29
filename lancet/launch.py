@@ -33,11 +33,12 @@ class CommandTemplate(param.Parameterized):
 
     allowed_list = param.List(default=[], doc='''
         An optional, explicit list of the argument names that the
-        CommandTemplate is expected to accept. If the empty list, no checking is
-        performed. This allows some degree of error checking before tasks are
-        launched. A command may exit if invalid parameters are supplied but it
-        is often better to explicitly check: this avoids waiting in a cluster
-        queue or invalid simulations due to unrecognised parameters.''')
+        CommandTemplate is expected to accept. If the empty list, no
+        checks are performed. This allows some degree of error
+        checking before tasks are launched. A command may exit if
+        invalid parameters are supplied but it is often better to
+        explicitly check: this avoids waiting in a cluster queue or
+        invalid simulations due to unrecognised parameters.''')
 
     executable = param.String(default='python', constant=True, doc='''
         The executable that is to be run by this CommandTemplate. Unless the
@@ -247,6 +248,10 @@ class Launcher(param.Parameterized):
              is cvs but it is up to the user to implement the corresponding
              loader.''')
 
+    subdir = param.List(default=[], doc="""
+       A list of subdirectory names that allows custom organization
+       within the output directory before the root directory.""")
+
     @classmethod
     def resume_launch(cls):
         """
@@ -319,7 +324,8 @@ class Launcher(param.Parameterized):
         dictionary of useful launch information constant across all tasks.
         """
         root_name = self.root_directory_name()
-        self.root_directory = param.normalize_path(root_name)
+        fullpath = os.path.join(param.normalize_path(), *(self.subdir+[root_name]))
+        self.root_directory = os.path.realpath(fullpath)
 
         if not os.path.isdir(self.root_directory): os.makedirs(self.root_directory)
         metrics_dir = os.path.join(self.root_directory, 'metrics')
