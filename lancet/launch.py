@@ -681,7 +681,7 @@ class review_and_launch(param.Parameterized):
          Whether the launch is occuring from a lancet script running as
          main. Set to False for projects using lancet outside the main script.''')
 
-    launch_args = param.ClassSelector(default=None, allow_None=True, class_=core.StaticArgs,
+    launch_args = param.ClassSelector(default=None, allow_None=True, class_=core.Args,
          doc= '''An optional argument specifier to parameterise lancet,
                  allowing multi-launch scripts.  Useful for collecting
                  statistics over runs that are not deterministic or are affected

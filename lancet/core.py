@@ -199,7 +199,7 @@ class BaseArgs(param.Parameterized):
     def __repr__(self):  return self._pprint(flat=True)
     def __str__(self): return self._pprint()
 
-class StaticArgs(BaseArgs):
+class Args(BaseArgs):
     """
     Base class for many important static argument specifiers (dynamic=False)
     though also useful in its own right. Can be constructed from launcher log
@@ -215,11 +215,32 @@ class StaticArgs(BaseArgs):
           returned by the specifier. Float values are rounded to
           fp_precision.''')
 
-    def __init__(self, specs, fp_precision=None, **kwargs):
+    def __init__(self, specs=None, fp_precision=None, **kwargs):
         if fp_precision is None: fp_precision = BaseArgs.fp_precision
-        specs = list(self.round_floats(specs, fp_precision))
-        super(StaticArgs, self).__init__(fp_precision=fp_precision, specs=specs, **kwargs)
-        self.pprint_args(['specs'],[])
+        raw_specs, kwargs, explicit = self._build_specs(specs, kwargs, fp_precision)
+        super(Args, self).__init__(fp_precision=fp_precision, specs=raw_specs, **kwargs)
+
+        self._lexorder = None
+        # Some types cannot be sorted (e.g. numpy arrays)
+        self.unsortable_keys = []
+        if explicit: 
+            self.pprint_args(['specs'],[])
+        else: # Present in kwarg format
+            self.pprint_args([], self.constant_keys, None, 
+                             dict(self.constant_items))
+
+    def _build_specs(self, specs, kwargs, fp_precision):
+        """
+        Returns the specs, the remaining kwargs and whether or not the
+        constructor was called with kwarg or explicit specs.
+        """
+        if isinstance(specs, list):
+            return list(self.round_floats(specs, fp_precision)), kwargs, True
+        elif specs is None:
+            overrides = param.ParamOverrides(self, kwargs, allow_extra_keywords=True)
+            extra_kwargs = overrides.extra_keywords()
+            kwargs = dict([(k,v) for (k,v) in kwargs.items() if k not in extra_kwargs])
+            return list(self.round_floats([extra_kwargs], fp_precision)), kwargs, False
 
     def __iter__(self):
         self._exhausted = False
@@ -282,7 +303,7 @@ class StaticArgs(BaseArgs):
 
     def __len__(self): return len(self.specs)
 
-class Concatenate(StaticArgs):
+class Concatenate(Args):
     """
     Concatenate is the sequential composition of two StaticArg
     specifiers. The specifier created by the compositon (firsts + second)
@@ -290,10 +311,10 @@ class Concatenate(StaticArgs):
     second.
     """
 
-    first = param.ClassSelector(default=None, class_=StaticArgs, allow_None=True, constant=True, doc='''
+    first = param.ClassSelector(default=None, class_=Args, allow_None=True, constant=True, doc='''
             The first static specifier used to generate the concatenation.''')
 
-    second = param.ClassSelector(default=None, class_=StaticArgs, allow_None=True, constant=True, doc='''
+    second = param.ClassSelector(default=None, class_=Args, allow_None=True, constant=True, doc='''
             The second static specifier used to generate the concatenation.''')
 
     def __init__(self, first, second):
@@ -304,7 +325,7 @@ class Concatenate(StaticArgs):
                                                 first=first, second=second)
         self.pprint_args(['first', 'second'],[], infix_operator='+')
 
-class CartesianProduct(StaticArgs):
+class CartesianProduct(Args):
     """
     CartesianProduct is the cartesian product of two StaticArg
     specifiers. The specifier created by the compositon (firsts * second)
@@ -312,10 +333,10 @@ class CartesianProduct(StaticArgs):
     arguments in second. Note that len(first * second) = len(first)*len(second)
     """
 
-    first = param.ClassSelector(default=None, class_=StaticArgs, allow_None=True, constant=True, doc='''
+    first = param.ClassSelector(default=None, class_=Args, allow_None=True, constant=True, doc='''
             The first static specifier used to generate the Cartesian product.''')
 
-    second = param.ClassSelector(default=None, class_=StaticArgs, allow_None=True, constant=True, doc='''
+    second = param.ClassSelector(default=None, class_=Args, allow_None=True, constant=True, doc='''
             The second static specifier used to generate the Cartesian product.''')
 
     def __init__(self, first, second):
@@ -330,21 +351,7 @@ class CartesianProduct(StaticArgs):
                                                      first=first, second=second)
         self.pprint_args(['first', 'second'],[], infix_operator='*')
 
-class Args(StaticArgs):
-    """
-    Allows easy instantiation of a single set of arguments using keywords.
-    Useful for instantiating constant arguments before applying a cartesian
-    product.
-    """
-
-    def __init__(self, **kwargs):
-        assert kwargs != {}, "Empty specification not allowed."
-        fp_precision = kwargs.pop('fp_precision') if ('fp_precision' in kwargs) else None
-        specs = [dict((k, kwargs[k]) for k in kwargs)]
-        super(Args,self).__init__(specs, fp_precision=fp_precision)
-        self.pprint_args([],list(kwargs.keys()), None, dict(**kwargs))
-
-class LinearArgs(StaticArgs):
+class LinearArgs(Args):
     """
     LinearArgs generates an argument from a numerically interpolated range which
     is linear by default. An optional function can be specified to sample a
@@ -387,7 +394,7 @@ class LinearArgs(StaticArgs):
             L[i] = nm1inv * (start*(nm1 - i) + stop*i)
         return L
 
-class ListArgs(StaticArgs):
+class ListArgs(Args):
     """
     An argument specifier that takes its values from a given list.
     """
@@ -405,11 +412,11 @@ class ListArgs(StaticArgs):
         super(ListArgs, self).__init__(specs, list_key=list_key, list_values=list_values, **kwargs)
         self.pprint_args(['list_key', 'list_values'], [])
 
-class Log(StaticArgs):
+class Log(Args):
     """
     Specifier that loads arguments from a log file in tid (task id) order.  For
-    full control over the arguments, you can use this class with StaticArgs as
-    follows: StaticArgs(Log.extract_log(<log_file>).values()),
+    full control over the arguments, you can use this class with Args as
+    follows: Args(Log.extract_log(<log_file>).values()),
 
     This wrapper class allows a concise representation of log specifiers with
     the option of adding the task id to the loaded specifications.
@@ -454,7 +461,7 @@ class Log(StaticArgs):
         if append and not allow_append:
             raise Exception('Appending has been disabled and file %s exists' % log_path)
 
-        if not (listing or isinstance(data, StaticArgs)):
+        if not (listing or isinstance(data, Args)):
             raise Exception('Can only write static specifiers or dictionary lists to log file.')
 
         specs = data if listing else data.specs
@@ -481,7 +488,7 @@ class Log(StaticArgs):
         self.pprint_args(['log_path'], ['tid_key'])
 
 
-class FilePattern(StaticArgs):
+class FilePattern(Args):
     """
     A FilePattern specifier allows files to be located via an extended form of
     globbing. For example, you can find the absolute filenames of all npz files
