@@ -65,7 +65,7 @@ class CommandTemplate(param.Parameterized):
         raise NotImplementedError
 
     def _formatter(self, arg_specifier, spec):
-        if self.do_format: return arg_specifier.spec_formatter(spec)
+        if self.do_format: return core.BaseArgs.spec_formatter(spec)
         else             : return spec
 
     def show(self, arg_specifier, file_handle=sys.stdout, **kwargs):

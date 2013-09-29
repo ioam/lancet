@@ -56,7 +56,8 @@ class BaseArgs(param.Parameterized):
     def __contains__(self, value):
         return value in (self.constant_keys + self.varying_keys)
 
-    def spec_formatter(self, spec):
+    @classmethod
+    def spec_formatter(cls, spec):
         " Formats the elements of an argument set appropriately"
         return dict((k, str(v)) for (k,v) in spec.items())
 
@@ -201,15 +202,6 @@ class BaseArgs(param.Parameterized):
     def __str__(self): return self._pprint()
 
 class Args(BaseArgs):
-    """
-    Base class for many important static argument specifiers (dynamic=False)
-    though also useful in its own right. Can be constructed from launcher log
-    files and gives full control over the output arguments.Accepts the full
-    static specification as a list of dictionaries, provides all necessary
-    mechanisms for identifying varying and constant keys, implements next()
-    appropriately, does not exhaust like dynamic specifiers and has useful
-    support for len().
-    """
 
     specs = param.List(default=[], constant=True, doc='''
           The static list of specifications (ie. dictionaries) to be
@@ -350,7 +342,7 @@ class CartesianProduct(Args):
                    &  set(second.varying_keys + second.constant_keys))
         assert overlap == set(), 'Sets of keys cannot overlap between argument specifiers in cartesian product.'
         super(CartesianProduct, self).__init__(specs, fp_precision=max_precision,
-                                                     first=first, second=second)
+                                               first=first, second=second)
         self.pprint_args(['first', 'second'],[], infix_operator='*')
 
 class Range(Args):
