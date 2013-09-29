@@ -427,7 +427,7 @@ class Launcher(param.Parameterized):
             tids = list(range(last_tid, last_tid+len(groupspecs)))
             last_tid += len(groupspecs)
             allcommands = [self.command_template(
-                                self.command_template._formatter(self.arg_specifier, spec), tid, launchinfo) \
+                                self.command_template._formatter(spec), tid, launchinfo) \
                            for (spec,tid) in zip(groupspecs,tids)]
 
             self.append_log(list(zip(tids,groupspecs)))
@@ -670,7 +670,7 @@ class QLauncher(Launcher):
             job_name = "%s_%s_job_%d" % (self.batch_name, self.job_timestamp, tid)
             job_names.append(job_name)
             cmd_args = self.command_template(
-                    self.command_template._formatter(self.arg_specifier, spec),
+                    self.command_template._formatter(spec),
                     tid, self._launchinfo)
 
             popen_args = self.qsub_args([("-e",error_dir), ('-N',job_name), ("-o",output_dir)],
@@ -693,7 +693,7 @@ class QLauncher(Launcher):
         # Write out the specification files in anticipation of execution
         for (tid, spec) in tid_specs:
             self.command_template.specify(
-                    self.command_template._formatter(self.arg_specifier, spec),
+                    self.command_template._formatter(spec),
                     tid, self._launchinfo)
 
         # If schedule is empty (or on first initialization)...
@@ -942,8 +942,8 @@ class review_and_launch(param.Parameterized):
         print("Constant Items:\n\n%s\n" % items)
         print("Definition:\n%s" % arg_specifier)
 
-        response = self.input_options(['Y', 'n','quit'],
-                '\nShow available argument specifier entries?', default='y')
+        response = self.input_options(['y', 'N','quit'],
+                '\nShow available argument specifier entries?', default='n')
         if response == 'quit': return False
         if response == 'y':  arg_specifier.show()
         print
@@ -958,8 +958,8 @@ class review_and_launch(param.Parameterized):
         if isinstance(launcher, QLauncher) and launcher.is_dynamic_qsub:
             command_template.show(arg_specifier, queue_cmd_only=True)
 
-        response = self.input_options(['Y', 'n','quit','save'],
-                                      '\nShow available command entries?', default='y')
+        response = self.input_options(['y', 'N','quit','save'],
+                                      '\nShow available command entries?', default='n')
         if response == 'quit': return False
         if response == 'y':
             command_template.show(arg_specifier)
