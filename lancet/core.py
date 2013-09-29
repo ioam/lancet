@@ -89,7 +89,8 @@ class BaseArgs(param.Parameterized):
         raise NotImplementedError
 
     def round_floats(self, specs, fp_precision):
-        _round = lambda v, fp: np.round(v, fp) if (type(v) in np_ftypes) else round(v, fp)
+        _round_float = lambda v, fp: np.round(v, fp) if (type(v) in np_ftypes) else round(v, fp)
+        _round = (lambda v, fp: int(v)) if fp_precision==0  else _round_float
         return (dict((k, _round(v, fp_precision) if (type(v) in float_types) else v)
                      for (k,v) in spec.items()) for spec in specs)
 
