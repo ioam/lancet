@@ -2,7 +2,7 @@
 # Lancet launchers and launch helpers
 #
 
-import os, sys, time, pipes, subprocess
+import os, sys, time, pipes, subprocess, types
 import fnmatch
 import json, pickle
 import logging
@@ -64,7 +64,7 @@ class CommandTemplate(param.Parameterized):
         """
         raise NotImplementedError
 
-    def _formatter(self, arg_specifier, spec):
+    def _formatter(self, spec):
         if self.do_format: return core.BaseArgs.spec_formatter(spec)
         else             : return spec
 
@@ -89,6 +89,97 @@ class CommandTemplate(param.Parameterized):
 
         file_handle.write(full_string)
         file_handle.flush()
+
+
+class UnixCommand(CommandTemplate):
+    """
+    A generic CommandTemplate useable with most Unix commands. By
+    default, follows the GNU coding convention for commandline
+    arguments.
+    """
+
+    expansions = param.Dict(default={}, doc="""
+       A extension to the specs that supports functions that expand to
+       valid argument values.  If a function is used, it must have the
+       signature (spec, info, tid). A typical usage for a function
+       value is tobuild a valid output filename given the contrext.
+
+       One such function provided (template_expander) allows strings
+       to be built using Python's new-style dictionary formatting.""")
+
+    posargs = param.List(default=[], doc="""
+       The list of positional argument keys. Positional arguments are
+       always supplied at the end of a command in the order given.""")
+
+    long_prefix = param.String(default='--',  doc="""
+       Although the double dash is a GNU coding convention, some
+       applications use single dashes for long options.""")
+
+    def __init__(self, executable, **kwargs):
+        super(UnixCommand,self).__init__(executable = executable,
+                                         do_format=False,
+                                         **kwargs)
+
+    def __call__(self, spec, tid=None, info={}):
+        # Function expansions are called here.
+        expanded = {}
+        for (k,v) in self.expansions.items():
+            if isinstance(v, types.FunctionType):
+                expanded[k] = v(spec, info, tid)
+            else:
+                expanded[k] = v
+
+        expanded.update(spec)
+        expanded = core.BaseArgs.spec_formatter(expanded)
+
+        options = []
+        for (k, v) in expanded.items():
+            if k in self.posargs or spec[k] == False:
+                continue
+            options.append('%s%s' % (self.long_prefix if len(k) > 1 else '-', k))
+            if spec[k] != True:
+                options.append(v)
+
+        posargs = [expanded[parg] if (parg in expanded) else parg(spec, info, tid)
+                   for parg in self.posargs]
+        return [self.executable] + options + posargs
+
+
+    @classmethod
+    def root_directory(cls):
+        """
+        Supplies the root_directory to a command.
+        """
+        def _expander(spec, info, tid): return  info['root_directory']
+        return _expander
+
+
+    @classmethod
+    def long_filename(cls, extension, excluding=[]):
+        """
+        Generates a long filename based on the input arguments in the
+        root directory with the given extension. Ignores constant items.
+        """
+        def _expander(spec, info, tid):
+            root_dir = info['root_directory']
+            params = [('tid' , tid)] + [(k,v) for  (k,v) in spec.items()
+                                        if k in info['varying_keys'] and k not in excluding]
+            basename = '_'.join('%s=%s' % (k,v) for (k,v) in sorted(params))
+            return os.path.join(root_dir, '%s_%s%s' % (info['batch_name'], basename, extension))
+        return _expander
+
+    @classmethod
+    def expand(cls, template):
+        """
+        Takes a new-style format string template and expands it out
+        using the keys in the spec, info and tid.
+        """
+        def _expander(spec, info, tid):
+            all_params = {'tid' : tid}
+            all_params.update(spec)
+            all_params.update(info)
+            return template.format(**all_params)
+        return _expander
 
 
 #===========#
@@ -894,4 +985,3 @@ class review_and_launch(param.Parameterized):
                     'main_script=False' if not self.main_script else None ]
         arg_str = ',\n   '.join(el for el in arg_list if el is not None)
         return 'review_and_launch(\n   %s\n)' % arg_str
-
