@@ -75,6 +75,7 @@ class CommandTemplate(param.Parameterized):
                 'batch_tag':          '<batch_tag>',
                 'batch_description':  '<batch_description>',
                 'timestamp':          tuple(time.localtime()),
+                'timestamp_format':   '<timestamp_format>',
                 'varying_keys':       arg_specifier.varying_keys,
                 'constant_keys':      arg_specifier.constant_keys,
                 'constant_items':     arg_specifier.constant_items}
@@ -327,6 +328,7 @@ class Launcher(param.Parameterized):
 
         return {'root_directory':    self.root_directory,
                 'timestamp':         self.timestamp,
+                'timestamp_format':  self.timestamp_format,
                 'varying_keys':      self.arg_specifier.varying_keys,
                 'constant_keys':     self.arg_specifier.constant_keys,
                 'constant_items':     self.arg_specifier.constant_items,
