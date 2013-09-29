@@ -351,9 +351,9 @@ class CartesianProduct(Args):
                                                      first=first, second=second)
         self.pprint_args(['first', 'second'],[], infix_operator='*')
 
-class LinearArgs(Args):
+class Range(Args):
     """
-    LinearArgs generates an argument from a numerically interpolated range which
+    Range generates an argument from a numerically interpolated range which
     is linear by default. An optional function can be specified to sample a
     numeric range with regular intervals.
     """
@@ -380,7 +380,7 @@ class LinearArgs(Args):
         values = self.linspace(start_value, end_value, steps)
         specs = [{key:mapfn(val)} for val in values ]
 
-        super(LinearArgs, self).__init__(specs, key=key, start_value=start_value,
+        super(Range, self).__init__(specs, key=key, start_value=start_value,
                                          end_value=end_value, steps=steps,
                                          mapfn=mapfn, **kwargs)
         self.pprint_args(['key', 'start_value'], ['end_value', 'steps'])
@@ -394,7 +394,7 @@ class LinearArgs(Args):
             L[i] = nm1inv * (start*(nm1 - i) + stop*i)
         return L
 
-class ListArgs(Args):
+class List(Args):
     """
     An argument specifier that takes its values from a given list.
     """
@@ -409,7 +409,7 @@ class ListArgs(Args):
 
         assert list_values != [], "Empty list not allowed."
         specs = [{list_key:val} for val in list_values]
-        super(ListArgs, self).__init__(specs, list_key=list_key, list_values=list_values, **kwargs)
+        super(List, self).__init__(specs, list_key=list_key, list_values=list_values, **kwargs)
         self.pprint_args(['list_key', 'list_values'], [])
 
 class Log(Args):
