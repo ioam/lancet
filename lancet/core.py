@@ -304,19 +304,19 @@ class Args(BaseArgs):
 
     def __len__(self): return len(self.specs)
 
+
 class Concatenate(Args):
     """
-    Concatenate is the sequential composition of two StaticArg
-    specifiers. The specifier created by the compositon (firsts + second)
-    generates the arguments in first followed by the arguments in
-    second.
+    Concatenate is the sequential composition of two specifiers. The
+    specifier created by the compositon (firsts + second) generates
+    the arguments in first followed by the arguments in second.
     """
 
     first = param.ClassSelector(default=None, class_=Args, allow_None=True, constant=True, doc='''
-            The first static specifier used to generate the concatenation.''')
+            The first specifier used to generate the concatenation.''')
 
     second = param.ClassSelector(default=None, class_=Args, allow_None=True, constant=True, doc='''
-            The second static specifier used to generate the concatenation.''')
+            The second specifier used to generate the concatenation.''')
 
     def __init__(self, first, second):
 
@@ -328,17 +328,18 @@ class Concatenate(Args):
 
 class CartesianProduct(Args):
     """
-    CartesianProduct is the cartesian product of two StaticArg
-    specifiers. The specifier created by the compositon (firsts * second)
-    generates the cartesian produce of the arguments in first followed by the
-    arguments in second. Note that len(first * second) = len(first)*len(second)
+    CartesianProduct is the cartesian product of two specifiers. The
+    specifier created by the compositon (firsts * second) generates
+    the cartesian produce of the arguments in first followed by the
+    arguments in second. Note that len(first * second) =
+    len(first)*len(second)
     """
 
     first = param.ClassSelector(default=None, class_=Args, allow_None=True, constant=True, doc='''
-            The first static specifier used to generate the Cartesian product.''')
+            The first specifier used to generate the Cartesian product.''')
 
     second = param.ClassSelector(default=None, class_=Args, allow_None=True, constant=True, doc='''
-            The second static specifier used to generate the Cartesian product.''')
+            The second specifier used to generate the Cartesian product.''')
 
     def __init__(self, first, second):
 
