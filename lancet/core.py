@@ -437,18 +437,19 @@ class List(Args):
     An argument specifier that takes its values from a given list.
     """
 
-    list_values = param.List(default=[], constant=True, doc='''
+    values = param.List(default=[], constant=True, doc='''
          The list values that are to be returned by the specifier''')
 
-    list_key = param.String(default='default', constant=True, doc='''
+    key = param.String(default='default', constant=True, doc='''
          The key assigned to the elements of the given list.''')
 
-    def __init__(self, list_key, list_values, **kwargs):
+    def __init__(self, key, values, **kwargs):
 
-        assert list_values != [], "Empty list not allowed."
-        specs = [{list_key:val} for val in list_values]
-        super(List, self).__init__(specs, list_key=list_key, list_values=list_values, **kwargs)
-        self.pprint_args(['list_key', 'list_values'], [])
+        assert values != [], "Empty list not allowed."
+        specs = [{key:val} for val in values]
+        super(List, self).__init__(specs, key=key, values=values, **kwargs)
+        self.pprint_args(['key', 'values'], [])
+
 
 class Log(Args):
     """
