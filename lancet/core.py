@@ -86,12 +86,13 @@ class BaseArgs(param.Parameterized):
     def __iter__(self): return self
 
     def __contains__(self, value):
-        return value in (self.constant_keys() + self.constant_keys())
+        return value in (self.constant_keys + self.varying_keys)
 
     def spec_formatter(self, spec):
         " Formats the elements of an argument set appropriately"
         return dict((k, str(v)) for (k,v) in spec.items())
 
+    @property
     def constant_keys(self):
         """
         Returns the list of parameter names whose values are constant as the
@@ -100,14 +101,16 @@ class BaseArgs(param.Parameterized):
         """
         raise NotImplementedError
 
+    @property
     def constant_items(self):
         """
         Returns the set of constant items as a list of tuples. This allows easy
         conversion to dictionary format. Note, the items should be supplied in
-        the same key ordering as for constant_keys() for consistency.
+        the same key ordering as for constant_keys for consistency.
         """
         raise NotImplementedError
 
+    @property
     def varying_keys(self):
         """
         Returns the list of parameters whose values vary as the argument
@@ -177,7 +180,7 @@ class BaseArgs(param.Parameterized):
         enumerated = [el for el in enumerate(copied)]
         for (group_ind, specs) in enumerated:
             if len(enumerated) > 1: print("Group %d" % group_ind)
-            ordering = self.constant_keys() + self.varying_keys()
+            ordering = self.constant_keys + self.varying_keys
             # Ordered nicely by varying_keys definition.
             spec_lines = [', '.join(['%s=%s' % (k, s[k]) for k in ordering]) for s in specs]
             print('\n'.join(['%d: %s' % (i,l) for (i,l) in enumerate(spec_lines)]))
@@ -251,7 +254,7 @@ class BaseArgs(param.Parameterized):
         pkwargs = [(k, params[k])  for k in kwargs if (k in modified)] + extra_params.items()
         arg_list = [(k,params[k]) for k in pos_args] + pkwargs
 
-        len_ckeys, len_vkeys = len(self.constant_keys()), len(self.varying_keys())
+        len_ckeys, len_vkeys = len(self.constant_keys), len(self.varying_keys)
         info_triple = (len(self),
                        ', %d constant key(s)' % len_ckeys if len_ckeys else '',
                        ', %d varying key(s)'  % len_vkeys if len_vkeys else '')
@@ -319,17 +322,20 @@ class StaticArgs(BaseArgs):
         return [seen.setdefault(idfun(e),e) for e in sequence
                 if idfun(e) not in seen]
 
+    @property
     def constant_keys(self):
         collection = self._collect_by_key(self.specs)
         return [k for k in sorted(collection) if (len(self._unique(collection[k])) == 1)]
 
+    @property
     def constant_items(self):
         collection = self._collect_by_key(self.specs)
-        return [(k,collection[k][0]) for k in self.constant_keys()]
+        return [(k,collection[k][0]) for k in self.constant_keys]
 
+    @property
     def varying_keys(self):
         collection = self._collect_by_key(self.specs)
-        constant_set = set(self.constant_keys())
+        constant_set = set(self.constant_keys)
         unordered_varying = set(collection.keys()).difference(constant_set)
         # Finding out how fast keys are varying
         grouplens = [(len([len(list(y)) for (_,y) in itertools.groupby(collection[k])]),k) for k in collection]
@@ -387,8 +393,8 @@ class StaticCartesianProduct(StaticArgs):
         max_precision = max(first.fp_precision, second.fp_precision)
         specs = self._cartesian_product(first.specs, second.specs)
 
-        overlap = (set(first.varying_keys() + first.constant_keys())
-                   &  set(second.varying_keys() + second.constant_keys()))
+        overlap = (set(first.varying_keys + first.constant_keys)
+                   &  set(second.varying_keys + second.constant_keys))
         assert overlap == set(), 'Sets of keys cannot overlap between argument specifiers in cartesian product.'
         super(StaticCartesianProduct, self).__init__(specs, fp_precision=max_precision,
                                                      first=first, second=second)
@@ -713,10 +719,10 @@ class DynamicConcatenate(BaseArgs):
             return [len(self._second_cached)]+ second_schedule
 
     def constant_keys(self):
-        return list(set(self.first.constant_keys()) | set(self.second.constant_keys()))
+        return list(set(self.first.constant_keys) | set(self.second.constant_keys))
 
     def varying_keys(self):
-        return list(set(self.first.varying_keys()) | set(self.second.varying_keys()))
+        return list(set(self.first.varying_keys) | set(self.second.varying_keys))
 
     def update(self, data):
         if (self.first.dynamic and not self._exhausted): self.first.update(data)
@@ -742,7 +748,7 @@ class DynamicCartesianProduct(BaseArgs):
         self.first = first
         self.second = second
 
-        overlap = set(self.first.varying_keys()) &  set(self.second.varying_keys())
+        overlap = set(self.first.varying_keys) &  set(self.second.varying_keys)
         assert overlap == set(), 'Sets of keys cannot overlap between argument specifiers in cartesian product.'
 
         super(CartesianProduct, self).__init__(dynamic=True)
@@ -755,10 +761,10 @@ class DynamicCartesianProduct(BaseArgs):
         self.pprint_args(['first', 'second'],[], infix_operator='*')
 
     def constant_keys(self):
-        return list(set(self.first.constant_keys()) | set(self.second.constant_keys()))
+        return list(set(self.first.constant_keys) | set(self.second.constant_keys))
 
     def varying_keys(self):
-        return list(set(self.first.varying_keys()) | set(self.second.varying_keys()))
+        return list(set(self.first.varying_keys) | set(self.second.varying_keys))
 
     def update(self, data):
         if self.first.dynamic:  self.first.update(data)
@@ -839,7 +845,7 @@ class applying(param.Parameterized):
 
     @property
     def kwargs(self):
-        all_keys = self.specifier.constant_keys() + self.specifier.varying_keys()
+        all_keys = self.specifier.constant_keys + self.specifier.varying_keys
         return [k for k in all_keys if k not in self.args]
 
     def _args_kwargs(self, specs, args):

@@ -91,9 +91,9 @@ class CommandTemplate(param.Parameterized):
                 'batch_tag':          '<batch_tag>',
                 'batch_description':  '<batch_description>',
                 'timestamp':          tuple(time.localtime()),
-                'varying_keys':       arg_specifier.varying_keys(),
-                'constant_keys':      arg_specifier.constant_keys(),
-                'constant_items':     arg_specifier.constant_items()}
+                'varying_keys':       arg_specifier.varying_keys,
+                'constant_keys':      arg_specifier.constant_keys,
+                'constant_items':     arg_specifier.constant_items}
 
         if queue_cmd_only and not hasattr(self, 'queue'):
             print("Cannot show queue: CommandTemplate does not allow queueing")
@@ -260,9 +260,9 @@ class Launcher(param.Parameterized):
 
         return {'root_directory':    self.root_directory,
                 'timestamp':         self.timestamp,
-                'varying_keys':      self.arg_specifier.varying_keys(),
-                'constant_keys':     self.arg_specifier.constant_keys(),
-                'constant_items':     self.arg_specifier.constant_items(),
+                'varying_keys':      self.arg_specifier.varying_keys,
+                'constant_keys':     self.arg_specifier.constant_keys,
+                'constant_items':     self.arg_specifier.constant_items,
                 'batch_name':        self.batch_name,
                 'batch_tag':         self.tag,
                 'batch_description': self.description }
@@ -771,8 +771,8 @@ class review_and_launch(param.Parameterized):
         checkable_launchers = [launcher for launcher in launchers
                                if (launcher.command_template.allowed_list != [])]
 
-        used_args = [set(launcher.arg_specifier.varying_keys()
-                         + launcher.arg_specifier.constant_keys()) for launcher in checkable_launchers]
+        used_args = [set(launcher.arg_specifier.varying_keys
+                         + launcher.arg_specifier.constant_keys) for launcher in checkable_launchers]
 
         allowed_args = [set(launcher.command_template.allowed_list) for launcher in checkable_launchers]
 
@@ -868,8 +868,8 @@ class review_and_launch(param.Parameterized):
         print(self.section(heading))
         print("Type: %s (dynamic=%s)" %
               (arg_specifier.__class__.__name__, arg_specifier.dynamic))
-        print("Varying Keys: %s" % arg_specifier.varying_keys())
-        items = '\n'.join(['%s = %r' % (k,v) for (k,v) in arg_specifier.constant_items()])
+        print("Varying Keys: %s" % arg_specifier.varying_keys)
+        items = '\n'.join(['%s = %r' % (k,v) for (k,v) in arg_specifier.constant_items])
         print("Constant Items:\n\n%s\n" % items)
         print("Definition:\n%s" % arg_specifier)
 
