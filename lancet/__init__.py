@@ -53,3 +53,16 @@ identify mistakes early before consuming computational time and resources.
 from lancet.core import *
 from lancet.launch import *
 
+# IPython pretty printing support (optional)
+try:
+    def repr_pretty_annotated(obj, p, cycle):
+        p.text(obj._pprint(cycle, annotate=True))
+
+    def repr_pretty_unannotated(obj, p, cycle):
+        p.text(obj._pprint(cycle, annotate=False))
+
+    ip = get_ipython()
+    plaintext_formatter = ip.display_formatter.formatters['text/plain']
+    plaintext_formatter.for_type(StaticArgs, repr_pretty_annotated)
+except:
+    pass

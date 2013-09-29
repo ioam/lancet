@@ -14,6 +14,9 @@ try:
 except:
     np, np_ftypes = None, []
 
+try:    from pandas import DataFrame
+except: DataFrame = None
+
 from collections import defaultdict
 
 float_types = [float] + np_ftypes
@@ -336,6 +339,10 @@ class StaticArgs(BaseArgs):
         for (n,k) in varying_counts: ddict[n].append(k)
         alphagroups = [sorted(ddict[k]) for k in sorted(ddict)]
         return [el for group in alphagroups for el in group]
+
+    @property
+    def dframe(self):
+        return DataFrame(self.specs) if DataFrame else "Pandas not available"
 
     def __len__(self): return len(self.specs)
 
