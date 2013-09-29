@@ -426,8 +426,7 @@ class Log(Args):
 
     log_path = param.String(default=None, allow_None=True, constant=True, doc='''
               The relative or absolute path to the log file. If a relative path
-              is given, the absolute path is computed with param.normalize_path
-              (os.getcwd() by default).''')
+              is given, the absolute path is computed relative to os.getcwd().''')
 
     tid_key = param.String(default='tid', constant=True, allow_None=True, doc='''
                If not None, the key given to the tid values included in the
@@ -442,7 +441,9 @@ class Log(Args):
         Ordering can be maintained by setting dict_type to the appropriate
         constructor. Keys are converted from unicode to strings for kwarg use.
         """
-        with open(param.normalize_path(log_path),'r') as log:
+        log_path = (log_path if os.path.isfile(log_path)
+                    else os.path.join(os.getcwd(), log_path))
+        with open(log_path,'r') as log:
             splits = (line.split() for line in log)
             uzipped = ((int(split[0]), json.loads(" ".join(split[1:]))) for split in splits)
             szipped = [(i, dict((str(k),v) for (k,v) in d.items())) for (i,d) in uzipped]
@@ -490,6 +491,7 @@ class Log(Args):
         self.pprint_args(['log_path'], ['tid_key'])
 
 
+
 class FilePattern(Args):
     """
     A FilePattern specifier allows files to be located via an extended form of
@@ -516,14 +518,14 @@ class FilePattern(Args):
     """
 
     key = param.String(default=None, allow_None=True, constant=True, doc='''
-             The key name given to the matched file path strings.''')
+       The key name given to the matched file path strings.''')
 
     pattern = param.String(default=None, allow_None=True, constant=True,
-              doc='''The pattern files are to be searched against.''')
+       doc='''The pattern files are to be searched against.''')
 
     root = param.String(default=None, allow_None=True, constant=True, doc='''
-             The root directory from which patterns are to be loaded.  If set to
-             None, normalize_path.prefix is used (os.getcwd() by default).''')
+       The root directory from which patterns are to be loaded.  The root
+       is set relative to os.getcwd().''')
 
     @classmethod
     def directory(cls, directory, root=None, extension=None, **kwargs):
@@ -532,7 +534,7 @@ class FilePattern(Args):
         extension are loaded if the extension is specified. The given kwargs are
         passed through to the normal constructor.
         """
-        root = param.normalize_path.prefix if root is None else root
+        root = os.getcwd() if root is None else root
         suffix = '' if extension is None else '.' + extension.rsplit('.')[-1]
         pattern = directory + os.sep + '*' + suffix
         key = os.path.join(root, directory,'*').rsplit(os.sep)[-2]
@@ -542,12 +544,11 @@ class FilePattern(Args):
         return cls(key, pattern, root, **kwargs)
 
     def __init__(self, key, pattern, root=None, **kwargs):
-        root = param.normalize_path.prefix if root is None else root
+        root = os.getcwd() if root is None else root
         specs = self._load_expansion(key, root, pattern)
-        updated_specs = self._load_file_metadata(specs, key, **kwargs)
-        super(FilePattern, self).__init__(updated_specs, key=key, pattern=pattern,
+        super(FilePattern, self).__init__(specs, key=key, pattern=pattern,
                                           root=root, **kwargs)
-        if len(updated_specs) == 0:
+        if len(specs) == 0:
             print("%r: No matches found." % self)
         self.pprint_args(['key', 'pattern'], ['root'])
 
@@ -558,12 +559,6 @@ class FilePattern(Args):
         """
         parse = list(string.Formatter().parse(self.pattern))
         return [f for f in zip(*parse)[1] if f is not None]
-
-    def _load_file_metadata(self, specs, key, **kwargs):
-        """
-        Hook to allow a subclass to load metadata from the located files.
-        """
-        return specs
 
     def _load_expansion(self, key, root, pattern):#, lexsort):
         """
@@ -577,7 +572,7 @@ class FilePattern(Args):
             rootdir = path if os.path.isdir(path) else os.path.split(path)[0]
             filelist = [os.path.join(path,f) for f in os.listdir(path)] if os.path.isdir(path) else [path]
             for filepath in filelist:
-                specs.append(dict(tags,**{key:filepath}))
+                specs.append(dict(tags,**{key:os.path.realpath(filepath)}))
 
         return sorted(specs, key=lambda s: s[key])
 
