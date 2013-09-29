@@ -266,6 +266,48 @@ class Args(BaseArgs):
         spec_lines = [', '.join(['%s=%s' % (k, s[k]) for k in ordering if k in s]) for s in self.specs]
         print('\n'.join(['%d: %s' % (i,l) for (i,l) in enumerate(spec_lines)]))
 
+
+    def lexsort(self, *order):
+        """
+        The lexical sort order is specified by a list of string
+        arguments. Each string is a key name prefixed by '+' or '-' for
+        ascending and descending sort respectively. If the key is not
+        found in the operand's set of varying keys, it is ignored.
+        """
+        if order == []:
+            raise Exception("Please specify the keys for sorting (prefix '+' for ascending, '-' for descending.)")
+
+        if not set(el[1:] for el in order).issubset(set(self.varying_keys)):
+            raise Exception("Key(s) specified not in the set of varying keys.")
+
+        sorted_args = copy.deepcopy(self)
+        specs_param = sorted_args.params('specs')
+        specs_param.constant = False
+        sorted_args.specs = self._lexsorted_specs(order)
+        specs_param.constant = True
+        sorted_args._lexorder = order
+        return sorted_args
+
+    def _lexsorted_specs(self, order):
+        """
+        A lexsort is specified using normal key string prefixed by '+'
+        (for ascending) or '-' for (for descending).
+
+        Note that in Python 2, if a key is missing, None is returned
+        (smallest Python value). In Python 3, an Exception will be
+        raised regarding comparison of heterogenous types.
+        """
+        specs = self.specs[:]
+        if not all(el[0] in ['+', '-'] for el in order):
+            raise Exception("Please prefix sort keys with either '+' (for ascending) or '-' for descending")
+
+        sort_cycles = [(el[1:], True if el[0]=='+' else False) for el in reversed(order)
+                       if el[1:] in self.varying_keys]
+
+        for (key, ascending) in sort_cycles:
+            specs = sorted(specs, key=lambda s: s.get(key, None), reverse=(not ascending))
+        return specs
+
     @property
     def constant_keys(self):
         collection = self._collect_by_key(self.specs)
@@ -345,6 +387,7 @@ class CartesianProduct(Args):
         super(CartesianProduct, self).__init__(specs, fp_precision=max_precision,
                                                first=first, second=second)
         self.pprint_args(['first', 'second'],[], infix_operator='*')
+
 
 class Range(Args):
     """
