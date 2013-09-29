@@ -10,6 +10,7 @@ import logging
 import param
 
 import lancet.core as core
+from lancet.dynamic import DynamicArgs
 
 #===================#
 # Commands Template #
@@ -28,24 +29,6 @@ class CommandTemplate(param.Parameterized):
     info is a dictionary of run-time information supplied by the launcher. Info
     contains of the following information : root_directory, timestamp,
     varying_keys, constant_keys, batch_name, batch_tag and batch_description.
-
-    Command templates should avoid all platform specific logic (this is the job
-    of the Launcher) but there are cases where the specification needs to be
-    read from file. This allows tasks to be queued (typically on a cluster)
-    before the required arguments are known. To achieve this two extra methods
-    should be implemented if possible:
-
-    specify(spec, tid, info):
-
-    Takes a specification for the task and writes it to a file in the
-    'specifications' subdirectory of the root directory. Each specification
-    filename must include the tid to ensure uniqueness.
-
-    queue(self,tid, info):
-
-    The subprocess Popen argument list that upon execution runs the desired
-    command using the arguments in the specification file of the given tid
-    located in the 'specifications' folder of the root directory.
     """
 
     allowed_list = param.List(default=[], doc='''
@@ -85,7 +68,8 @@ class CommandTemplate(param.Parameterized):
         if self.do_format: return arg_specifier.spec_formatter(spec)
         else             : return spec
 
-    def show(self, arg_specifier, file_handle=sys.stdout, queue_cmd_only=False):
+    def show(self, arg_specifier, file_handle=sys.stdout, **kwargs):
+        full_string = ''
         info = {'root_directory':     '<root_directory>',
                 'batch_name':         '<batch_name>',
                 'batch_tag':          '<batch_tag>',
@@ -95,25 +79,17 @@ class CommandTemplate(param.Parameterized):
                 'constant_keys':      arg_specifier.constant_keys,
                 'constant_items':     arg_specifier.constant_items}
 
-        if queue_cmd_only and not hasattr(self, 'queue'):
-            print("Cannot show queue: CommandTemplate does not allow queueing")
-            return
-        elif queue_cmd_only:
-            full_string = 'Queue command: '+ ' '.join([pipes.quote(el) for el in self.queue('<tid>',info)])
-        elif (queue_cmd_only is False):
-            copied = arg_specifier.copy()
-            full_string = ''
-            enumerated = list(enumerate(copied))
-            for (group_ind, specs) in enumerated:
-                if len(enumerated) > 1: full_string += "\nGroup %d" % group_ind
-                quoted_cmds = [[pipes.quote(el) \
-                                    for el in self(self._formatter(copied, s),'<tid>',info)] \
-                              for s in specs]
-                cmd_lines = ['%d: %s\n' % (i, ' '.join(qcmds)) for (i,qcmds) in enumerate(quoted_cmds)]
-                full_string += ''.join(cmd_lines)
+        quoted_cmds = [ subprocess.list2cmdline(
+                [el for el in self(self._formatter(s),'<tid>',info)])
+                        for s in arg_specifier.specs]
+
+        cmd_lines = ['%d: %s\n' % (i, qcmds) for (i,qcmds)
+                     in enumerate(quoted_cmds)]
+        full_string += ''.join(cmd_lines)
 
         file_handle.write(full_string)
         file_handle.flush()
+
 
 #===========#
 # Launchers #
@@ -255,7 +231,7 @@ class Launcher(param.Parameterized):
 
         if not os.path.isdir(self.root_directory): os.makedirs(self.root_directory)
         metrics_dir = os.path.join(self.root_directory, 'metrics')
-        if not os.path.isdir(metrics_dir) and self.arg_specifier.dynamic:
+        if not os.path.isdir(metrics_dir) and isinstance(self.arg_specifier,DynamicArgs):
             os.makedirs(metrics_dir)
 
         return {'root_directory':    self.root_directory,
@@ -368,7 +344,7 @@ class Launcher(param.Parameterized):
 
             last_tids = tids[:]
 
-            if self.arg_specifier.dynamic:
+            if isinstance(self.arg_specifier, DynamicArgs):
                 self.arg_specifier.update(self.extract_metrics(last_tids, launchinfo))
 
         self.record_info()
@@ -467,7 +443,7 @@ class QLauncher(Launcher):
         self.max_concurrency = None # Inherited
 
         # The necessary conditions for reserving jobs before specification known.
-        self.is_dynamic_qsub = all([self.arg_specifier.dynamic,
+        self.is_dynamic_qsub = all([isinstance(self.arg_specifier, DynamicArgs),
                                     hasattr(self.arg_specifier, 'schedule'),
                                     hasattr(self.command_template,   'queue'),
                                     hasattr(self.command_template,   'specify')])
@@ -546,7 +522,7 @@ class QLauncher(Launcher):
         self.append_log(tid_specs)
 
         # Updating the argument specifier
-        if self.arg_specifier.dynamic:
+        if isinstance(self.arg_specifier,DynamicArgs):
             self.arg_specifier.update(self.extract_metrics(self.last_tids, self._launchinfo))
         self.last_tids = [tid for (tid,_) in tid_specs]
 
@@ -556,7 +532,7 @@ class QLauncher(Launcher):
         else:            self.static_qsub(output_dir, error_dir, tid_specs)
 
         # Pickle launcher before exit if necessary.
-        if (self.arg_specifier.dynamic) or (self.reduction_fn is not None):
+        if isinstance(self.arg_specifier,DynamicArgs) or (self.reduction_fn is not None):
             root_path = param.normalize_path(self.root_directory)
             pickle_path = os.path.join(root_path, 'launcher.pickle')
             pickle.dump(self, open(pickle_path,'wb'))
@@ -867,7 +843,7 @@ class review_and_launch(param.Parameterized):
         arg_specifier = obj.arg_specifier if isinstance(obj, Launcher) else obj
         print(self.section(heading))
         print("Type: %s (dynamic=%s)" %
-              (arg_specifier.__class__.__name__, arg_specifier.dynamic))
+              (arg_specifier.__class__.__name__, isinstance(arg_specifier,DynamicArgs)))
         print("Varying Keys: %s" % arg_specifier.varying_keys)
         items = '\n'.join(['%s = %r' % (k,v) for (k,v) in arg_specifier.constant_items])
         print("Constant Items:\n\n%s\n" % items)

@@ -51,6 +51,7 @@ identify mistakes early before consuming computational time and resources.
 """
 
 from lancet.core import *
+from lancet.dynamic import *
 from lancet.launch import *
 
 # IPython pretty printing support (optional)
