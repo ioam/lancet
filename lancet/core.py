@@ -352,7 +352,7 @@ class Range(Args):
     numeric range with regular intervals.
     """
 
-    key = param.String(default='', doc='''
+    key = param.String(default='', constant=True, doc='''
          The key assigned to values computed over the linear numeric range.''')
 
     start_value =  param.Number(default=None, allow_None=True, constant=True, doc='''
@@ -451,15 +451,15 @@ class Log(Args):
         log file. This can be disabled by setting allow_append to False.
         """
         append = os.path.isfile(log_path)
-        listing = isinstance(data, list)
+        islist = isinstance(data, list)
 
         if append and not allow_append:
             raise Exception('Appending has been disabled and file %s exists' % log_path)
 
-        if not (listing or isinstance(data, Args)):
+        if not (islist or isinstance(data, Args)):
             raise Exception('Can only write static specifiers or dictionary lists to log file.')
 
-        specs = data if listing else data.specs
+        specs = data if islist else data.specs
         if not all(isinstance(el,dict) for el in specs):
             raise Exception('List elements must be dictionaries.')
 
