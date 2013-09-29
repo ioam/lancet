@@ -671,3 +671,75 @@ class FilePattern(Args):
         for i in range(0, len(parts), 2): parts[i] = re.escape(parts[i])
 
         return globpattern, ''.join(parts).replace('\\*','.*'), list(f for f in fields if f), dict(types)
+
+
+# Importing from filetypes requires PrettyPrinted to be defined
+from filetypes import FileType
+
+class FileInfo(Args):
+    """
+    Loads metadata (and optionally data) from a set of filenames. For
+    instance, you can load metadata associated with a series of image
+    files given by a FilePattern. Unlike other explicit instances of
+    Args, this object extends the values of an existing Args object.
+    """
+
+    source = param.ClassSelector(class_ = Args, doc="""
+        The argument specifer that provides the filenames.""")
+
+    filetype = param.ClassSelector(constant=True, class_= FileType, doc="""
+        A FileType object to be applied to each filename in turn.""")
+
+    key = param.String(constant=True, doc="""
+       The key used to find the file paths for inspection.""")
+
+    load_contents = param.Boolean(default=False, constant=True, doc="""
+       Whether the contents of the files are to be loaded along with
+       the metadata.""")
+
+    ignore = param.List(default=[], constant=True, doc="""
+       Metadata keys that are to be explicitly ignored. """)
+
+    def __init__(self, source, key, filetype, load_contents=False, ignore = [], **kwargs):
+        specs, data_keys = self._info(source, key, filetype, load_contents, ignore)
+        super(FileInfo, self).__init__(specs,
+                                       source = source,
+                                       filetype = filetype,
+                                       key = key,
+                                       load_contents = load_contents,
+                                       ignore=ignore,
+                                       **kwargs)
+        # Do not attempt to sort data fields.
+        self.unsortable_keys = list(data_keys)
+        self.pprint_args(['source', 'key', 'filetype'], ['load_contents', 'ignore'])
+
+    def _info(self, source, key, filetype, load_contents, ignore):
+        """
+        Generates the union of the source.specs and the metadata
+        dictionary loaded by the filetype object. Optionally, the the
+        file contents are also loaded.
+        """
+        specs = []
+        data_keys = set()
+        data, mdata = {}, {}
+        mdata_clashes, datakey_clashes  = set(), set()
+
+        for spec in source.specs:
+            if key not in spec:
+                raise Exception("Key %r not available in 'source'." % key)
+
+            mdata = dict((k,v) for (k,v) in filetype.metadata(spec[key]).items() 
+                         if k not in ignore)
+            data = filetype.data(spec[key]) if load_contents else {}
+            data_keys = data_keys | set(data.keys())
+            mdata_spec = dict(spec, **mdata)
+            specs.append(dict(mdata_spec, **data))
+            mdata_clashes = mdata_clashes | (set(spec.keys()) & set(mdata.keys()))
+            datakey_clashes = datakey_clashes | (set(data.keys()) & set(mdata_spec))
+
+        # Metadata clashes can be avoided by using the ignore list.
+        if mdata_clashes:
+            print "WARNING: Loaded metadata keys are overriding source keys."
+        if datakey_clashes:
+            print "WARNING: Loaded data keys are overriding source and/or metadata keys"
+        return specs, data_keys

@@ -53,6 +53,7 @@ identify mistakes early before consuming computational time and resources.
 from lancet.core import *
 from lancet.dynamic import *
 from lancet.launch import *
+from lancet.filetypes import *
 
 # IPython pretty printing support (optional)
 try:
@@ -64,6 +65,6 @@ try:
 
     ip = get_ipython()
     plaintext_formatter = ip.display_formatter.formatters['text/plain']
-    plaintext_formatter.for_type(StaticArgs, repr_pretty_annotated)
+    plaintext_formatter.for_type(Args, repr_pretty_annotated)
 except:
     pass
