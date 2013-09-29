@@ -765,10 +765,6 @@ class review_and_launch(param.Parameterized):
     parameter is the proper way of executing code after the Launcher exits.
     """
 
-    launcher_class = param.Parameter(doc='''
-         The launcher class used for this lancet script.  Necessary to access
-         launcher classmethods (to resume launch for example).''')
-
     output_directory = param.String(default='.', doc='''
          The output directory - the directory that will contain all the root
          directories for the individual launches.''')
@@ -788,11 +784,11 @@ class review_and_launch(param.Parameterized):
 
     launch_fn = param.Callable(doc='''The function that is to be applied.''')
 
-    def __init__(self, launcher_class, output_directory='.', **kwargs):
+    def __init__(self, output_directory='.', **kwargs):
 
-        super(review_and_launch, self).__init__(launcher_class=launcher_class,
-                                                output_directory=output_directory,
-                                                **kwargs)
+        super(review_and_launch, self).__init__( output_directory=output_directory,
+                                                 **kwargs)
+
         self._get_launcher = lambda x:x
         self._cross_checks = [(self._get_launcher, self.cross_check_launchers)]
         self._reviewers = [(self._get_launcher, self.review_launcher ),
@@ -833,14 +829,12 @@ class review_and_launch(param.Parameterized):
         timestamps = [launcher.timestamp for launcher in launchers]
         launcher_classes = [launcher.__class__ for launcher in launchers]
 
-        if len(set(batch_names)) != len(launchers):
-            raise Exception('Each launcher requires a unique batch name.')
+        # Needs to be made compatible with the subdir option of Launcher
+        # if len(set(batch_names)) != len(launchers):
+        #     raise Exception('Each launcher requires a unique batch name.')
 
         if not all(timestamps[0] == tstamp for tstamp in timestamps):
             raise Exception("Launcher timestamps not all equal. Consider setting timestamp explicitly.")
-
-        if not all(lclass == self.launcher_class for lclass in launcher_classes):
-            raise Exception("Launcher class inconsistent with returned launcher instances.")
 
         # Argument name consistency checks
         checkable_launchers = [launcher for launcher in launchers
@@ -864,9 +858,6 @@ class review_and_launch(param.Parameterized):
 
         if self.main_script and self.launch_fn.__module__ != '__main__': return False
 
-        # Resuming launch as necessary
-        if self.launcher_class.resume_launch(): return False
-
         # Setting the output directory via param
         if self.output_directory is not None:
             param.normalize_path.prefix = self.output_directory
@@ -875,7 +866,9 @@ class review_and_launch(param.Parameterized):
         kwargs_list = [{}] if (self.launch_args is None) else self.launch_args.specs
         lvals = [self.launch_fn(**kwargs_list[0])]
         if self.launch_args is not None:
-            self.launcher_class.timestamp = self._get_launcher(lvals[0]).timestamp
+            first_launcher = self._get_launcher(lvals[0])
+            first_launcher.__class__.timestamp = tuple(time.localtime())
+
             lvals += [self.launch_fn(**kwargs) for kwargs in kwargs_list[1:]]
 
         # Cross checks
@@ -977,8 +970,7 @@ class review_and_launch(param.Parameterized):
         return True
 
     def __repr__(self):
-        arg_list = ['%s' % self.launcher_class.__name__,
-                    '%r' % self.output_directory,
+        arg_list = ['%r' % self.output_directory,
                     'launch_args=%r' % self.launch_args if self.launch_args else None,
                     'review=False' if not self.review else None,
                     'main_script=False' if not self.main_script else None ]
@@ -986,8 +978,7 @@ class review_and_launch(param.Parameterized):
         return 'review_and_launch(%s)' % arg_str
 
     def __str__(self):
-        arg_list = ['launcher_class=%s' % self.launcher_class.__name__,
-                    'output_directory=%r' % self.output_directory,
+        arg_list = ['output_directory=%r' % self.output_directory,
                     'launch_args=%s' % self.launch_args._pprint(level=2) if self.launch_args else None,
                     'review=False' if not self.review else None,
                     'main_script=False' if not self.main_script else None ]
