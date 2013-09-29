@@ -282,13 +282,14 @@ class Args(BaseArgs):
         constant_set = set(self.constant_keys)
         unordered_varying = set(collection.keys()).difference(constant_set)
         # Finding out how fast keys are varying
-        grouplens = [(len([len(list(y)) for (_,y) in itertools.groupby(collection[k])]),k) for k in collection]
+        grouplens = [(len([len(list(y)) for (_,y) in itertools.groupby(collection[k])]),k) for k in collection 
+                     if (k not in self.unsortable_keys)]
         varying_counts = [(n,k) for (n,k) in sorted(grouplens) if (k in unordered_varying)]
         # Grouping keys with common frequency alphanumerically (desired behaviour).
         ddict = defaultdict(list)
         for (n,k) in varying_counts: ddict[n].append(k)
         alphagroups = [sorted(ddict[k]) for k in sorted(ddict)]
-        return [el for group in alphagroups for el in group]
+        return [el for group in alphagroups for el in group] + sorted(self.unsortable_keys)
 
     @property
     def dframe(self):
