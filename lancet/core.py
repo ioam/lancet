@@ -33,13 +33,72 @@ def set_fp_precision(value):
 # Argument Specifiers #
 #=====================#
 
-class BaseArgs(param.Parameterized):
+class PrettyPrinted(object):
     """
-    The base class for all argument specifiers. Argument specifiers implement
-    Python's iterator protocol, returning arguments on each call to next(). Note
-    that these objects should not be written as generators as they often need to
-    be pickled.
+    A mixin class for generating pretty-printed representations.
     """
+
+    def pprint_args(self, pos_args, keyword_args, infix_operator=None, extra_params={}):
+        """
+        Method to define the positional arguments and keyword order for pretty printing.
+        """
+        if infix_operator and not (len(pos_args)==2 and keyword_args==[]):
+            raise Exception('Infix format requires exactly two positional arguments and no keywords')
+        (kwargs,_,_,_) = self._pprint_args
+        self._pprint_args = (keyword_args + kwargs, pos_args, infix_operator, extra_params)
+
+    def _pprint(self, cycle=False, flat=False, annotate=False, level=1, tab = '   '):
+        """
+        Pretty printer that prints only the modified keywords and generates flat
+        representations (for repr) and optionally annotates with a comment.
+        """
+        (kwargs, pos_args, infix_operator, extra_params) = self._pprint_args
+        (br, indent)  = ('' if flat else '\n', '' if flat else tab * level)
+        prettify = lambda x: isinstance(x, PrettyPrinted) and not flat
+        pretty = lambda x: x._pprint(flat=flat, level=level+1) if prettify(x) else repr(x)
+
+        params = dict(self.get_param_values())
+        show_lexsort = getattr(self, '_lexorder', None) is not None
+        modified = [k for (k,v) in self.get_param_values(onlychanged=True)]
+        pkwargs = [(k, params[k])  for k in kwargs if (k in modified)] + extra_params.items()
+        arg_list = [(k,params[k]) for k in pos_args] + pkwargs
+
+        lines = []
+        if annotate: # Optional annotating comment
+            len_ckeys, len_vkeys = len(self.constant_keys), len(self.varying_keys)
+            info_triple = (len(self),
+                           ', %d constant key(s)' % len_ckeys if len_ckeys else '',
+                           ', %d varying key(s)'  % len_vkeys if len_vkeys else '')
+            annotation = '# == %d items%s%s ==\n' % info_triple
+            lines = [annotation]
+
+        if show_lexsort: lines.append('(')
+        if cycle:
+            lines.append('%s(...)' % self.__class__.__name__)
+        elif infix_operator:
+            level = level - 1
+            triple = (pretty(params[pos_args[0]]), infix_operator, pretty(params[pos_args[1]]))
+            lines.append('%s %s %s' % triple)
+        else:
+            lines.append('%s(' % self.__class__.__name__)
+            for (k,v) in arg_list:
+                lines.append('%s%s=%s' %  (br+indent, k, pretty(v)))
+                lines.append(',')
+            lines = lines[:-1] +[br+(tab*(level-1))+')'] # Remove trailing comma
+
+        if show_lexsort: 
+            lines.append(').lexsort(%s)' % ', '.join(repr(el) for el in self._lexorder))
+        return ''.join(lines)
+
+    def __repr__(self):
+        return self._pprint(flat=True)
+
+    def __str__(self):
+        return self._pprint()
+
+
+
+class BaseArgs(PrettyPrinted, param.Parameterized):
 
     fp_precision = param.Integer(default=4, constant=True, doc='''
          The floating point precision to use for floating point values.  Unlike
@@ -48,8 +107,8 @@ class BaseArgs(param.Parameterized):
 
     def __init__(self, **params):
         self._pprint_args = ([],[],None,{})
-        super(BaseArgs,self).__init__(**params)
         self.pprint_args([],['fp_precision', 'dynamic'])
+        super(BaseArgs,self).__init__(**params)
 
     def __iter__(self): return self
 
@@ -152,54 +211,7 @@ class BaseArgs(param.Parameterized):
                       ))
                  for s1 in first_specs for s2 in second_specs ]
 
-    def pprint_args(self, pos_args, keyword_args, infix_operator=None, extra_params={}):
-        """
-        Method to define the positional arguments and keyword order for pretty printing.
-        """
-        if infix_operator and not (len(pos_args)==2 and keyword_args==[]):
-            raise Exception('Infix format requires exactly two positional arguments and no keywords')
-        (kwargs,_,_,_) = self._pprint_args
-        self._pprint_args = (keyword_args + kwargs, pos_args, infix_operator, extra_params)
 
-    def _pprint(self, cycle=False, flat=False, annotate=False, level=1, tab = '   '):
-        """
-        Pretty printer that prints only the modified keywords and generates flat
-        representations (for repr) and optionally annotates with a comment.
-        """
-        (kwargs, pos_args, infix_operator, extra_params) = self._pprint_args
-        (br, indent)  = ('' if flat else '\n', '' if flat else tab * level)
-        prettify = lambda x: isinstance(x, BaseArgs) and not flat
-        pretty = lambda x: x._pprint(flat=flat, level=level+1) if prettify(x) else repr(x)
-
-        params = dict(self.get_param_values())
-        modified = [k for (k,v) in self.get_param_values(onlychanged=True)]
-        pkwargs = [(k, params[k])  for k in kwargs if (k in modified)] + extra_params.items()
-        arg_list = [(k,params[k]) for k in pos_args] + pkwargs
-
-        len_ckeys, len_vkeys = len(self.constant_keys), len(self.varying_keys)
-        info_triple = (len(self),
-                       ', %d constant key(s)' % len_ckeys if len_ckeys else '',
-                       ', %d varying key(s)'  % len_vkeys if len_vkeys else '')
-        annotation = '# == %d items%s%s ==\n' % info_triple
-        lines = [annotation] if annotate else []    # Optional annotating comment
-
-        if cycle:
-            lines.append('%s(...)' % self.__class__.__name__)
-        elif infix_operator:
-            level = level - 1
-            triple = (pretty(params[pos_args[0]]), infix_operator, pretty(params[pos_args[1]]))
-            lines.append('%s %s %s' % triple)
-        else:
-            lines.append('%s(' % self.__class__.__name__)
-            for (k,v) in arg_list:
-                lines.append('%s%s=%s' %  (br+indent, k, pretty(v)))
-                lines.append(',')
-            lines = lines[:-1] +[br+(tab*(level-1))+')'] # Remove trailing comma
-
-        return ''.join(lines)
-
-    def __repr__(self):  return self._pprint(flat=True)
-    def __str__(self): return self._pprint()
 
 class Args(BaseArgs):
 
