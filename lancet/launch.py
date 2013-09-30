@@ -408,12 +408,12 @@ class Launcher(param.Parameterized):
                 # max_concurrency reached, wait until more slots available
                 while len(processes) >= self.max_concurrency:
                     if not check_complete_processes(len(processes)==1):
-                        time.sleep(3)
+                        time.sleep(0.1)
 
         # Wait for all processes to complete
         while len(processes) > 0:
             if not check_complete_processes(True):
-                time.sleep(3)
+                time.sleep(0.1)
 
     def launch(self):
         """
