@@ -609,7 +609,7 @@ class FilePattern(Args):
         parse = list(string.Formatter().parse(self.pattern))
         return [f for f in zip(*parse)[1] if f is not None]
 
-    def _load_expansion(self, key, root, pattern):#, lexsort):
+    def _load_expansion(self, key, root, pattern):
         """
         Loads the files that match the given pattern.
         """
@@ -621,7 +621,7 @@ class FilePattern(Args):
             rootdir = path if os.path.isdir(path) else os.path.split(path)[0]
             filelist = [os.path.join(path,f) for f in os.listdir(path)] if os.path.isdir(path) else [path]
             for filepath in filelist:
-                specs.append(dict(tags,**{key:os.path.realpath(filepath)}))
+                specs.append(dict(tags,**{key:os.path.abspath(filepath)}))
 
         return sorted(specs, key=lambda s: s[key])
 

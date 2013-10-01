@@ -113,8 +113,8 @@ class FileType(PrettyPrinted, param.Parameterized):
         (_, ext) = os.path.splitext(filename)
         if ext not in self.extensions:
             raise Exception("Unsupported extensions")
-        realpath = os.path.realpath(os.path.join(self.directory, filename))
-        return filename if os.path.isfile(filename) else realpath
+        abspath = os.path.abspath(os.path.join(self.directory, filename))
+        return filename if os.path.isfile(filename) else abspath
 
     def _savepath(self, filename):
         """
@@ -123,7 +123,7 @@ class FileType(PrettyPrinted, param.Parameterized):
         """
         (basename, ext) = os.path.splitext(filename)
         ext = ext if ext else self.extensions[0]
-        savepath = os.path.realpath(os.path.join(self.directory, 
+        savepath = os.path.abspath(os.path.join(self.directory, 
                                                  '%s%s' % (basename, ext)))
         return (tempfile.mkstemp(ext, basename + "_", self.directory)[1] 
                 if self.hash_suffix else savepath)

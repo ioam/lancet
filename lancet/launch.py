@@ -147,7 +147,6 @@ class UnixCommand(CommandTemplate):
                    for parg in self.posargs]
         return [self.executable] + options + posargs
 
-
     @classmethod
     def root_directory(cls):
         """
@@ -155,7 +154,6 @@ class UnixCommand(CommandTemplate):
         """
         def _expander(spec, info, tid): return  info['root_directory']
         return _expander
-
 
     @classmethod
     def long_filename(cls, extension, excluding=[]):
@@ -244,6 +242,10 @@ class Launcher(param.Parameterized):
       format. If None, the timestamp is omitted from root directory
       name.''')
 
+    output_directory = param.String(default='.', doc="""
+         The output directory - the directory that will contain all
+         the root directories for the individual launches.""")
+
     subdir = param.List(default=[], doc="""
       A list of subdirectory names that allows custom organization
       within the output directory before the root directory.""")
@@ -258,16 +260,21 @@ class Launcher(param.Parameterized):
         if self.timestamp == (0,)*9:
             self.timestamp = tuple(time.localtime())
 
-    def root_directory_name(self, timestamp=None):
+    def get_root_directory(self, timestamp=None):
         """
-        A helper method that gives the root directory name given a
+        A helper method that supplies the root directory name given a
         timestamp.
         """
         if timestamp is None: timestamp = self.timestamp
         if self.timestamp_format is not None:
-            return time.strftime(self.timestamp_format, timestamp) + '-' + self.batch_name
+            root_name =  (time.strftime(self.timestamp_format, timestamp)
+                          + '-' + self.batch_name)
         else:
-            return self.batch_name
+            root_name = self.batch_name
+
+        path = os.path.join(self.output_directory, 
+                                *(self.subdir+[root_name]))
+        return os.path.abspath(path)
 
     def append_log(self, specs):
         """
@@ -311,11 +318,9 @@ class Launcher(param.Parameterized):
         directory and generate basic launch information for command
         templates to use (including a registered timestamp).
         """
-        root_name = self.root_directory_name()
-        fullpath = os.path.join(param.normalize_path(), *(self.subdir+[root_name]))
-        self.root_directory = os.path.realpath(fullpath)
-
-        if not os.path.isdir(self.root_directory): os.makedirs(self.root_directory)
+        self.root_directory = self.get_root_directory()
+        if not os.path.isdir(self.root_directory):
+            os.makedirs(self.root_directory)
 
         return {'root_directory':    self.root_directory,
                 'timestamp':         self.timestamp,
@@ -328,8 +333,7 @@ class Launcher(param.Parameterized):
                 'batch_description': self.description }
 
     def _setup_streams_path(self):
-        streams_path = os.path.join(param.normalize_path(),
-                               self.root_directory, "streams")
+        streams_path = os.path.join(self.root_directory, "streams")
 
         try: os.makedirs(streams_path)
         except: pass
@@ -412,7 +416,8 @@ class Launcher(param.Parameterized):
                 self.arg_specifier.update(last_tids, launchinfo)
 
         self.record_info()
-        if self.reduction_fn is not None: self.reduction_fn(self._spec_log, self.root_directory)
+        if self.reduction_fn is not None:
+            self.reduction_fn(self._spec_log, self.root_directory)
 
 class QLauncher(Launcher):
     """
@@ -558,8 +563,7 @@ class QLauncher(Launcher):
 
         # Pickle launcher before exit if necessary.
         if isinstance(self.arg_specifier,DynamicArgs) or (self.reduction_fn is not None):
-            root_path = param.normalize_path(self.root_directory)
-            pickle_path = os.path.join(root_path, 'qlauncher.pkl')
+            pickle_path = os.path.join(self.root_directory, 'qlauncher.pkl')
             pickle.dump(self, open(pickle_path,'wb'))
 
     def qsub_collate_and_launch(self, output_dir, error_dir, job_names):
@@ -780,10 +784,6 @@ class review_and_launch(param.Parameterized):
 
         if self.main_script and self.launch_fn.__module__ != '__main__': return False
 
-        # Setting the output directory via param
-        if self.output_directory is not None:
-            param.normalize_path.prefix = self.output_directory
-
         # Calling the wrapped function with appropriate arguments
         kwargs_list = [{}] if (self.launch_args is None) else self.launch_args.specs
         lvals = [self.launch_fn(**kwargs_list[0])]
@@ -792,6 +792,11 @@ class review_and_launch(param.Parameterized):
             first_launcher.__class__.timestamp = tuple(time.localtime())
 
             lvals += [self.launch_fn(**kwargs) for kwargs in kwargs_list[1:]]
+
+        # Setting the output directory
+        if self.output_directory is not None:
+            for lval in lvals:
+                lval.output_directory = self.output_directory
 
         # Cross checks
         for (accessor, checker) in self._cross_checks:
@@ -839,8 +844,8 @@ class review_and_launch(param.Parameterized):
         print("Type: %s" % launcher.__class__.__name__)
         print("Batch Name: %s" % launcher.batch_name)
         print("Command executable: %s" % command_template.executable)
-        root_directory = launcher.root_directory_name()
-        print("Root directory: %s" % param.normalize_path(root_directory))
+        root_directory = launcher.get_root_directory()
+        print("Root directory: %s" % root_directory)
         print("Maximum concurrency: %s" % launcher.max_concurrency)
 
         description = '<No description>' if launcher.description == '' else launcher.description
