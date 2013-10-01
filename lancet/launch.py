@@ -248,18 +248,8 @@ class Launcher(param.Parameterized):
       A list of subdirectory names that allows custom organization
       within the output directory before the root directory.""")
 
-    @classmethod
-    def resume_launch(cls):
-        """
-        Class method to allow Launchers to be controlled from the
-        environment.  If the environment is processed and the launcher
-        is resuming, return True, otherwise return False.
-        """
-        return False
-
 
     def __init__(self, batch_name, arg_specifier, command_template, **kwargs):
-
         super(Launcher,self).__init__(arg_specifier=arg_specifier,
                                           command_template = command_template,
                                           **kwargs)
@@ -460,37 +450,7 @@ class QLauncher(Launcher):
        keywords in the dict constructor: ie. using
        qsub_flag_options=dict(key1=value1, key2=value2, ....)""")
 
-    script_path = param.String(default=None, allow_None = True, doc="""
-       For python environments, this is the path to the lancet script
-       allowing the QLauncher to collate jobs. The lancet script is
-       run with the LANCET_ANALYSIS_DIR environment variable set
-       appropriately. This allows the launcher to resume launching
-       jobs when using dynamic argument specifiers or when performing
-       a reduction step.
-
-       If set to None, the command template executable (whatever it
-       may be) is executed with the environment variable set.""")
-
-    @classmethod
-    def resume_launch(cls):
-        """
-        Resumes the execution of the launcher if environment contains
-        LANCET_ANALYSIS_DIR. This information allows the
-        launcher.pickle file to be unpickled to resume the launch.
-        """
-        if "LANCET_ANALYSIS_DIR" not in os.environ: return False
-
-        root_path = param.normalize_path(os.environ["LANCET_ANALYSIS_DIR"])
-        del os.environ["LANCET_ANALYSIS_DIR"]
-        pickle_path = os.path.join(root_path, 'launcher.pickle')
-        launcher = pickle.load(open(pickle_path,'rb'))
-        launcher.collate_and_launch()
-
-        return True
-
     def __init__(self, batch_name, arg_specifier, command_template, **kwargs):
-        assert "LANCET_ANALYSIS_DIR" not in os.environ, "LANCET_ANALYSIS_DIR already in environment!"
-
         super(QLauncher, self).__init__(batch_name, arg_specifier,
                 command_template, **kwargs)
 
@@ -599,14 +559,14 @@ class QLauncher(Launcher):
         # Pickle launcher before exit if necessary.
         if isinstance(self.arg_specifier,DynamicArgs) or (self.reduction_fn is not None):
             root_path = param.normalize_path(self.root_directory)
-            pickle_path = os.path.join(root_path, 'launcher.pickle')
+            pickle_path = os.path.join(root_path, 'qlauncher.pkl')
             pickle.dump(self, open(pickle_path,'wb'))
 
     def qsub_collate_and_launch(self, output_dir, error_dir, job_names):
         """
-        The method that actually runs qsub to invoke the user launch
-        script with the necessary environment variable to trigger the
-        next collation step and next block of jobs.
+        The method that actually runs qsub to invoke the python
+        process with the necessary commands to trigger the next
+        collation step and next block of jobs.
         """
 
         job_name = "%s_%s_collate_%d" % (self.batch_name,
@@ -616,11 +576,15 @@ class QLauncher(Launcher):
         overrides = [("-e",error_dir), ('-N',job_name), ("-o",output_dir),
                      ('-hold_jid',','.join(job_names))]
 
-        cmd_args = [self.command_template.executable]
-        if self.script_path is not None: cmd_args += [self.script_path]
+        resume_cmds =["import os, pickle, lancet",
+                      ("pickle_path = os.path.join(%r, 'qlauncher.pkl')"
+                       % self.root_directory),
+                      "launcher = pickle.load(open(pickle_path,'rb'))",
+                      "launcher.collate_and_launch()"]
 
-        popen_args = self.qsub_args(overrides, cmd_args,
-                        [("-v", "LANCET_ANALYSIS_DIR=%s" % self.root_directory)])
+        cmd_args = [self.command_template.executable,
+                    '-c', ';'.join(resume_cmds)]
+        popen_args = self.qsub_args(overrides, cmd_args)
 
         p = subprocess.Popen(popen_args, stdout=subprocess.PIPE)
         (stdout, stderr) = p.communicate()
