@@ -18,17 +18,17 @@ from lancet.dynamic import DynamicArgs
 
 class CommandTemplate(param.Parameterized):
     """
-    A command template is a way of converting the key-value dictionary format
-    returned by argument specifiers into a particular command. When called with
-    an argument specifier, a command template returns a list of strings
-    corresponding to a subprocess Popen argument list.
+    A command template is a way of converting the dictionaries
+    returned by argument specifiers into a particular command. When
+    called with an argument specifier, a command template returns a
+    list of strings corresponding to a subprocess Popen argument list.
 
     __call__(self, spec, tid=None, info={}):
 
-    All CommandTemplates must be callable. The tid argument is the task id and
-    info is a dictionary of run-time information supplied by the launcher. Info
-    contains of the following information : root_directory, timestamp,
-    varying_keys, constant_keys, batch_name, batch_tag and batch_description.
+    All CommandTemplates must be callable. The tid argument is the
+    task id and info is a dictionary of run-time information supplied
+    by the launcher. See the _setup_launch method of Launcher to see
+    details about the launch information supplied.
     """
 
     allowed_list = param.List(default=[], doc='''
@@ -41,15 +41,15 @@ class CommandTemplate(param.Parameterized):
         invalid simulations due to unrecognised parameters.''')
 
     executable = param.String(default='python', constant=True, doc='''
-        The executable that is to be run by this CommandTemplate. Unless the
-        executable is a standard command expected on the system path, this
-        should be an absolute path. By default this invokes python or the python
-        environment used to invoke the CommandTemplate (eg. the topographica
-        script).''')
+        The executable that is to be run by this
+        CommandTemplate. Unless the executable is a standard command
+        expected on the system path, this should be an absolute
+        path. By default this invokes python or the python environment
+        used to invoke the CommandTemplate (eg. topographica).''')
 
     do_format = param.Boolean(default=True, doc= '''
-        Set to True to receive input arguments as formatted strings, False for
-        the raw unformatted objects.''')
+        Set to True to receive input arguments as formatted strings,
+        False for the raw unformatted objects.''')
 
     def __init__(self, executable=None, **kwargs):
         if executable is None:
@@ -58,10 +58,10 @@ class CommandTemplate(param.Parameterized):
 
     def __call__(self, spec, tid=None, info={}):
         """
-        Formats a single argument specification - a dictionary of argument
-        name/value pairs. The info dictionary includes the root_directory,
-        batch_name, batch_tag, batch_description, timestamp, varying_keys,
-        constant_keys and constant_items.
+        Formats a single argument specification supplied as a
+        dictionary of argument name/value pairs. The info dictionary
+        contains launch information as defined in the _setup_launch
+        method of Launcher.
         """
         raise NotImplementedError
 
@@ -101,13 +101,14 @@ class UnixCommand(CommandTemplate):
     """
 
     expansions = param.Dict(default={}, doc="""
-       A extension to the specs that supports functions that expand to
-       valid argument values.  If a function is used, it must have the
-       signature (spec, info, tid). A typical usage for a function
-       value is tobuild a valid output filename given the contrext.
+        Allows extension of the specification that supports functions
+        that expand to valid argument values.  If a function is used,
+        it must have the signature (spec, info, tid). A typical usage
+        for a function value is to build a valid output filename given
+        the contrext.
 
-       One such function provided (template_expander) allows strings
-       to be built using Python's new-style dictionary formatting.""")
+        Three such function are provided as classmethods:
+        'root_directory', 'long_filename' and 'expand'.""")
 
     posargs = param.List(default=[], doc="""
        The list of positional argument keys. Positional arguments are
@@ -160,7 +161,8 @@ class UnixCommand(CommandTemplate):
     def long_filename(cls, extension, excluding=[]):
         """
         Generates a long filename based on the input arguments in the
-        root directory with the given extension. Ignores constant items.
+        root directory with the given extension. Ignores constant
+        items.
         """
         def _expander(spec, info, tid):
             root_dir = info['root_directory']
@@ -190,59 +192,61 @@ class UnixCommand(CommandTemplate):
 
 class Launcher(param.Parameterized):
     """
-    A Launcher is constructed using a name, an argument specifier and a command
-    template and launches the corresponding tasks appropriately when invoked.
+    A Launcher is constructed using a name, an argument specifier and
+    a command template. It can then launch the corresponding tasks
+    appropriately when invoked.
 
-    This default Launcher uses subprocess to launch tasks. It is intended to
-    illustrate the basic design and should be used as a base class for more
-    complex Launchers. In particular all Launchers should retain the same
-    behaviour of writing stdout/stderr to the streams directory, writing a log
-    file and recording launch information.
+    This default Launcher uses subprocess to launch tasks. It is
+    intended to illustrate the basic design and should be used as a
+    base class for more complex Launchers. In particular all Launchers
+    should retain the same behaviour of writing stdout/stderr to the
+    streams directory, writing a log file and recording launch
+    information.
     """
 
     arg_specifier = param.ClassSelector(core.BaseArgs, constant=True, doc='''
-              The specifier used to generate the varying parameters for the tasks.''')
+       The specifier used to generate the varying parameters for the tasks.''')
 
     command_template = param.ClassSelector(CommandTemplate, constant=True, doc='''
-              The command template used to generate the commands for the current tasks.''')
+       The command template used to generate the commands for the current tasks.''')
 
     tag = param.String(default='', doc='''
-               A very short, identifiable human-readable string that
-               meaningfully describes the batch to be executed. Should not
-               include spaces as it may be used in filenames.''')
+       A very short, identifiable human-readable string that
+       meaningfully describes the batch to be executed. Should not
+       include spaces as it may be used in filenames.''')
 
     description = param.String(default='', doc='''
-              A short description of the purpose of the current set of tasks.''')
+       A short description of the purpose of the current set of tasks.''')
 
     metadata = param.Dict(default={}, doc='''
-              Metadata information to add to the info file.''')
+       Metadata information to add to the info file.''')
 
     max_concurrency = param.Integer(default=2, allow_None=True, doc='''
-             Concurrency limit to impose on the launch. As the current class
-             uses subprocess locally, multiple processes are possible at
-             once. Set to None for no limit (eg. for clusters)''')
+       Concurrency limit to impose on the launch. As the current class
+       uses subprocess locally, multiple processes are possible at
+       once. Set to None for no limit (eg. for clusters)''')
 
     reduction_fn = param.Callable(default=None, doc='''
-             A callable that will be invoked when the Launcher has completed all
-             tasks. For example, this can be used to collect and analyse data
-             generated across tasks (eg. reduce across maps in a
-             RunBatchAnalysis), inform the user of completion (eg. send an
-             e-mail) among other possibilities.''')
+      A callable that will be invoked when the Launcher has completed
+      all tasks. For example, this could inform the user of completion
+      (eg. send an e-mail) among other possibilities.''')
 
     timestamp = param.NumericTuple(default=(0,)*9, doc='''
-            Optional override of timestamp (default timestamp set on launch
-            call) in Python struct_time 9-tuple format.  Useful when you need to
-            have a known root_directory path (see root_directory documentation)
-            before launch. For example, you should store state related to
-            analysis (eg. pickles) in the same location as everything else.''')
+      Optional override of timestamp (default timestamp set on launch
+      call) in Python struct_time 9-tuple format.  Useful when you
+      need to have a known root_directory path (see root_directory
+      documentation) before launch. For example, you should store
+      state related to analysis (eg. pickles) in the same location as
+      everything else.''')
 
     timestamp_format = param.String(default='%Y-%m-%d_%H%M', allow_None=True, doc='''
-             The timestamp format for the root directories in python datetime
-             format. If None, the timestamp is omitted from root directory name.''')
+      The timestamp format for the root directories in python datetime
+      format. If None, the timestamp is omitted from root directory
+      name.''')
 
     subdir = param.List(default=[], doc="""
-       A list of subdirectory names that allows custom organization
-       within the output directory before the root directory.""")
+      A list of subdirectory names that allows custom organization
+      within the output directory before the root directory.""")
 
     @classmethod
     def resume_launch(cls):
@@ -265,7 +269,10 @@ class Launcher(param.Parameterized):
             self.timestamp = tuple(time.localtime())
 
     def root_directory_name(self, timestamp=None):
-        " A helper method that gives the root direcory name given a timestamp "
+        """
+        A helper method that gives the root directory name given a
+        timestamp.
+        """
         if timestamp is None: timestamp = self.timestamp
         if self.timestamp_format is not None:
             return time.strftime(self.timestamp_format, timestamp) + '-' + self.batch_name
@@ -274,8 +281,8 @@ class Launcher(param.Parameterized):
 
     def append_log(self, specs):
         """
-        The log contains the tids and corresponding specifications used during
-        launch with the specifications in json format.
+        The log contains the tids and corresponding specifications
+        used during launch with the specifications in JSON format.
         """
         self._spec_log += specs # This should be removed
         log_path = os.path.join(self.root_directory, ("%s.log" % self.batch_name))
@@ -283,11 +290,11 @@ class Launcher(param.Parameterized):
 
     def record_info(self, setup_info=None):
         """
-        All launchers should call this method to write the info file at the end
-        of the launch. The info file saves the given setup_info, usually the
-        launch dict returned by _setup_launch. The file is written to the
-        root_directory. When called without setup_info, the existing info file
-        is being updated with the end-time.
+        All launchers should call this method to write the info file
+        at the end of the launch. The .info file is saved given
+        setup_info supplied by _setup_launch into the
+        root_directory. When called without setup_info, the existing
+        info file is updated with the end-time.
         """
         info_path = os.path.join(self.root_directory, ('%s.info' % self.batch_name))
 
@@ -310,10 +317,9 @@ class Launcher(param.Parameterized):
 
     def _setup_launch(self):
         """
-        Method to be used by all launchers that prepares the root directory and
-        generate basic launch information for command templates to use. Prepends
-        some information to the description, registers a timestamp and return a
-        dictionary of useful launch information constant across all tasks.
+        Method to be used by all launchers that prepares the root
+        directory and generate basic launch information for command
+        templates to use (including a registered timestamp).
         """
         root_name = self.root_directory_name()
         fullpath = os.path.join(param.normalize_path(), *(self.subdir+[root_name]))
@@ -343,16 +349,18 @@ class Launcher(param.Parameterized):
 
     def launch_process_group(self, process_commands, streams_path):
         """
-        Launches processes defined by process_commands, but only executes
-        max_concurrency processes at a time; if a process completes and there
-        are still outstanding processes to be executed, the next processes are
-        run until max_concurrency is reached again.
+        Launches processes defined by process_commands, but only
+        executes max_concurrency processes at a time; if a process
+        completes and there are still outstanding processes to be
+        executed, the next processes are run until max_concurrency is
+        reached again.
         """
         processes = {}
         def check_complete_processes(wait=False):
             """
             Returns True if a process completed, False otherwise.
-            Optionally allows waiting for better performance (avoids sleep-poll cycle if possible).
+            Optionally allows waiting for better performance (avoids
+            sleep-poll cycle if possible).
             """
             result = False
             for proc in list(processes): # make list (copy) of keys, as dict is modified during iteration
@@ -386,10 +394,8 @@ class Launcher(param.Parameterized):
 
     def launch(self):
         """
-        The method that starts Launcher execution. Typically called by a launch
-        helper.  This could be called directly by the users but the risk is that
-        if __name__=='__main__' is omitted, the launcher may rerun on any import
-        of the script effectively creating a fork-bomb.
+        The method that starts Launcher execution. Typically called by
+        a launch helper.  This could be called directly by the user.
         """
         launchinfo = self._setup_launch()
         streams_path = self._setup_streams_path()
@@ -420,61 +426,50 @@ class Launcher(param.Parameterized):
 
 class QLauncher(Launcher):
     """
-    Launcher that operates the Sun Grid Engine using default arguments suitable
-    for running on the Edinburgh Eddie cluster. Allows automatic parameter
-    search strategies such as hillclimbing to be used, queueing jobs without
-    arguments without blocking (via specification files).
+    Launcher that operates with Grid Engine using default arguments
+    chosen to be suitable for a typical cluster (tested on
+    the Edinburgh University Eddie cluster).
 
-    One of the main features of this class is that it is non-blocking - it alway
-    exits shortly after invoking qsub. This means that the script is not left
-    running, waiting for long periods of time on the cluster. This is
-    particularly important for long simulation where you wish to run some code
-    at the end of the simulation (eg. plotting your results) or when waiting for
-    results from runs (eg. waiting for results from 100 seeds to update your
-    hillclimbing algorithm).
+    One of the main features of this class is that it is non-blocking
+    - it alway exits shortly after invoking qsub. This means that the
+    script is not left running or waiting for long periods of time.
 
-    To achieve this, QLauncher qsubs a job that relaunches the user's lancet
-    script which can then instructs the Qlauncher to continue with
-    'collate_and_launch' step (via environment variable). Collating refers to
-    either collecting output from a subset of runs to update the argument specifier
-    or to a final reduction operation over all the results. Jobs are qsubbed
-    with dependencies on the previous collate step and conversely each collate
-    step depends on the all the necessary tasks steps reaching completion.
-
-    By convention the standard output and error streams go to the corresponding
-    folders in the 'streams' subfolder of the root directory - any -o or -e qsub
-    options will be overridden. The job name (the -N flag) is specified
-    automatically and any user value will be ignored.
+    By convention the standard output and error streams go to the
+    corresponding folders in the 'streams' subfolder of the root
+    directory - any -o or -e qsub options will be overridden. The job
+    name (the -N flag) is specified automatically and any user value
+    will be ignored.
     """
 
-    qsub_switches = param.List(default=['-V', '-cwd'], doc = '''
-          Specifies the qsub switches (flags without arguments) as a list of
-          strings. By default the -V switch is used to exports all environment
-          variables in the host environment to the batch job.''')
+    qsub_switches = param.List(default=['-V', '-cwd'], doc = """
+       Specifies the qsub switches (flags without arguments) as a list
+       of strings. By default the -V switch is used to exports all
+       environment variables in the host environment to the batch job.""")
 
-    qsub_flag_options = param.Dict(default={'-b':'y'}, doc='''
-          Specifies qsub flags and their corresponding options as a
-          dictionary. Valid values may be strings or lists of string.  If a
-          plain Python dictionary is used, the keys are alphanumerically sorted,
-          otherwise the dictionary is assumed to be an OrderedDict (Python 2.7+,
-          Python3 or param.external.OrderedDict) and the key ordering will be
-          preserved.
+    qsub_flag_options = param.Dict(default={'-b':'y'}, doc="""
+       Specifies qsub flags and their corresponding options as a
+       dictionary. Valid values may be strings or lists of string.  If
+       a plain Python dictionary is used, the keys arealphanumerically
+       sorted, otherwise the dictionary is assumed to be an
+       OrderedDict (Python 2.7+ or param.external.OrderedDict) and the
+       key ordering will be preserved.
 
-          By default the -b (binary) flag is set to 'y' to allow binaries to be
-          directly invoked. Note that the '-' is added to the key if missing (to
-          make into a valid flag) so you can specify using keywords in the dict
-          constructor: ie. using qsub_flag_options=dict(key1=value1,
-          key2=value2, ....)''')
+       By default the -b (binary) flag is set to 'y' to allow binaries
+       to be directly invoked. Note that the '-' is added to the key
+       if missing (to make into a valid flag) so you can specify using
+       keywords in the dict constructor: ie. using
+       qsub_flag_options=dict(key1=value1, key2=value2, ....)""")
 
-    script_path = param.String(default=None, allow_None = True, doc='''
-         For python environments, this is the path to the lancet script
-         allowing the QLauncher to collate jobs. The lancet script is run with
-         the LANCET_ANALYSIS_DIR environment variable set appropriately. This
-         allows the launcher to resume launching jobs when using dynamic
-         argument specifiers or when performing a reduction step.
+    script_path = param.String(default=None, allow_None = True, doc="""
+       For python environments, this is the path to the lancet script
+       allowing the QLauncher to collate jobs. The lancet script is
+       run with the LANCET_ANALYSIS_DIR environment variable set
+       appropriately. This allows the launcher to resume launching
+       jobs when using dynamic argument specifiers or when performing
+       a reduction step.
 
-         If set to None, the command template executable (whatever it may be) is
-         executed with the environment variable set.''')
+       If set to None, the command template executable (whatever it
+       may be) is executed with the environment variable set.""")
 
     @classmethod
     def resume_launch(cls):
@@ -518,14 +513,14 @@ class QLauncher(Launcher):
 
     def qsub_args(self, override_options, cmd_args, append_options=[]):
         """
-        Method to generate Popen style argument list for qsub using the
-        qsub_switches and qsub_flag_options parameters. Switches are returned
-        first. The qsub_flag_options follow in keys() ordered if not a vanilla
-        Python dictionary (ie. a Python 2.7+ or param.external OrderedDict).
-        Otherwise the keys are sorted alphanumerically. Note that
-        override_options is a list of key-value pairs.
+        Method to generate Popen style argument list for qsub using
+        the qsub_switches and qsub_flag_options parameters. Switches
+        are returned first. The qsub_flag_options follow in keys()
+        ordered if not a vanilla Python dictionary (ie. a Python 2.7+
+        or param.external OrderedDict).  Otherwise the keys are sorted
+        alphanumerically. Note that override_options is a list of
+        key-value pairs.
         """
-
         opt_dict = type(self.qsub_flag_options)()
         opt_dict.update(self.qsub_flag_options)
         opt_dict.update(override_options)
@@ -552,9 +547,10 @@ class QLauncher(Launcher):
 
     def launch(self):
         """
-        Main entry point for the launcher. Collects the static information about
-        the launch and sets up the stdout and stderr stream output
-        directories. Generates the first call to collate_and_launch().
+        Main entry point for the launcher. Collects the static
+        information about the launch and sets up the stdout and stderr
+        stream output directories. Generates the first call to
+        collate_and_launch().
         """
         self._launchinfo = self._setup_launch()
         self.job_timestamp = time.strftime('%H%M%S')
@@ -570,11 +566,12 @@ class QLauncher(Launcher):
 
     def collate_and_launch(self):
         """
-        Method that collates the previous jobs and launches the next block of
-        concurrent jobs. The launch type can be either static or dynamic (using
-        schedule, queue and specify for dynamic argument specifiers).  This method is
-        invoked on initial launch and then subsequently via the commandline to
-        collate the previously run jobs and launching the next block of jobs.
+        Method that collates the previous jobs and launches the next
+        block of concurrent jobs. The launch type can be either static
+        or dynamic (using schedule, queue and specify for dynamic
+        argument specifiers).  This method is invoked on initial
+        launch and then subsequently via the commandline to collate
+        the previously run jobs and launching the next block of jobs.
         """
 
         try:   specs = next(self.spec_iter)
@@ -607,9 +604,9 @@ class QLauncher(Launcher):
 
     def qsub_collate_and_launch(self, output_dir, error_dir, job_names):
         """
-        The method that actually runs qsub to invoke the user launch script with
-        the necessary environment variable to trigger the next collation step
-        and next block of jobs.
+        The method that actually runs qsub to invoke the user launch
+        script with the necessary environment variable to trigger the
+        next collation step and next block of jobs.
         """
 
         job_name = "%s_%s_collate_%d" % (self.batch_name,
@@ -635,8 +632,9 @@ class QLauncher(Launcher):
 
     def static_qsub(self, output_dir, error_dir, tid_specs):
         """
-        This method handles static argument specifiers and cases where the
-        dynamic specifiers cannot be queued before the arguments are known.
+        This method handles static argument specifiers and cases where
+        the dynamic specifiers cannot be queued before the arguments
+        are known.
         """
         processes = []
         job_names = []
@@ -661,8 +659,9 @@ class QLauncher(Launcher):
 
     def dynamic_qsub(self, output_dir, error_dir, tid_specs):
         """
-        This method handles dynamic argument specifiers where the dynamic
-        argument specifier can be queued before the arguments are computed.
+        This method handles dynamic argument specifiers where the
+        dynamic argument specifier can be queued before the arguments
+        are computed.
         """
 
         # Write out the specification files in anticipation of execution
@@ -704,9 +703,9 @@ class QLauncher(Launcher):
 
     def qdel_batch(self):
         """
-        Runs qdel command to remove all remaining queued jobs using the
-        <batch_name>* pattern . Necessary when StopIteration is raised with
-        scheduled jobs left on the queue.
+        Runs qdel command to remove all remaining queued jobs using
+        the <batch_name>* pattern . Necessary when StopIteration is
+        raised with scheduled jobs left on the queue.
         """
         p = subprocess.Popen(['qdel', '%s_%s*' % (self.batch_name, self.job_timestamp)],
                              stdout=subprocess.PIPE)
@@ -718,40 +717,30 @@ class QLauncher(Launcher):
 
 class review_and_launch(param.Parameterized):
     """
-    The basic example of the sort of helper that is highly recommended for
-    launching:
-
-    1) The lancet script may include objects/class that need to be imported
-    (eg. for accessing analysis functions) to execute the tasks. By default this
-    would execute the whole script and therefore re-run the Launcher which would
-    cause a fork-bomb! This decorator only executes the launcher that is
-    returned by the wrapped function if __name__=='__main__'
-
-    Code in the script after Launcher execution has been invoked is not
-    guaranteed to execute *after* all tasks are complete (eg. due to forking,
-    subprocess, qsub etc). This decorator helps solves this issue, making sure
-    launch is the last thing in the definition function. The reduction_fn
-    parameter is the proper way of executing code after the Launcher exits.
+    The basic example of the sort of helper that is highly recommended
+    for launching.
     """
 
-    output_directory = param.String(default='.', doc='''
-         The output directory - the directory that will contain all the root
-         directories for the individual launches.''')
+    output_directory = param.String(default='.', doc="""
+         The output directory - the directory that will contain all
+         the root directories for the individual launches.""")
 
-    review = param.Boolean(default=True, doc='''
-         Whether or not to perform a detailed review of the launch.''')
+    review = param.Boolean(default=True, doc="""
+         Whether or not to perform a detailed review of the launch.""")
 
-    main_script = param.Boolean(default=True, doc='''
-         Whether the launch is occuring from a lancet script running as
-         main. Set to False for projects using lancet outside the main script.''')
+    main_script = param.Boolean(default=True, doc="""
+         Whether the launch is occuring from a lancet script running
+         as main. Set to False for projects using lancet outside the
+         main script.""")
 
     launch_args = param.ClassSelector(default=None, allow_None=True, class_=core.Args,
-         doc= '''An optional argument specifier to parameterise lancet,
-                 allowing multi-launch scripts.  Useful for collecting
-                 statistics over runs that are not deterministic or are affected
-                 by a random seed for example.''')
+         doc= """An optional argument specifier to parameterise
+                 lancet, allowing multi-launch scripts.  Useful for
+                 collecting statistics over runs that are not
+                 deterministic or are affected by a random seed for
+                 example.""")
 
-    launch_fn = param.Callable(doc='''The function that is to be applied.''')
+    launch_fn = param.Callable(doc="""The function that is to be applied.""")
 
     def __init__(self, output_directory='.', **kwargs):
 
@@ -767,9 +756,9 @@ class review_and_launch(param.Parameterized):
     def configure_launch(self, lval):
         """
         Hook to allow the Launch helper to autoconfigure launches as
-        appropriate.  For example, can be used to save objects in their final
-        state. Return True if configuration successful, False to cancel the
-        entire launch.
+        appropriate.  For example, can be used to save objects in
+        their final state. Return True if configuration successful,
+        False to cancel the entire launch.
         """
         return True
 

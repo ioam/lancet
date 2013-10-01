@@ -1,3 +1,7 @@
+#
+# Experimental code (WIP)
+#
+
 import os, sys,pickle
 import param
 from core import BaseArgs, Concatenate, CartesianProduct
@@ -12,7 +16,7 @@ class DynamicArgs(BaseArgs):
        be considered is cvs but it is up to the user to implement the
        corresponding loader.""")
 
-    
+
     def _update_state(self, data):
         """
         Determines the next desired point in the parameter space using
@@ -43,19 +47,21 @@ class DynamicArgs(BaseArgs):
         except:
             logging.error("Cannot load required metric files. Cannot continue.")
             return None # StopIteration should be raised by the argument specifier
-        
+
     def schedule(self):
         """
-        Specifies the expected number of specifications that will be returned on
-        future iterations if dynamic=True. This is simply a list of integers
-        specifying the number of argument sets to be returned on each subsequent
-        call to next(). Return None if scheduling information cnanot be
-        estimated.
+        Specifies the expected number of specifications that will be
+        returned on future iterations. This is simply a list of
+        integers specifying the number of argument sets to be returned
+        on each subsequent call to next(). Return None if scheduling
+        information cannot be estimated.
         """
         raise NotImplementedError
 
     def show(self):
-        """ When dynamic, not all argument values may be available."""
+        """
+        When dynamic, not all argument values may be available.
+        """
         copied = self.copy()
         enumerated = [el for el in enumerate(copied)]
         for (group_ind, specs) in enumerated:
@@ -92,9 +98,8 @@ class DynamicArgs(BaseArgs):
             raise Exception('Cannot take Cartesian product two dynamic specifiers.')
         elif (True in dynamic):
             return DynamicCartesianProduct(self, other)
-        else:                             
+        else:
             return CartesianProduct(self, other)
-
 
 
 #=============================#
@@ -135,9 +140,9 @@ class DynamicConcatenate(DynamicArgs):
         return list(set(self.first.varying_keys) | set(self.second.varying_keys))
 
     def update(self, tids, info):
-        if (self.isinstance(first,DynamicArgs) and not self._exhausted): 
+        if (self.isinstance(first,DynamicArgs) and not self._exhausted):
             self.first.update(tids, info)
-        elif (self.isinstance(second,DynamicArgs) and self._first_sent): 
+        elif (self.isinstance(second,DynamicArgs) and self._first_sent):
             self.second.update(tids, info)
 
     def next(self):
@@ -228,7 +233,6 @@ class DynamicCommandTemplate(CommandTemplate):
     the given tid located in the 'specifications' folder of the root
     directory.
     """
-    
 
     def specify(self,spec, tid, info):
         raise NotImplementedError
