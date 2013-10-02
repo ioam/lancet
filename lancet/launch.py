@@ -717,15 +717,6 @@ class review_and_launch(param.Parameterized):
                            (self._get_launcher, self.review_args),
                            (self._get_launcher, self.review_command_template)]
 
-    def configure_launch(self, lval):
-        """
-        Hook to allow the Launch helper to autoconfigure launches as
-        appropriate.  For example, can be used to save objects in
-        their final state. Return True if configuration successful,
-        False to cancel the entire launch.
-        """
-        return True
-
     def section(self, text, car='=', carvert='|'):
         length=len(text)+4
         return '%s\n%s %s %s\n%s' % (car*length, carvert, text,
@@ -818,9 +809,6 @@ class review_and_launch(param.Parameterized):
 
             if self.input_options(['y','N'], 'Execute?', default='n') != 'y':
                 return False
-
-        # Run configure hook. Exit if any configuration fails
-        if not all([self.configure_launch(lval) for lval in lvals]): return False
 
         for lval in lvals:
             launcher =  self._get_launcher(lval)
