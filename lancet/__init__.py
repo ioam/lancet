@@ -69,5 +69,6 @@ try:
     plaintext_formatter.for_type(CommandTemplate, repr_pretty_unannotated)
     plaintext_formatter.for_type(Launcher, repr_pretty_unannotated)
     plaintext_formatter.for_type(FileType, repr_pretty_unannotated)
+    plaintext_formatter.for_type(review_and_launch, repr_pretty_unannotated)
 except:
     pass

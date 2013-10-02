@@ -742,7 +742,7 @@ class QLauncher(Launcher):
 # Launch Helper #
 #===============#
 
-class review_and_launch(param.Parameterized):
+class review_and_launch(core.PrettyPrinted, param.Parameterized):
     """
     A helper decorator that always checks for consistency and can
     prompt the user for a full review of the launch configuration.
@@ -765,9 +765,11 @@ class review_and_launch(param.Parameterized):
     launch_fn = param.Callable(doc="""The function that is to be applied.""")
 
     def __init__(self, output_directory='.', **kwargs):
-
-        super(review_and_launch, self).__init__( output_directory=output_directory,
-                                                 **kwargs)
+        self._pprint_args = ([],[],None,{})
+        super(review_and_launch, self).__init__(output_directory=output_directory,
+                                                **kwargs)
+        self.pprint_args(['output_directory', 'launch_fn'],
+                         ['review', 'launch_args'])
 
     def cross_check_launchers(self, launchers):
         """
@@ -932,18 +934,3 @@ class review_and_launch(param.Parameterized):
             if response in check_options: return response.strip()
             elif response == '' and default is not None:
                 return default.lower().strip()
-
-
-    def __repr__(self):
-        arg_list = ['%r' % self.output_directory,
-                    'launch_args=%r' % self.launch_args if self.launch_args else None,
-                    'review=False' if not self.review else None]
-        arg_str = ','.join(el for el in arg_list if el is not None)
-        return 'review_and_launch(%s)' % arg_str
-
-    def __str__(self):
-        arg_list = ['output_directory=%r' % self.output_directory,
-                    'launch_args=%s' % self.launch_args._pprint(level=2) if self.launch_args else None,
-                    'review=False' if not self.review else None]
-        arg_str = ',\n   '.join(el for el in arg_list if el is not None)
-        return 'review_and_launch(\n   %s\n)' % arg_str
