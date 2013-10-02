@@ -89,17 +89,20 @@ class FileType(PrettyPrinted, param.Parameterized):
             return True
 
     @classmethod
-    def _img_tag(cls, png_data):
-        """"
-        Helper to conviently build a base64 encoded img tag.
-        Useful for implementing the display method when available.
+    def _img_tag(cls, data, format='png'):
         """
-        prefix = 'data:image/png;base64,'
-        b64 = prefix + png_data.encode("base64")
+        Helper to conviently build a base64 encoded img tag. Accepts
+        both png and svg image types.  Useful for implementing the
+        display method when available.
+        """
+        assert format in ['png', 'svg'], "Only png or svg display supported"
+        prefix = ('data:image/png;base64,' if format=='png'
+                  else 'data:image/svg+xml;base64,')
+        b64 = prefix + data.encode("base64")
         return ('<img src="%s" />' % b64)
 
     @classmethod
-    def display(cls, value, size=64):
+    def display(cls, value, size=64, format='png'):
         """
         A function that generates a display image as a base64 encoded
         HTMl image (png format). The input should either by a filename
@@ -322,7 +325,7 @@ class ImageFile(FileType):
         return {self.data_key:data}
 
     @classmethod
-    def display(cls, value, size=256):
+    def display(cls, value, size=256, format='png'):
         import Image
         # Return the base54 image if possible, else return None
         if isinstance(value, Image.Image):
@@ -334,13 +337,14 @@ class ImageFile(FileType):
 
         im.thumbnail((size,size))
         buff = StringIO.StringIO()
+        assert format=='png', "Only png display enabled"
         im.save(buff, format='png')
         buff.seek(0)
         return cls._img_tag(buff.read())
 
 
 
-class MPLFile(FileType):
+class MatplotlibFile(FileType):
     """
     Since version 1.0, Matplotlib figures support pickling. An mpkl
     file is simply a pickled matplotlib figure.
@@ -351,7 +355,7 @@ class MPLFile(FileType):
     def __init__(self, **kwargs):
         from matplotlib import pyplot
         global pyplot
-        super(MPLFile, self).__init__(**kwargs)
+        super(MatplotlibFile, self).__init__(**kwargs)
         self.pprint_args(['hash_suffix'], [])
 
     def save(self, filename, fig):
@@ -371,7 +375,7 @@ class MPLFile(FileType):
         return {self.data_key:fig}
 
     @classmethod
-    def display(cls, value, size=256):
+    def display(cls, value, size=256, format='png'):
         from matplotlib import pyplot
         if isinstance(value, pyplot.Figure):
             fig = value
@@ -384,10 +388,10 @@ class MPLFile(FileType):
         inches = size / float(fig.dpi)
         fig.set_size_inches(inches, inches)
         buff = StringIO.StringIO()
-        fig.savefig(buff, format='png')
+        fig.savefig(buff, format=format)
         buff.seek(0)
         pyplot.close(fig)
-        return cls._img_tag(buff.read())
+        return cls._img_tag(buff.read(), format=format)
 
 
 
@@ -406,8 +410,13 @@ class ViewFrame(param.ParameterizedFunction):
     size = param.Number(default=256, doc="""
        The size of the display image to generate.""")
 
+    format = param.ObjectSelector(default='png', objects=['png','svg'],
+       doc=""" The image format of the display. Either 'png' or 'svg'.
+               Note that SVGs may display correctly in FireFox but not
+               Chromium. """)
+
     display_fns = param.List(default=[ImageFile.display,
-                                      MPLFile.display],
+                                      MatplotlibFile.display],
        doc="""A list of display functions that return raster images
        (base64 encoded png images) based on filename or Python objects
        as input.""")
@@ -419,7 +428,7 @@ class ViewFrame(param.ParameterizedFunction):
         """
 
         for dfn in self.display_fns:
-            string = dfn(x,self.size)
+            string = dfn(x, self.overrides.size, self.overrides.format)
             if string is not None:
                 return string
 
@@ -438,7 +447,7 @@ class ViewFrame(param.ParameterizedFunction):
         import pandas
         from IPython.display import display, HTML
 
-        p= param.ParamOverrides(self, kwargs)
+        self.overrides = param.ParamOverrides(self, kwargs)
         self.max_colwidth = pandas.get_option('max_colwidth')
         formatters = [self.formatter for el in range(len(dframe.columns))]
         # Pandas escapes contents by default (making this class necessary)
