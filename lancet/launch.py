@@ -428,10 +428,10 @@ class Launcher(core.PrettyPrinted, param.Parameterized):
             if not check_complete_processes(True):
                 time.sleep(0.1)
 
-    def launch(self):
+    def __call__(self):
         """
-        The method that starts Launcher execution. Typically called by
-        a launch helper.  This could be called directly by the user.
+        Call to start Launcher execution. Typically invoked by
+        review_and_launch but may be called directly by the user.
         """
         launchinfo = self._setup_launch()
         streams_path = self._setup_streams_path()
@@ -567,7 +567,7 @@ class QLauncher(Launcher):
         return (['qsub'] + self.qsub_switches
                 + flattened_options + [pipes.quote(c) for c in cmd_args])
 
-    def launch(self):
+    def __call__(self):
         """
         Main entry point for the launcher. Collects the static
         information about the launch and sets up the stdout and stderr
@@ -720,7 +720,9 @@ class QLauncher(Launcher):
                     (stdout, stderr) = p.communicate()
                     group_names.append(job_name)
 
-                collate_name = self.qsub_collate_and_launch(output_dir, error_dir, group_names)
+                collate_name = self.qsub_collate_and_launch(output_dir,
+                                                            error_dir,
+                                                            group_names)
                 self.last_scheduled_tid += batch_size
 
             # Popping the currently specified tasks off the schedule
@@ -825,7 +827,7 @@ class review_and_launch(param.Parameterized):
         """
         for launcher in launchers:
             print("== Launching  %s ==" % launcher.batch_name)
-            launcher.launch()
+            launcher()
         return True
 
     def _review_all(self, launchers):
