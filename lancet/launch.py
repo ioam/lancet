@@ -712,11 +712,6 @@ class review_and_launch(param.Parameterized):
         super(review_and_launch, self).__init__( output_directory=output_directory,
                                                  **kwargs)
 
-        self._get_launcher = lambda x:x
-        self._reviewers = [(self._get_launcher, self.review_launcher ),
-                           (self._get_launcher, self.review_args),
-                           (self._get_launcher, self.review_command_template)]
-
     def section(self, text, car='=', carvert='|'):
         length=len(text)+4
         return '%s\n%s %s %s\n%s' % (car*length, carvert, text,
@@ -766,7 +761,7 @@ class review_and_launch(param.Parameterized):
         kwargs_list = self.launch_args.specs if self.launch_args else [{}]
         lvals = [self.launch_fn(**kwargs_list[0])]
         if self.launch_args is not None:
-            first_launcher = self._get_launcher(lvals[0])
+            first_launcher = lvals[0]
             first_launcher.__class__.timestamp = tuple(time.localtime())
             lvals += [self.launch_fn(**kwargs) for kwargs in kwargs_list[1:]]
 
@@ -785,8 +780,11 @@ class review_and_launch(param.Parameterized):
                 if not proceed: return False
 
             for (count, lval) in enumerate(lvals):
-                proceed = all(r(access(lval)) for (access, r) in self._reviewers)
-                if not proceed:
+                reviewers = [self.review_launcher,
+                             self.review_args,
+                             self.review_command_template]
+
+                if not all(reviewer(lval) for reviewer in reviewers):
                     print("Aborting launch.")
                     return False
 
@@ -801,8 +799,7 @@ class review_and_launch(param.Parameterized):
             if self.input_options(['y','N'], 'Execute?', default='n') != 'y':
                 return False
 
-        for lval in lvals:
-            launcher =  self._get_launcher(lval)
+        for launcher in lvals:
             print("== Launching  %s ==" % launcher.batch_name)
             launcher.launch()
 
