@@ -16,7 +16,7 @@ from lancet.dynamic import DynamicArgs
 # Commands Template #
 #===================#
 
-class CommandTemplate(param.Parameterized):
+class CommandTemplate(core.PrettyPrinted, param.Parameterized):
     """
     A command template is a way of converting the dictionaries
     returned by argument specifiers into a particular command. When
@@ -45,7 +45,9 @@ class CommandTemplate(param.Parameterized):
     def __init__(self, executable=None, **kwargs):
         if executable is None:
             executable = sys.executable
+        self._pprint_args = ([],[],None,{})
         super(CommandTemplate,self).__init__(executable=executable, **kwargs)
+        self.pprint_args([],['executable'])
 
     def __call__(self, spec, tid=None, info={}):
         """
@@ -110,7 +112,7 @@ class UnixCommand(CommandTemplate):
     arguments.
     """
 
-    expansions = param.Dict(default={}, doc="""
+    expansions = param.Dict(default={}, constant=True, doc="""
         Allows extension of the specification that supports functions
         that expand to valid argument values.  If a function is used,
         it must have the signature (spec, info, tid). A typical usage
@@ -120,11 +122,11 @@ class UnixCommand(CommandTemplate):
         Three such function are provided as classmethods:
         'root_directory', 'long_filename' and 'expand'.""")
 
-    posargs = param.List(default=[], doc="""
+    posargs = param.List(default=[], constant=True, doc="""
        The list of positional argument keys. Positional arguments are
        always supplied at the end of a command in the order given.""")
 
-    long_prefix = param.String(default='--',  doc="""
+    long_prefix = param.String(default='--',  constant=True, doc="""
        Although the double dash is a GNU coding convention, some
        applications use single dashes for long options.""")
 
@@ -132,6 +134,7 @@ class UnixCommand(CommandTemplate):
         super(UnixCommand,self).__init__(executable = executable,
                                          do_format=False,
                                          **kwargs)
+        self.pprint_args(['posargs'],['long_prefix'])
 
     def __call__(self, spec, tid=None, info={}):
         # Function expansions are called here.
@@ -203,7 +206,7 @@ class UnixCommand(CommandTemplate):
 # Launchers #
 #===========#
 
-class Launcher(param.Parameterized):
+class Launcher(core.PrettyPrinted, param.Parameterized):
     """
     A Launcher is constructed using a name, an argument specifier and
     a command template. It can then launch the corresponding tasks
@@ -216,6 +219,9 @@ class Launcher(param.Parameterized):
     streams directory, writing a log file and recording launch
     information.
     """
+
+    batch_name = param.String(default=None, allow_None=True, constant=True,
+       doc="""A unique identifier for the current batch""")
 
     arg_specifier = param.ClassSelector(core.BaseArgs, constant=True, doc='''
        The specifier used to generate the varying parameters for the tasks.''')
@@ -267,13 +273,17 @@ class Launcher(param.Parameterized):
 
 
     def __init__(self, batch_name, arg_specifier, command_template, **kwargs):
-        super(Launcher,self).__init__(arg_specifier=arg_specifier,
+
+        self._pprint_args = ([],[],None,{})
+        super(Launcher,self).__init__(batch_name=batch_name,
+                                      arg_specifier=arg_specifier,
                                       command_template = command_template,
                                       **kwargs)
-        self.batch_name = batch_name
         self._spec_log = []
         if self.timestamp == (0,)*9:
             self.timestamp = tuple(time.localtime())
+
+        self.pprint_args(['batch_name','arg_specifier', 'command_template'],[])
 
     def get_root_directory(self, timestamp=None):
         """
@@ -740,22 +750,6 @@ class review_and_launch(param.Parameterized):
         super(review_and_launch, self).__init__( output_directory=output_directory,
                                                  **kwargs)
 
-    def section(self, text, car='=', carvert='|'):
-        length=len(text)+4
-        return '%s\n%s %s %s\n%s' % (car*length, carvert, text,
-                                     carvert, car*length)
-
-    def input_options(self, options, prompt='Select option', default=None):
-        """
-        Helper to prompt the user for input on the commandline.
-        """
-        check_options = [x.lower() for x in options]
-        while True:
-            response = raw_input('%s [%s]: ' % (prompt, ', '.join(options))).lower()
-            if response in check_options: return response.strip()
-            elif response == '' and default is not None:
-                return default.lower().strip()
-
     def cross_check_launchers(self, launchers):
         """
         Performs consistency checks across all the launchers.
@@ -827,11 +821,12 @@ class review_and_launch(param.Parameterized):
                                        heading='Meta Arguments')
             if not proceed: return False
 
-        reviewers = [self.review_launcher,
-                     self.review_args,
-                     self.review_command_template]
+        reviewers = [self.review_args,
+                     self.review_command_template,
+                     self.review_launcher]
 
         for (count, launcher) in enumerate(launchers):
+
             # Run reviews for all launchers if desired...
             if not all(reviewer(launcher) for reviewer in reviewers):
                 print("\n == Aborting launch ==")
@@ -850,8 +845,12 @@ class review_and_launch(param.Parameterized):
             return self._launch_all(launchers)
 
     def review_launcher(self, launcher):
-        print('%s\n' % self.section('Launcher'))
+        print('%s\n' % self.summary_heading('Launcher'))
         launcher.summary()
+        print
+        if self.input_options(['y','N'], 
+                              '\nShow complete launch repr?', default='y') == 'y':
+            print("\n%s\n" % launcher)
         return True
 
     def review_args(self, obj, heading='Arguments'):
@@ -860,9 +859,8 @@ class review_and_launch(param.Parameterized):
         meta-arguments (launch_args) or the arguments themselves.
         """
         arg_specifier = obj.arg_specifier if isinstance(obj, Launcher) else obj
-        print('\n%s\n' % self.section(heading))
+        print('\n%s\n' % self.summary_heading(heading))
         arg_specifier.summary()
-        print('\n%s' % arg_specifier)
 
         response = self.input_options(['y', 'N','quit'],
                 '\nShow available argument specifier entries?', default='n')
@@ -875,9 +873,8 @@ class review_and_launch(param.Parameterized):
 
         command_template = launcher.command_template
         template_name = command_template.__class__.__name__
-        print('%s\n' % self.section(template_name))
+        print('%s\n' % self.summary_heading(template_name))
         command_template.summary()
-        print("\n%s\n" % command_template)
 
         response = self.input_options(['y', 'N','quit','save'],
                                       '\nShow available command entries?',
@@ -898,6 +895,24 @@ class review_and_launch(param.Parameterized):
                 command_template.show(arg_specifier, file_handle=f)
         print
         return True
+
+    def summary_heading(self, text, car='=', carvert='|'):
+        text = text + " Summary"
+        length=len(text)+4
+        return '%s\n%s %s %s\n%s' % (car*length, carvert, text,
+                                     carvert, car*length)
+
+    def input_options(self, options, prompt='Select option', default=None):
+        """
+        Helper to prompt the user for input on the commandline.
+        """
+        check_options = [x.lower() for x in options]
+        while True:
+            response = raw_input('%s [%s]: ' % (prompt, ', '.join(options))).lower()
+            if response in check_options: return response.strip()
+            elif response == '' and default is not None:
+                return default.lower().strip()
+
 
     def __repr__(self):
         arg_list = ['%r' % self.output_directory,
