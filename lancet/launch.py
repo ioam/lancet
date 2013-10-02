@@ -31,15 +31,6 @@ class CommandTemplate(param.Parameterized):
     details about the launch information supplied.
     """
 
-    allowed_list = param.List(default=[], doc='''
-        An optional, explicit list of the argument names that the
-        CommandTemplate is expected to accept. If the empty list, no
-        checks are performed. This allows some degree of error
-        checking before tasks are launched. A command may exit if
-        invalid parameters are supplied but it is often better to
-        explicitly check: this avoids waiting in a cluster queue or
-        invalid simulations due to unrecognised parameters.''')
-
     executable = param.String(default='python', constant=True, doc='''
         The executable that is to be run by this
         CommandTemplate. Unless the executable is a standard command
@@ -68,6 +59,16 @@ class CommandTemplate(param.Parameterized):
     def _formatter(self, spec):
         if self.do_format: return core.BaseArgs.spec_formatter(spec)
         else             : return spec
+
+    def validate_arguments(self, args):
+        """
+        Allows a final check that ensures valid arguments have been
+        passed before launch. Allows the constant and varying_keys to
+        be be checked and can inspect the specs attribute if an
+        instance of Args. If invalid, raise an Exception with the
+        appropriate error message.
+        """
+        return
 
     def show(self, arg_specifier, file_handle=sys.stdout, **kwargs):
         full_string = ''
@@ -273,7 +274,7 @@ class Launcher(param.Parameterized):
         else:
             root_name = self.batch_name
 
-        path = os.path.join(self.output_directory, 
+        path = os.path.join(self.output_directory,
                                 *(self.subdir+[root_name]))
         return os.path.abspath(path)
 
@@ -686,8 +687,8 @@ class QLauncher(Launcher):
 
 class review_and_launch(param.Parameterized):
     """
-    The basic example of the sort of helper that is highly recommended
-    for launching.
+    A helper decorator that always checks for consistency and can
+    prompt the user for a full review of the launch configuration.
     """
 
     output_directory = param.String(default='.', doc="""
@@ -699,10 +700,10 @@ class review_and_launch(param.Parameterized):
 
     launch_args = param.ClassSelector(default=None, allow_None=True, class_=core.Args,
          doc= """An optional argument specifier to parameterise
-                 lancet, allowing multi-launch scripts.  Useful for
-                 collecting statistics over runs that are not
-                 deterministic or are affected by a random seed for
-                 example.""")
+                 lancet, allowing multi-launch scripts.  For instance,
+                 this may be useful for collecting statistics over
+                 runs that are not deterministic or are affected by a
+                 random input seed.""")
 
     launch_fn = param.Callable(doc="""The function that is to be applied.""")
 
@@ -712,7 +713,6 @@ class review_and_launch(param.Parameterized):
                                                  **kwargs)
 
         self._get_launcher = lambda x:x
-        self._cross_checks = [(self._get_launcher, self.cross_check_launchers)]
         self._reviewers = [(self._get_launcher, self.review_launcher ),
                            (self._get_launcher, self.review_args),
                            (self._get_launcher, self.review_command_template)]
@@ -738,44 +738,36 @@ class review_and_launch(param.Parameterized):
         Performs consistency checks across all the launchers.
         """
         if len(launchers) == 0: raise Exception('Empty launcher list')
-        batch_names = [launcher.batch_name for launcher in launchers]
         timestamps = [launcher.timestamp for launcher in launchers]
-        launcher_classes = [launcher.__class__ for launcher in launchers]
+
+        if not all(timestamps[0] == tstamp for tstamp in timestamps):
+            raise Exception("Launcher timestamps not all equal. "
+                            "Consider setting timestamp explicitly.")
 
         # Needs to be made compatible with the subdir option of Launcher
         # if len(set(batch_names)) != len(launchers):
         #     raise Exception('Each launcher requires a unique batch name.')
 
-        if not all(timestamps[0] == tstamp for tstamp in timestamps):
-            raise Exception("Launcher timestamps not all equal. Consider setting timestamp explicitly.")
+        for launcher in launchers:
+            command_template = launcher.command_template
+            arg_specifier = launcher.arg_specifier
+            command_template.validate_arguments(arg_specifier)
 
-        # Argument name consistency checks
-        checkable_launchers = [launcher for launcher in launchers
-                               if (launcher.command_template.allowed_list != [])]
-
-        used_args = [set(launcher.arg_specifier.varying_keys
-                         + launcher.arg_specifier.constant_keys) for launcher in checkable_launchers]
-
-        allowed_args = [set(launcher.command_template.allowed_list) for launcher in checkable_launchers]
-
-        clashes = [used - allowed for (used, allowed) in zip(used_args, allowed_args)
-                   if (used - allowed) != set()]
-
-        if clashes != []: raise Exception("Keys %s not in CommandTemplate allowed list" % list(clashes[0]))
 
     def __call__(self, fn=None):
 
+        # On first call, simply wrap the provided launch function.
         if fn is not None:
             self.launch_fn = fn
             return self
 
-        # Calling the wrapped function with appropriate arguments
-        kwargs_list = [{}] if (self.launch_args is None) else self.launch_args.specs
+        # Calling the wrapped function with appropriate arguments as
+        # supplied by launch_args.
+        kwargs_list = self.launch_args.specs if self.launch_args else [{}]
         lvals = [self.launch_fn(**kwargs_list[0])]
         if self.launch_args is not None:
             first_launcher = self._get_launcher(lvals[0])
             first_launcher.__class__.timestamp = tuple(time.localtime())
-
             lvals += [self.launch_fn(**kwargs) for kwargs in kwargs_list[1:]]
 
         # Setting the output directory
@@ -783,9 +775,8 @@ class review_and_launch(param.Parameterized):
             for lval in lvals:
                 lval.output_directory = self.output_directory
 
-        # Cross checks
-        for (accessor, checker) in self._cross_checks:
-            checker([accessor(lval) for lval in lvals])
+        # Cross check the launchers
+        self.cross_check_launchers(lvals)
 
         if self.review:
             # Run review of launch args only if necessary
@@ -861,8 +852,6 @@ class review_and_launch(param.Parameterized):
         command_template = launcher.command_template
         arg_specifier = launcher.arg_specifier
         print(self.section(command_template.__class__.__name__))
-        if command_template.allowed_list != []:
-            print("Allowed List: %s" % command_template.allowed_list)
         if isinstance(launcher, QLauncher) and launcher.is_dynamic_qsub:
             command_template.show(arg_specifier, queue_cmd_only=True)
 
