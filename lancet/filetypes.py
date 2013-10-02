@@ -1,20 +1,19 @@
-import os, tempfile, StringIO, json
+import os, tempfile, StringIO, json, pickle
 import param
-#from core import Args
 import numpy as np
 from core import PrettyPrinted
 
 
 class buff_img(object):
     """
-    A small context manager that helps build an HTML display image
-    via any utility that can save an image as a png file.
+    A small context manager that helps build an HTML display image via
+    any utility that can save an image as a png file.
     """
     def __enter__(self):
         self.buff = StringIO.StringIO()
         self.html = ''
-        return self.buff 
-    
+        return self.buff
+
     def __exit__(self, *args):
         self.buff.seek(0)
         prefix = 'data:image/png;base64,'
@@ -43,8 +42,8 @@ class mpl_img(object):
         inches = self.size / float(self.fig.dpi)
         self.fig.set_size_inches(inches, inches)
         self.html = ''
-        return self.buff 
-    
+        return self.buff
+
     def __exit__(self, *args):
         self.fig.savefig(self.buff, format='png')
         self.buff.seek(0)
@@ -75,7 +74,7 @@ class FileType(PrettyPrinted, param.Parameterized):
        Directory in which to load or save the file. Note that this
        is a class level parameter only.""")
 
-    extensions = param.List(default=[], constant=True, 
+    extensions = param.List(default=[], constant=True,
        doc= """The set of supported file extensions.""")
 
     data_key = param.String(default='data', doc="""
@@ -123,9 +122,9 @@ class FileType(PrettyPrinted, param.Parameterized):
         """
         (basename, ext) = os.path.splitext(filename)
         ext = ext if ext else self.extensions[0]
-        savepath = os.path.abspath(os.path.join(self.directory, 
+        savepath = os.path.abspath(os.path.join(self.directory,
                                                  '%s%s' % (basename, ext)))
-        return (tempfile.mkstemp(ext, basename + "_", self.directory)[1] 
+        return (tempfile.mkstemp(ext, basename + "_", self.directory)[1]
                 if self.hash_suffix else savepath)
 
     @classmethod
@@ -133,23 +132,22 @@ class FileType(PrettyPrinted, param.Parameterized):
         if not isinstance(filename, str):
             return False
         (_, ext) = os.path.splitext(filename)
-        if ext not in cls.extensions: 
+        if ext not in cls.extensions:
             return False
         else:
             return True
 
     @classmethod
-    def display(cls, cellval, size=64):
+    def display(cls, value, size=64):
         """
-        Returns a function that generates a display image as a base64
-        encoded HTMl image (png format). Should be implemented if
-        there is an obvious visualization of the file type.
+        A function that generates a display image as a base64 encoded
+        HTMl image (png format). The input should either by a filename
+        with an appropriate extension or the appropriate object
+        type. Should be implemented if there is an obvious
+        visualization suitable for the file type/object. If the value
+        cannot be visualized with this class, return None.
         """
-        if cls.file_supported(cellval):
-            # Return the base54 image if possible, else return cellval
-            return cellval
-        else:
-            return cellval
+        return None
 
     def __repr__(self):
         return self._pprint(flat=True, annotate=False)
@@ -161,46 +159,25 @@ class FileType(PrettyPrinted, param.Parameterized):
         return FileOption(self, other)
 
 
-class CustomFileLoader(FileType):
-    
-    data_fn = param.Callable()
-    
-    metadata_fn = param.Callable()
-    
-    def __init__(self, data_fn=None, metadata_fn=None, **kwargs):
-        zipped = zip(['data_fn','metadata_fn'], [data_fn, metadata_fn])
-        fn_dict = dict([(k,v) for (k,v) in zipped if (v is not None)])
-        super(CustomFileLoader, self).__init__(**dict(kwargs, **fn_dict))
-        
-    def data(self, filename):
-        val = self.data_fn(filename)
-        if not isinstance(val, dict):
-            val = {self.data_key:val}
-        return val
-    
-    def metadata(self, filename):
-        val = self.metadata_fn(filename)
-        if not isinstance(val, dict):
-            raise Exception("The metadata callable must return a dictionary.")
-        return val
-    
 
 class FileOption(FileType):
     """
-    Allows one FileType in a pair of FileTypes to handle a given
-    file. For instance, given a mixed list of image files and numpy
-    npz files, the ImageFile() | NumpyFile() object an handle either
-    type of file appropriately.
+    Allows a FileType out of a pair of FileTypes to handle a given
+    file. For instance, given a mixed list of .png image filenames and
+    .npz Numpy filenames, the ImageFile() | NumpyFile() object an
+    handle either type of filename appropriately.
     """
-    first = param.ClassSelector(class_=FileType)
+    first = param.ClassSelector(class_=FileType, doc="""
+       The first possible FileType to handle a given filename.""")
 
-    second = param.ClassSelector(class_=FileType)
+    second = param.ClassSelector(class_=FileType, doc="""
+       The second possible FileType to handle a given filename."""
 
     def __init__(self, first, second, **kwargs):
         if set(first.extensions) & set(second.extensions):
             raise Exception("FileTypes must support non-overlapping sets of extensions.")
         extensions = set(first.extensions) | set(second.extensions)
-        super(FileOption, self).__init__(first=first, second=second, 
+        super(FileOption, self).__init__(first=first, second=second,
                                          extensions = list(extensions), **kwargs)
         self.pprint_args(['first', 'second'],[], infix_operator='|')
 
@@ -231,6 +208,40 @@ class FileOption(FileType):
     def __str__(self):
         return self._pprint(annotate=False)
 
+
+class CustomFile(FileType):
+    """
+    A customizable FileType that takes two functions as input and maps
+    them to the loading interface for all FileTypes.
+    """
+
+    data_fn = param.Callable(doc="""
+       A callable that takes a filename and returns a dictionary of
+       data values""")
+
+    metadata_fn = param.Callable(doc="""
+        A callable that takes a filename and returns a dictionary of
+        metadata values""")
+
+    def __init__(self, data_fn=None, metadata_fn=None, **kwargs):
+        zipped = zip(['data_fn','metadata_fn'], [data_fn, metadata_fn])
+        fn_dict = dict([(k,v) for (k,v) in zipped if (v is not None)])
+        super(CustomFile, self).__init__(**dict(kwargs, **fn_dict))
+
+    def data(self, filename):
+        val = self.data_fn(filename)
+        if not isinstance(val, dict):
+            val = {self.data_key:val}
+        return val
+
+    def metadata(self, filename):
+        val = self.metadata_fn(filename)
+        if not isinstance(val, dict):
+            raise Exception("The metadata callable must return a dictionary.")
+        return val
+
+
+
 class JSONFile(FileType):
     """
     It is assumed you won't store very large volumes of data as JSON.
@@ -249,13 +260,21 @@ class JSONFile(FileType):
 
     def metadata(self, filename):
         jsonfile = open(self._loadpath(filename),'r')
-        return json.load(jsonfile)
-    
+        jsondata = json.load(jsonfile)
+        jsonfile.close()
+        return jsondata
+
     def data(self, filename):
         raise Exception("JSONFile only loads metadata")
 
 
+
 class NumpyFile(FileType):
+    """
+    An npz file is the standard way to save Numpy arrays. This is a
+    highly flexible FileType that supports most native Python objects
+    including Numpy arrays.
+    """
 
     extensions = param.List(default=['.npz'], constant=True)
 
@@ -274,7 +293,7 @@ class NumpyFile(FileType):
 
     def metadata(self, filename):
         npzfile = np.load(self._loadpath(filename))
-        metadata = (npzfile['metadata'].tolist() 
+        metadata = (npzfile['metadata'].tolist()
                     if 'metadata' in npzfile.keys() else {})
         # Numpy load may return a Python dictionary.
         if not isinstance(npzfile, dict): npzfile.close()
@@ -284,8 +303,8 @@ class NumpyFile(FileType):
         npzfile = np.load(self._loadpath(filename))
         keys = [k for k in npzfile.keys() if k != 'metadata']
         data = dict((k,npzfile[k]) for k in keys)
-        
-        # IS THIS SAFE?
+
+        # Is this a safe way to unpack objects?
         for (k,val) in data.items():
             if val.dtype.char == 'O' and val.shape == ():
                 data[k] = val[()]
@@ -298,17 +317,17 @@ class NumpyFile(FileType):
 
 class ImageFile(FileType):
     """
-    Requires PIL or Pillow.
+    Image support - requires PIL or Pillow.
     """
     extensions = param.List(default=['.png', '.jpg'], constant=True)
 
-    image_info = param.Dict(default={'mode':'mode', 'size':'size', 'format':'format'}, 
+    image_info = param.Dict(default={'mode':'mode', 'size':'size', 'format':'format'},
         doc="""Dictionary of the metadata to load. Each key is the
         name given to the metadata item and each value is the PIL
         Image attribute to return.""")
 
-    data_mode = param.ObjectSelector(default='RGBA', 
-                                     objects=['L', 'RGB', 'RGBA', 'I','F'], 
+    data_mode = param.ObjectSelector(default='RGBA',
+                                     objects=['L', 'RGB', 'RGBA', 'I','F'],
         doc="""Sets the mode of the mode of the Image object. Palette
         mode'P is not supported""")
 
@@ -319,7 +338,8 @@ class ImageFile(FileType):
         import Image
         global Image
         super(ImageFile, self).__init__(**kwargs)
-        self.pprint_args(['hash_suffix'], ['data_key', 'data_mode', 'image_info'])
+        self.pprint_args(['hash_suffix'],
+                         ['data_key', 'data_mode', 'image_info'])
 
     def metadata(self, filename, **kwargs):
         image = Image.open(self._loadpath(filename))
@@ -341,26 +361,31 @@ class ImageFile(FileType):
         return {self.data_key:data}
 
     @classmethod
-    def display(cls, cellval, size=256):
+    def display(cls, value, size=256):
         import Image
-        if cls.file_supported(cellval):
-            im = Image.open(cellval)
-            im.thumbnail((size,size))
-            img = buff_img()
-            with img as f:  im.save(f, format='png')
-            return img.html
+        # Return the base54 image if possible, else return None
+        if isinstance(value, Image.Image):
+            im = value
+        elif cls.file_supported(value):
+            im = Image.open(value)
         else:
-            return cellval
+            return None
+
+        im.thumbnail((size,size))
+        img = buff_img()
+        with img as f:  im.save(f, format='png')
+        return img.html
+
 
 
 class ViewFrame(param.ParameterizedFunction):
     """
-    A FileViewer allows a DataFrame (or corresponding Args object) to
-    be viewed as a HTML table containing image thumbnails in IPython
-    Notebook.  Any filenames in the rows or columns of the DataFrame
-    will be viewed thumbnails according to the display functions in
-    display_by_filename. Object type can also be displayed according
-    to the display_by_type dictionary.
+    A FileViewer allows a DataFrame to be viewed as a HTML table
+    containing image thumbnails in IPython Notebook.  Any filenames in
+    the rows or columns of the DataFrame will be viewed thumbnails
+    according to the display functions in display_by_filename. Object
+    type can also be displayed according to the display_by_type
+    dictionary.
 
     Requires both Pandas and IPython Notebook.
     """
@@ -368,25 +393,19 @@ class ViewFrame(param.ParameterizedFunction):
     size = param.Number(default=256, doc="""
        The size of the display image to generate.""")
 
-    display_by_filename = param.List(default=[ImageFile.display])
-
-    display_by_type = param.Dict(default={})
+    display_fns = param.List(default=[ImageFile.display])
 
     def formatter(self,x):
         """
         A simple Pandas formatter that approximates the usual
         behaviour but also allows display of HTML images.
         """
-        
-        if isinstance(x, str):
-            for dfn in self.display_by_filename:
-                string = dfn(x, self.size)
-                if string.startswith("<img src="):
-                    return string
-        elif type(x) in self.display_by_type:
-            dfn = self.display_by_type[type(x)]
-            return dfn(x, self.size)
-        
+
+        for dfn in self.display_fns:
+            string = dfn(x,self.size)
+            if string is not None:
+                return string
+
         string = str(x)
         if len(string) <= self.max_colwidth:
             return string
@@ -394,7 +413,7 @@ class ViewFrame(param.ParameterizedFunction):
             return string[:self.max_colwidth-3] + '...'
 
 
-    def __call__(self, dframe, **kwargs): # size=None
+    def __call__(self, dframe, **kwargs):
         """
         Takes a DataFrame object and uses pandas to generate an HTML
         table containing display images.
