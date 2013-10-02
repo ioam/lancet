@@ -89,7 +89,7 @@ class FileType(PrettyPrinted, param.Parameterized):
             return True
 
     @classmethod
-    def _img_tag(cls, data, format='png'):
+    def _img_tag(cls, data, size, format='png'):
         """
         Helper to conviently build a base64 encoded img tag. Accepts
         both png and svg image types.  Useful for implementing the
@@ -99,7 +99,7 @@ class FileType(PrettyPrinted, param.Parameterized):
         prefix = ('data:image/png;base64,' if format=='png'
                   else 'data:image/svg+xml;base64,')
         b64 = prefix + data.encode("base64")
-        return ('<img src="%s" />' % b64)
+        return ("<img height='%d' width='%d' src='%s' />" % (size, size, b64))
 
     @classmethod
     def display(cls, value, size=64, format='png'):
@@ -191,6 +191,9 @@ class CustomFile(FileType):
         zipped = zip(['data_fn','metadata_fn'], [data_fn, metadata_fn])
         fn_dict = dict([(k,v) for (k,v) in zipped if (v is not None)])
         super(CustomFile, self).__init__(**dict(kwargs, **fn_dict))
+
+    def save(self, filename, data):
+        raise NotImplementedError
 
     def data(self, filename):
         val = self.data_fn(filename)
@@ -340,7 +343,7 @@ class ImageFile(FileType):
         assert format=='png', "Only png display enabled"
         im.save(buff, format='png')
         buff.seek(0)
-        return cls._img_tag(buff.read())
+        return cls._img_tag(buff.read(), size=size)
 
 
 
@@ -391,7 +394,39 @@ class MatplotlibFile(FileType):
         fig.savefig(buff, format=format)
         buff.seek(0)
         pyplot.close(fig)
-        return cls._img_tag(buff.read(), format=format)
+        return cls._img_tag(buff.read(),
+                            size=size,
+                            format=format)
+
+
+
+class SVGFile(FileType):
+    """
+    There is no standard way to handle SVG files in Python, therefore
+    this class implements display only. For custom SVG handling, this
+    can be subclassed by the user.
+    """
+
+    def save(self, filename, data):
+        raise NotImplementedError
+
+    def data(self, filename):
+        raise NotImplementedError
+
+    def metadata(self, filename):
+        raise NotImplementedError
+
+    @classmethod
+    def display(cls,value, size=256, format='svg'):
+        """
+        SVG is a tricky format to support for saving and loading but
+        it is easy to display.
+        """
+        if not isinstance(value, str): return None
+        (_, ext) = os.path.splitext(value)
+        if ext != '.svg':              return None
+        data = open(value, 'r').read()
+        return FileType._img_tag(data, size=size, format='svg')
 
 
 
@@ -399,10 +434,8 @@ class ViewFrame(param.ParameterizedFunction):
     """
     A FileViewer allows a DataFrame to be viewed as a HTML table
     containing image thumbnails in IPython Notebook.  Any filenames in
-    the rows or columns of the DataFrame will be viewed thumbnails
-    according to the display functions in display_by_filename. Object
-    type can also be displayed according to the display_by_type
-    dictionary.
+    the rows or columns of the DataFrame will be viewed as thumbnails
+    according to the display functions in display_fns.
 
     Requires both Pandas and IPython Notebook.
     """
@@ -411,15 +444,15 @@ class ViewFrame(param.ParameterizedFunction):
        The size of the display image to generate.""")
 
     format = param.ObjectSelector(default='png', objects=['png','svg'],
-       doc=""" The image format of the display. Either 'png' or 'svg'.
-               Note that SVGs may display correctly in FireFox but not
-               Chromium. """)
+       doc=""" The image format of the display. Either 'png' or 'svg'.""")
 
     display_fns = param.List(default=[ImageFile.display,
-                                      MatplotlibFile.display],
+                                      MatplotlibFile.display,
+                                      SVGFile.display],
        doc="""A list of display functions that return raster images
        (base64 encoded png images) based on filename or Python objects
        as input.""")
+
 
     def formatter(self,x):
         """
