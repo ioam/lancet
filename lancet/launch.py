@@ -47,7 +47,7 @@ class CommandTemplate(core.PrettyPrinted, param.Parameterized):
             executable = sys.executable
         self._pprint_args = ([],[],None,{})
         super(CommandTemplate,self).__init__(executable=executable, **kwargs)
-        self.pprint_args([],['executable'])
+        self.pprint_args([],[])
 
     def __call__(self, spec, tid=None, info={}):
         """
@@ -61,16 +61,6 @@ class CommandTemplate(core.PrettyPrinted, param.Parameterized):
     def _formatter(self, spec):
         if self.do_format: return core.BaseArgs.spec_formatter(spec)
         else             : return spec
-
-    def validate_arguments(self, args):
-        """
-        Allows a final check that ensures valid arguments have been
-        passed before launch. Allows the constant and varying_keys to
-        be be checked and can inspect the specs attribute if an
-        instance of Args. If invalid, raise an Exception with the
-        appropriate error message.
-        """
-        return
 
     def show(self, arg_specifier, file_handle=sys.stdout, **kwargs):
         full_string = ''
@@ -94,6 +84,16 @@ class CommandTemplate(core.PrettyPrinted, param.Parameterized):
 
         file_handle.write(full_string)
         file_handle.flush()
+
+    def validate_arguments(self, args):
+        """
+        Allows a final check that ensures valid arguments have been
+        passed before launch. Allows the constant and varying_keys to
+        be be checked and can inspect the specs attribute if an
+        instance of Args. If invalid, raise an Exception with the
+        appropriate error message.
+        """
+        return
 
     def summary(self):
         """
@@ -134,7 +134,7 @@ class UnixCommand(CommandTemplate):
         super(UnixCommand,self).__init__(executable = executable,
                                          do_format=False,
                                          **kwargs)
-        self.pprint_args(['posargs'],['long_prefix'])
+        self.pprint_args(['executable','posargs'],['long_prefix'])
 
     def __call__(self, spec, tid=None, info={}):
         # Function expansions are called here.
@@ -282,8 +282,9 @@ class Launcher(core.PrettyPrinted, param.Parameterized):
         self._spec_log = []
         if self.timestamp == (0,)*9:
             self.timestamp = tuple(time.localtime())
-
-        self.pprint_args(['batch_name','arg_specifier', 'command_template'],[])
+        self.pprint_args(['batch_name','arg_specifier','command_template'],
+                         ['description', 'tag', 'output_directory',
+                          'subdir','metadata'])
 
     def get_root_directory(self, timestamp=None):
         """
@@ -451,10 +452,10 @@ class Launcher(core.PrettyPrinted, param.Parameterized):
         key information relevant to the user.
         """
         print("Type: %s" % self.__class__.__name__)
-        print("Batch Name: %s" % self.batch_name)
+        print("Batch Name: %r" % self.batch_name)
         if self.tag:
             print("Tag: %s" % self.tag)
-        print("Root directory: %s" % self.get_root_directory())
+        print("Root directory: %r" % self.get_root_directory())
         print("Maximum concurrency: %s" % self.max_concurrency)
         if self.description:
             print("Description: %s" % self.description)
@@ -845,10 +846,11 @@ class review_and_launch(param.Parameterized):
             return self._launch_all(launchers)
 
     def review_launcher(self, launcher):
-        print('%s\n' % self.summary_heading('Launcher'))
+        launcher_name = launcher.__class__.__name__
+        print('%s\n' % self.summary_heading(launcher_name)
         launcher.summary()
         print
-        if self.input_options(['y','N'], 
+        if self.input_options(['Y','n'],
                               '\nShow complete launch repr?', default='y') == 'y':
             print("\n%s\n" % launcher)
         return True
