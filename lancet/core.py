@@ -86,7 +86,7 @@ class PrettyPrinted(object):
                 lines.append(',')
             lines = lines[:-1] +[br+(tab*(level-1))+')'] # Remove trailing comma
 
-        if show_lexsort: 
+        if show_lexsort:
             lines.append(').lexsort(%s)' % ', '.join(repr(el) for el in self._lexorder))
         return ''.join(lines)
 
@@ -219,7 +219,7 @@ class BaseArgs(PrettyPrinted, param.Parameterized):
         """
         varying_keys = ', '.join('%r' % k for k in self.varying_keys)
         print("Varying Keys: %s" % varying_keys)
-        items = ', '.join(['%s=%r' % (k,v) 
+        items = ', '.join(['%s=%r' % (k,v)
                            for (k,v) in self.constant_items])
         if self.constant_items:
             print("Constant Items: %s" % items)
@@ -240,10 +240,10 @@ class Args(BaseArgs):
         self._lexorder = None
         # Some types cannot be sorted (e.g. numpy arrays)
         self.unsortable_keys = []
-        if explicit: 
+        if explicit:
             self.pprint_args(['specs'],[])
         else: # Present in kwarg format
-            self.pprint_args([], self.constant_keys, None, 
+            self.pprint_args([], self.constant_keys, None,
                              dict(self.constant_items))
 
     def _build_specs(self, specs, kwargs, fp_precision):
@@ -348,7 +348,7 @@ class Args(BaseArgs):
         constant_set = set(self.constant_keys)
         unordered_varying = set(collection.keys()).difference(constant_set)
         # Finding out how fast keys are varying
-        grouplens = [(len([len(list(y)) for (_,y) in itertools.groupby(collection[k])]),k) for k in collection 
+        grouplens = [(len([len(list(y)) for (_,y) in itertools.groupby(collection[k])]),k) for k in collection
                      if (k not in self.unsortable_keys)]
         varying_counts = [(n,k) for (n,k) in sorted(grouplens) if (k in unordered_varying)]
         # Grouping keys with common frequency alphanumerically (desired behaviour).
@@ -740,7 +740,7 @@ class FileInfo(Args):
             if key not in spec:
                 raise Exception("Key %r not available in 'source'." % key)
 
-            mdata = dict((k,v) for (k,v) in filetype.metadata(spec[key]).items() 
+            mdata = dict((k,v) for (k,v) in filetype.metadata(spec[key]).items()
                          if k not in ignore)
             data = filetype.data(spec[key]) if load_contents else {}
             data_keys = data_keys | set(data.keys())
