@@ -748,6 +748,11 @@ class review_and_launch(param.Parameterized):
             arg_specifier = launcher.arg_specifier
             command_template.validate_arguments(arg_specifier)
 
+    def launch_all(self, lvals):
+        for launcher in lvals:
+            print("== Launching  %s ==" % launcher.batch_name)
+            launcher.launch()
+        return True
 
     def __call__(self, fn=None):
 
@@ -773,40 +778,37 @@ class review_and_launch(param.Parameterized):
         # Cross check the launchers
         self.cross_check_launchers(lvals)
 
-        if self.review:
-            # Run review of launch args only if necessary
-            if self.launch_args is not None:
-                proceed = self.review_args(self.launch_args, heading='Lancet Meta Parameters')
-                if not proceed: return False
+        if not self.review:
+            return self.launch_all(lvals)
 
-            for (count, lval) in enumerate(lvals):
-                reviewers = [self.review_launcher,
-                             self.review_args,
-                             self.review_command_template]
+        # = Review =
 
-                if not all(reviewer(lval) for reviewer in reviewers):
-                    print("Aborting launch.")
-                    return False
+        reviewers = [self.review_launcher,
+                     self.review_args,
+                     self.review_command_template]
 
-                if len(lvals)!= 1 and count < len(lvals)-1:
-                    skip_remaining = self.input_options(['Y', 'n','quit'],
-                                     '\nSkip remaining reviews?', default='y')
-                    if skip_remaining == 'quit': return False
-                    if skip_remaining == 'y': break
-
-            self._process_launchers(lvals)
-
-            if self.input_options(['y','N'], 'Execute?', default='n') != 'y':
+        # Run review of launch args if necessary
+        if self.launch_args is not None:
+            proceed = self.review_args(self.launch_args, heading='Lancet Meta Parameters')
+            if not proceed:
                 return False
 
-        for launcher in lvals:
-            print("== Launching  %s ==" % launcher.batch_name)
-            launcher.launch()
+        for (count, lval) in enumerate(lvals):
 
-        return True
+            if not all(reviewer(lval) for reviewer in reviewers):
+                print("Aborting launch.")
+                return False
 
-    def _process_launchers(self, lvals):
-        pass
+            if len(lvals)!= 1 and count < len(lvals)-1:
+                skip_remaining = self.input_options(['Y', 'n','quit'],
+                                 '\nSkip remaining reviews?', default='y')
+                if skip_remaining == 'quit': return False
+                if skip_remaining == 'y': break
+
+        if self.input_options(['y','N'], 'Execute?', default='n') != 'y':
+            return False
+        else:
+            return self.launch_all(lvals)
 
     def review_launcher(self, launcher):
         command_template = launcher.command_template
