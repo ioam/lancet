@@ -164,42 +164,58 @@ class UnixCommand(CommandTemplate):
         print("Command executable: %s" % self.executable)
         print("Long prefix: %r" % self.long_prefix)
 
-    @classmethod
-    def root_directory(cls):
+    class RootDirectory(object):
         """
         Supplies the root_directory to a command.
         """
-        def _expander(spec, info, tid):
+        def __call__(self, spec, info, tid):
             return  info['root_directory']
-        return _expander
 
-    @classmethod
-    def long_filename(cls, extension, excluding=[]):
+        def __repr__(self):
+            return "UnixCommand.RootDirectory()"
+
+    class LongFilename(object):
         """
         Generates a long filename based on the input arguments in the
         root directory with the given extension. Ignores constant
         items.
         """
-        def _expander(spec, info, tid):
+        def __init__(self, extension, excluding=[]):
+            self.extension = extension
+            self.excluding = excluding
+
+        def __call__(self, spec, info, tid):
             root_dir = info['root_directory']
             params = [('tid' , tid)] + [(k,v) for  (k,v) in spec.items()
-                                        if k in info['varying_keys'] and k not in excluding]
+                                        if k in info['varying_keys']
+                                        and k not in self.excluding]
             basename = '_'.join('%s=%s' % (k,v) for (k,v) in sorted(params))
-            return os.path.join(root_dir, '%s_%s%s' % (info['batch_name'], basename, extension))
-        return _expander
+            return os.path.join(root_dir, '%s_%s%s' % (info['batch_name'],
+                                                       basename,
+                                                       self.extension))
+        def __repr__(self):
+            items = ([self.extension, self.excluding]
+                     if self.excluding else [self.extension])
+            return ("UnixCommand.LongFilename(%s)"
+                    % ', '.join('%r' % el for el in items))
 
-    @classmethod
-    def expand(cls, template):
+    class Expand(object):
         """
         Takes a new-style format string template and expands it out
         using the keys in the spec, info and tid.
         """
-        def _expander(spec, info, tid):
+
+        def __init__(self, template):
+            self.template = template
+
+        def __call__(self,spec, info, tid):
             all_params = {'tid' : tid}
             all_params.update(spec)
             all_params.update(info)
-            return template.format(**all_params)
-        return _expander
+            return self.template.format(**all_params)
+
+        def __repr__(self):
+            return "UnixCommand.Expand(%r)" % self.template
 
 
 #===========#
@@ -847,7 +863,7 @@ class review_and_launch(param.Parameterized):
 
     def review_launcher(self, launcher):
         launcher_name = launcher.__class__.__name__
-        print('%s\n' % self.summary_heading(launcher_name)
+        print('%s\n' % self.summary_heading(launcher_name))
         launcher.summary()
         print
         if self.input_options(['Y','n'],
