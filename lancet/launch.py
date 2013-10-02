@@ -152,7 +152,8 @@ class UnixCommand(CommandTemplate):
         """
         Supplies the root_directory to a command.
         """
-        def _expander(spec, info, tid): return  info['root_directory']
+        def _expander(spec, info, tid):
+            return  info['root_directory']
         return _expander
 
     @classmethod
@@ -253,8 +254,8 @@ class Launcher(param.Parameterized):
 
     def __init__(self, batch_name, arg_specifier, command_template, **kwargs):
         super(Launcher,self).__init__(arg_specifier=arg_specifier,
-                                          command_template = command_template,
-                                          **kwargs)
+                                      command_template = command_template,
+                                      **kwargs)
         self.batch_name = batch_name
         self._spec_log = []
         if self.timestamp == (0,)*9:
@@ -696,11 +697,6 @@ class review_and_launch(param.Parameterized):
     review = param.Boolean(default=True, doc="""
          Whether or not to perform a detailed review of the launch.""")
 
-    main_script = param.Boolean(default=True, doc="""
-         Whether the launch is occuring from a lancet script running
-         as main. Set to False for projects using lancet outside the
-         main script.""")
-
     launch_args = param.ClassSelector(default=None, allow_None=True, class_=core.Args,
          doc= """An optional argument specifier to parameterise
                  lancet, allowing multi-launch scripts.  Useful for
@@ -781,8 +777,6 @@ class review_and_launch(param.Parameterized):
         if fn is not None:
             self.launch_fn = fn
             return self
-
-        if self.main_script and self.launch_fn.__module__ != '__main__': return False
 
         # Calling the wrapped function with appropriate arguments
         kwargs_list = [{}] if (self.launch_args is None) else self.launch_args.specs
@@ -899,15 +893,13 @@ class review_and_launch(param.Parameterized):
     def __repr__(self):
         arg_list = ['%r' % self.output_directory,
                     'launch_args=%r' % self.launch_args if self.launch_args else None,
-                    'review=False' if not self.review else None,
-                    'main_script=False' if not self.main_script else None ]
+                    'review=False' if not self.review else None]
         arg_str = ','.join(el for el in arg_list if el is not None)
         return 'review_and_launch(%s)' % arg_str
 
     def __str__(self):
         arg_list = ['output_directory=%r' % self.output_directory,
                     'launch_args=%s' % self.launch_args._pprint(level=2) if self.launch_args else None,
-                    'review=False' if not self.review else None,
-                    'main_script=False' if not self.main_script else None ]
+                    'review=False' if not self.review else None]
         arg_str = ',\n   '.join(el for el in arg_list if el is not None)
         return 'review_and_launch(\n   %s\n)' % arg_str
