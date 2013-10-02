@@ -171,7 +171,7 @@ class FileOption(FileType):
        The first possible FileType to handle a given filename.""")
 
     second = param.ClassSelector(class_=FileType, doc="""
-       The second possible FileType to handle a given filename."""
+       The second possible FileType to handle a given filename.""")
 
     def __init__(self, first, second, **kwargs):
         if set(first.extensions) & set(second.extensions):
@@ -377,6 +377,53 @@ class ImageFile(FileType):
         return img.html
 
 
+class MPLFile(FileType):
+    """
+    Since version 1.0, Matplotlib figures support pickling. An mpkl
+    file is simply a pickled matplotlib figure.
+    """
+
+    extensions = param.List(default=['.mpkl'], constant=True)
+
+    def __init__(self, **kwargs):
+        from matplotlib import pyplot
+        global pyplot
+        super(MPLFile, self).__init__(**kwargs)
+        self.pprint_args(['hash_suffix'], [])
+
+    def save(self, filename, fig):
+        pickle.dump(fig, open(self._savepath(filename),'wb'))
+
+    def metadata(self, filename):
+        pklfile = open(self._loadpath(filename),'r')
+        fig = pickle.load(pklfile)
+        metadata = {'dpi':fig.dip, 'size':fig.size}
+        pklfile.close()
+        return metadata
+
+    def data(self, filename):
+        pklfile = open(self._loadpath(filename),'r')
+        fig = pickle.load(pklfile)
+        pklfile.close()
+        return {self.data_key:fig}
+
+    @classmethod
+    def display(cls, value, size=256):
+        from matplotlib import pyplot
+        if isinstance(value, pyplot.Figure):
+            fig = value
+        elif cls.file_supported(value):
+            pklfile = open(value,'r')
+            fig = pickle.load(pklfile)
+        else:
+            return None
+
+        img = mpl_img(size)
+        with img as f: img.fig = fig
+        plt.close(img.fig)
+        return img.html
+
+
 
 class ViewFrame(param.ParameterizedFunction):
     """
@@ -393,7 +440,11 @@ class ViewFrame(param.ParameterizedFunction):
     size = param.Number(default=256, doc="""
        The size of the display image to generate.""")
 
-    display_fns = param.List(default=[ImageFile.display])
+    display_fns = param.List(default=[ImageFile.display,
+                                      MPLFile.display],
+       doc="""A list of display functions that return raster images
+       (base64 encoded png images) based on filename or Python objects
+       as input.""")
 
     def formatter(self,x):
         """
