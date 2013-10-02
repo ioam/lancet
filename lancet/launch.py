@@ -782,14 +782,15 @@ class review_and_launch(core.PrettyPrinted, param.Parameterized):
             raise Exception("Launcher timestamps not all equal. "
                             "Consider setting timestamp explicitly.")
 
-        # Needs to be made compatible with the subdir option of Launcher
-        # if len(set(batch_names)) != len(launchers):
-        #     raise Exception('Each launcher requires a unique batch name.')
-
+        root_directories = []
         for launcher in launchers:
             command_template = launcher.command_template
             arg_specifier = launcher.arg_specifier
             command_template.validate_arguments(arg_specifier)
+            root_directory = launcher.get_root_directory()
+            if root_directory in root_directories:
+                raise Exception("Each launcher requires a unique root directory")
+            root_directories.append(root_directory)
 
     def __call__(self, fn=None):
 
