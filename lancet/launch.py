@@ -93,6 +93,15 @@ class CommandTemplate(param.Parameterized):
         file_handle.write(full_string)
         file_handle.flush()
 
+    def summary(self):
+        """
+        A succinct summary of the CommandTemplate configuration.
+         Unlike the repr, a summary does not have to be complete but
+         must supply key information relevant to the user. Must begin
+         by stating the executable.
+        """
+        raise NotImplementedError
+
 
 class UnixCommand(CommandTemplate):
     """
@@ -147,6 +156,10 @@ class UnixCommand(CommandTemplate):
         posargs = [expanded[parg] if (parg in expanded) else parg(spec, info, tid)
                    for parg in self.posargs]
         return [self.executable] + options + posargs
+
+    def summary(self):
+        print("Command executable: %s" % self.executable)
+        print("Long prefix: %r" % self.long_prefix)
 
     @classmethod
     def root_directory(cls):
@@ -420,6 +433,21 @@ class Launcher(param.Parameterized):
         self.record_info()
         if self.reduction_fn is not None:
             self.reduction_fn(self._spec_log, self.root_directory)
+
+    def summary(self):
+        """
+        A succinct summary of the Launcher configuration.  Unlike the
+        repr, a summary does not have to be complete but must supply
+        key information relevant to the user.
+        """
+        print("Type: %s" % self.__class__.__name__)
+        print("Batch Name: %s" % self.batch_name)
+        if self.tag:
+            print("Tag: %s" % self.tag)
+        print("Root directory: %s" % self.get_root_directory())
+        print("Maximum concurrency: %s" % self.max_concurrency)
+        if self.description:
+            print("Description: %s" % self.description)
 
 class QLauncher(Launcher):
     """
@@ -796,7 +824,7 @@ class review_and_launch(param.Parameterized):
         # Run review of launch args if necessary
         if self.launch_args is not None:
             proceed = self.review_args(self.launch_args,
-                                       heading='Lancet Meta Parameters')
+                                       heading='Meta Arguments')
             if not proceed: return False
 
         reviewers = [self.review_launcher,
@@ -804,18 +832,17 @@ class review_and_launch(param.Parameterized):
                      self.review_command_template]
 
         for (count, launcher) in enumerate(launchers):
-
+            # Run reviews for all launchers if desired...
             if not all(reviewer(launcher) for reviewer in reviewers):
                 print("\n == Aborting launch ==")
                 return False
-
+            # But allow the user to skip these extra reviews
             if len(launchers)!= 1 and count < len(launchers)-1:
                 skip_remaining = self.input_options(['Y', 'n','quit'],
                                  '\nSkip remaining reviews?', default='y')
-                if skip_remaining == 'quit':
-                    return False
-                if skip_remaining == 'y':
-                    break
+
+                if skip_remaining == 'y':          break
+                elif skip_remaining == 'quit':     return False
 
         if self.input_options(['y','N'], 'Execute?', default='n') != 'y':
             return False
@@ -823,34 +850,19 @@ class review_and_launch(param.Parameterized):
             return self._launch_all(launchers)
 
     def review_launcher(self, launcher):
-        command_template = launcher.command_template
-        print(self.section('Launcher'))
-        print("Type: %s" % launcher.__class__.__name__)
-        print("Batch Name: %s" % launcher.batch_name)
-        print("Command executable: %s" % command_template.executable)
-        root_directory = launcher.get_root_directory()
-        print("Root directory: %s" % root_directory)
-        print("Maximum concurrency: %s" % launcher.max_concurrency)
-
-        description = '<No description>' if launcher.description == '' else launcher.description
-        tag = '<No tag>' if launcher.tag == '' else launcher.tag
-        print("Description: %s" % description)
-        print("Tag: %s" % tag)
-        print
+        print('%s\n' % self.section('Launcher'))
+        launcher.summary()
         return True
 
-    def review_args(self, obj, heading='Argument Specification'):
+    def review_args(self, obj, heading='Arguments'):
         """
-        Input argument obj can be a Launcher or an ArgSpec object.
+        Reviews the given argument specification. Can review the
+        meta-arguments (launch_args) or the arguments themselves.
         """
         arg_specifier = obj.arg_specifier if isinstance(obj, Launcher) else obj
-        print(self.section(heading))
-        print("Type: %s (dynamic=%s)" %
-              (arg_specifier.__class__.__name__, isinstance(arg_specifier,DynamicArgs)))
-        print("Varying Keys: %s" % arg_specifier.varying_keys)
-        items = '\n'.join(['%s = %r' % (k,v) for (k,v) in arg_specifier.constant_items])
-        print("Constant Items:\n\n%s\n" % items)
-        print("Definition:\n%s" % arg_specifier)
+        print('\n%s\n' % self.section(heading))
+        arg_specifier.summary()
+        print('\n%s' % arg_specifier)
 
         response = self.input_options(['y', 'N','quit'],
                 '\nShow available argument specifier entries?', default='n')
@@ -860,18 +872,27 @@ class review_and_launch(param.Parameterized):
         return True
 
     def review_command_template(self, launcher):
+
         command_template = launcher.command_template
-        arg_specifier = launcher.arg_specifier
-        print(self.section(command_template.__class__.__name__))
-        if isinstance(launcher, QLauncher) and launcher.is_dynamic_qsub:
-            command_template.show(arg_specifier, queue_cmd_only=True)
+        template_name = command_template.__class__.__name__
+        print('%s\n' % self.section(template_name))
+        command_template.summary()
+        print("\n%s\n" % command_template)
 
         response = self.input_options(['y', 'N','quit','save'],
-                                      '\nShow available command entries?', default='n')
+                                      '\nShow available command entries?',
+                                      default='n')
+
+        arg_specifier = launcher.arg_specifier
+        isdynamic = (isinstance(launcher, QLauncher)
+                     and launcher.is_dynamic_qsub)
+
         if response == 'quit': return False
-        if response == 'y':
+        elif response == 'y' and not isdynamic:
             command_template.show(arg_specifier)
-        if response == 'save':
+        elif response == 'y' and isdynamic:
+            command_template.show(arg_specifier, queue_cmd_only=True)
+        elif response == 'save':
             fname = raw_input('Filename: ').replace(' ','_')
             with open(os.path.abspath(fname),'w') as f:
                 command_template.show(arg_specifier, file_handle=f)

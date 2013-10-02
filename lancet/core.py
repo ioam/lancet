@@ -211,6 +211,18 @@ class BaseArgs(PrettyPrinted, param.Parameterized):
                       ))
                  for s1 in first_specs for s2 in second_specs ]
 
+    def summary(self):
+        """
+        A succinct summary of the argument specifier. Unlike the repr,
+        a summary does not have to be complete but must supply key
+        information relevant to the user.
+        """
+        varying_keys = ', '.join('%r' % k for k in self.varying_keys)
+        print("Varying Keys: %s" % varying_keys)
+        items = ', '.join(['%s=%r' % (k,v) 
+                           for (k,v) in self.constant_items])
+        if self.constant_items:
+            print("Constant Items: %s" % items)
 
 
 class Args(BaseArgs):
