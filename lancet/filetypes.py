@@ -4,55 +4,6 @@ import numpy as np
 from core import PrettyPrinted
 
 
-class buff_img(object):
-    """
-    A small context manager that helps build an HTML display image via
-    any utility that can save an image as a png file.
-    """
-    def __enter__(self):
-        self.buff = StringIO.StringIO()
-        self.html = ''
-        return self.buff
-
-    def __exit__(self, *args):
-        self.buff.seek(0)
-        prefix = 'data:image/png;base64,'
-        b64 = prefix+self.buff.read().encode("base64")
-        self.html = '<img src="%s" />' % b64
-
-class mpl_img(object):
-    """
-    A small context manager that helps build an HTML display image
-    using matplotlb. Simply call pyplot plotting commands within the
-    block and the context manager will handle closing the figure
-    (which is always accessible via the fig attribute).
-
-    Useful for quickly building custom display functions for arbitrary
-    file data using Matplotlib.
-    """
-
-    def __init__(self, size):
-        self.size = size
-
-    def __enter__(self):
-        import matplotlib.pyplot as plt
-        global plt
-        self.buff = StringIO.StringIO()
-        self.fig = plt.figure()
-        inches = self.size / float(self.fig.dpi)
-        self.fig.set_size_inches(inches, inches)
-        self.html = ''
-        return self.buff
-
-    def __exit__(self, *args):
-        self.fig.savefig(self.buff, format='png')
-        self.buff.seek(0)
-        prefix = 'data:image/png;base64,'
-        b64 = prefix+self.buff.read().encode("base64")
-        plt.close(self.fig)
-        self.html = '<img src="%s" />' % b64
-
-
 
 class FileType(PrettyPrinted, param.Parameterized):
     """
@@ -136,6 +87,16 @@ class FileType(PrettyPrinted, param.Parameterized):
             return False
         else:
             return True
+
+    @classmethod
+    def _img_tag(cls, png_data):
+        """"
+        Helper to conviently build a base64 encoded img tag.
+        Useful for implementing the display method when available.
+        """
+        prefix = 'data:image/png;base64,'
+        b64 = prefix + png_data.encode("base64")
+        return ('<img src="%s" />' % b64)
 
     @classmethod
     def display(cls, value, size=64):
@@ -372,9 +333,11 @@ class ImageFile(FileType):
             return None
 
         im.thumbnail((size,size))
-        img = buff_img()
-        with img as f:  im.save(f, format='png')
-        return img.html
+        buff = StringIO.StringIO()
+        im.save(buff, format='png')
+        buff.seek(0)
+        return cls._img_tag(buff.read())
+
 
 
 class MPLFile(FileType):
@@ -418,10 +381,13 @@ class MPLFile(FileType):
         else:
             return None
 
-        img = mpl_img(size)
-        with img as f: img.fig = fig
-        plt.close(img.fig)
-        return img.html
+        inches = size / float(fig.dpi)
+        fig.set_size_inches(inches, inches)
+        buff = StringIO.StringIO()
+        fig.savefig(buff, format='png')
+        buff.seek(0)
+        pyplot.close(fig)
+        return cls._img_tag(buff.read())
 
 
 
