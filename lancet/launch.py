@@ -748,12 +748,6 @@ class review_and_launch(param.Parameterized):
             arg_specifier = launcher.arg_specifier
             command_template.validate_arguments(arg_specifier)
 
-    def launch_all(self, lvals):
-        for launcher in lvals:
-            print("== Launching  %s ==" % launcher.batch_name)
-            launcher.launch()
-        return True
-
     def __call__(self, fn=None):
 
         # On first call, simply wrap the provided launch function.
@@ -763,52 +757,70 @@ class review_and_launch(param.Parameterized):
 
         # Calling the wrapped function with appropriate arguments as
         # supplied by launch_args.
-        kwargs_list = self.launch_args.specs if self.launch_args else [{}]
-        lvals = [self.launch_fn(**kwargs_list[0])]
+        kwargs = self.launch_args.specs if self.launch_args else [{}]
+        launchers = [self.launch_fn(**kwargs[0])]
         if self.launch_args is not None:
-            first_launcher = lvals[0]
-            first_launcher.__class__.timestamp = tuple(time.localtime())
-            lvals += [self.launch_fn(**kwargs) for kwargs in kwargs_list[1:]]
+            launchers += [self.launch_fn(**kws) for kws in kwargs[1:]]
 
-        # Setting the output directory
-        if self.output_directory is not None:
-            for lval in lvals:
-                lval.output_directory = self.output_directory
+        current_timestamp = tuple(time.localtime())
+
+        # Across all the launchers...
+        for launcher in launchers:
+            # Ensure a shared timestamp throughout
+            launcher.__class__.timestamp = current_timestamp
+            # Set the output directory appropriately
+            if self.output_directory is not None:
+                launcher.output_directory = self.output_directory
 
         # Cross check the launchers
-        self.cross_check_launchers(lvals)
+        self.cross_check_launchers(launchers)
 
         if not self.review:
-            return self.launch_all(lvals)
+            return self._launch_all(launchers)
+        else:
+            return self._review_all(launchers)
 
-        # = Review =
+    def _launch_all(self, launchers):
+        """
+        Launches all available launchers.
+        """
+        for launcher in launchers:
+            print("== Launching  %s ==" % launcher.batch_name)
+            launcher.launch()
+        return True
+
+    def _review_all(self, launchers):
+        """
+        Runs the review process for all the launchers.
+        """
+        # Run review of launch args if necessary
+        if self.launch_args is not None:
+            proceed = self.review_args(self.launch_args,
+                                       heading='Lancet Meta Parameters')
+            if not proceed: return False
 
         reviewers = [self.review_launcher,
                      self.review_args,
                      self.review_command_template]
 
-        # Run review of launch args if necessary
-        if self.launch_args is not None:
-            proceed = self.review_args(self.launch_args, heading='Lancet Meta Parameters')
-            if not proceed:
+        for (count, launcher) in enumerate(launchers):
+
+            if not all(reviewer(launcher) for reviewer in reviewers):
+                print("\n == Aborting launch ==")
                 return False
 
-        for (count, lval) in enumerate(lvals):
-
-            if not all(reviewer(lval) for reviewer in reviewers):
-                print("Aborting launch.")
-                return False
-
-            if len(lvals)!= 1 and count < len(lvals)-1:
+            if len(launchers)!= 1 and count < len(launchers)-1:
                 skip_remaining = self.input_options(['Y', 'n','quit'],
                                  '\nSkip remaining reviews?', default='y')
-                if skip_remaining == 'quit': return False
-                if skip_remaining == 'y': break
+                if skip_remaining == 'quit':
+                    return False
+                if skip_remaining == 'y':
+                    break
 
         if self.input_options(['y','N'], 'Execute?', default='n') != 'y':
             return False
         else:
-            return self.launch_all(lvals)
+            return self._launch_all(launchers)
 
     def review_launcher(self, launcher):
         command_template = launcher.command_template
