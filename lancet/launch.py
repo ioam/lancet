@@ -113,23 +113,23 @@ class UnixCommand(CommandTemplate):
     arguments.
     """
 
-    expansions = param.Dict(default={}, constant=True, doc="""
+    expansions = param.Dict(default={}, constant=True, doc='''
         Allows extension of the specification that supports functions
         that expand to valid argument values.  If a function is used,
         it must have the signature (spec, info, tid). A typical usage
         for a function value is to build a valid output filename given
         the contrext.
 
-        Three such function are provided as classmethods:
-        'root_directory', 'long_filename' and 'expand'.""")
+        Three such subclasses are provided:
+        'RootDirectory', 'LongFilename' and 'Expand'.''')
 
-    posargs = param.List(default=[], constant=True, doc="""
+    posargs = param.List(default=[], constant=True, doc='''
        The list of positional argument keys. Positional arguments are
-       always supplied at the end of a command in the order given.""")
+       always supplied at the end of a command in the order given.''')
 
-    long_prefix = param.String(default='--',  constant=True, doc="""
+    long_prefix = param.String(default='--',  constant=True, doc='''
        Although the double dash is a GNU coding convention, some
-       applications use single dashes for long options.""")
+       applications use single dashes for long options.''')
 
     def __init__(self, executable, **kwargs):
         super(UnixCommand,self).__init__(executable = executable,
@@ -238,13 +238,21 @@ class Launcher(core.PrettyPrinted, param.Parameterized):
     """
 
     batch_name = param.String(default=None, allow_None=True, constant=True,
-       doc="""A unique identifier for the current batch""")
+       doc='''A unique identifier for the current batch''')
 
     arg_specifier = param.ClassSelector(core.BaseArgs, constant=True, doc='''
        The specifier used to generate the varying parameters for the tasks.''')
 
     command_template = param.ClassSelector(CommandTemplate, constant=True, doc='''
        The command template used to generate the commands for the current tasks.''')
+
+    output_directory = param.String(default='.', doc='''
+         The output directory - the directory that will contain all
+         the root directories for the individual launches.''')
+
+    subdir = param.List(default=[], doc='''
+      A list of subdirectory names that allows custom organization
+      within the output directory before the root directory.''')
 
     tag = param.String(default='', doc='''
        A very short, identifiable human-readable string that
@@ -279,14 +287,6 @@ class Launcher(core.PrettyPrinted, param.Parameterized):
       The timestamp format for the root directories in python datetime
       format. If None, the timestamp is omitted from root directory
       name.''')
-
-    output_directory = param.String(default='.', doc="""
-         The output directory - the directory that will contain all
-         the root directories for the individual launches.""")
-
-    subdir = param.List(default=[], doc="""
-      A list of subdirectory names that allows custom organization
-      within the output directory before the root directory.""")
 
 
     def __init__(self, batch_name, arg_specifier, command_template, **kwargs):
@@ -401,11 +401,13 @@ class Launcher(core.PrettyPrinted, param.Parameterized):
             sleep-poll cycle if possible).
             """
             result = False
-            for proc in list(processes): # make list (copy) of keys, as dict is modified during iteration
+            # list creates copy of keys, as dict is modified in loop
+            for proc in list(processes): 
                 if wait: proc.wait()
                 if proc.poll() is not None:
                     # process is done, free up slot
-                    logging.debug("Process %d exited with code %d." % (processes[proc]['tid'], proc.poll()))
+                    logging.debug("Process %d exited with code %d." 
+                                  % (processes[proc]['tid'], proc.poll()))
                     processes[proc]['stdout'].close()
                     processes[proc]['stderr'].close()
                     del processes[proc]
@@ -414,10 +416,14 @@ class Launcher(core.PrettyPrinted, param.Parameterized):
 
         for cmd, tid in process_commands:
             logging.debug("Starting process %d..." % tid)
-            stdout_handle = open(os.path.join(streams_path, "%s.o.%d" % (self.batch_name, tid)), "wb")
-            stderr_handle = open(os.path.join(streams_path, "%s.e.%d" % (self.batch_name, tid)), "wb")
+            stdout_handle = open(os.path.join(streams_path, "%s.o.%d" 
+                                              % (self.batch_name, tid)), "wb")
+            stderr_handle = open(os.path.join(streams_path, "%s.e.%d" 
+                                              % (self.batch_name, tid)), "wb")
             proc = subprocess.Popen(cmd, stdout=stdout_handle, stderr=stderr_handle)
-            processes[proc] = { 'tid' : tid, 'stdout' : stdout_handle, 'stderr' : stderr_handle }
+            processes[proc] = { 'tid' : tid, 
+                                'stdout' : stdout_handle, 
+                                'stderr' : stderr_handle }
 
             if self.max_concurrency:
                 # max_concurrency reached, wait until more slots available
@@ -495,12 +501,12 @@ class QLauncher(Launcher):
     will be ignored.
     """
 
-    qsub_switches = param.List(default=['-V', '-cwd'], doc = """
+    qsub_switches = param.List(default=['-V', '-cwd'], doc = '''
        Specifies the qsub switches (flags without arguments) as a list
        of strings. By default the -V switch is used to exports all
-       environment variables in the host environment to the batch job.""")
+       environment variables in the host environment to the batch job.''')
 
-    qsub_flag_options = param.Dict(default={'-b':'y'}, doc="""
+    qsub_flag_options = param.Dict(default={'-b':'y'}, doc='''
        Specifies qsub flags and their corresponding options as a
        dictionary. Valid values may be strings or lists of string.  If
        a plain Python dictionary is used, the keys arealphanumerically
@@ -512,7 +518,7 @@ class QLauncher(Launcher):
        to be directly invoked. Note that the '-' is added to the key
        if missing (to make into a valid flag) so you can specify using
        keywords in the dict constructor: ie. using
-       qsub_flag_options=dict(key1=value1, key2=value2, ....)""")
+       qsub_flag_options=dict(key1=value1, key2=value2, ....)''')
 
     def __init__(self, batch_name, arg_specifier, command_template, **kwargs):
         super(QLauncher, self).__init__(batch_name, arg_specifier,
@@ -736,7 +742,8 @@ class QLauncher(Launcher):
         the <batch_name>* pattern . Necessary when StopIteration is
         raised with scheduled jobs left on the queue.
         """
-        p = subprocess.Popen(['qdel', '%s_%s*' % (self.batch_name, self.job_timestamp)],
+        p = subprocess.Popen(['qdel', '%s_%s*' % (self.batch_name, 
+                                                  self.job_timestamp)],
                              stdout=subprocess.PIPE)
         (stdout, stderr) = p.communicate()
 
@@ -750,21 +757,21 @@ class review_and_launch(core.PrettyPrinted, param.Parameterized):
     prompt the user for a full review of the launch configuration.
     """
 
-    output_directory = param.String(default='.', doc="""
+    output_directory = param.String(default='.', doc='''
          The output directory - the directory that will contain all
-         the root directories for the individual launches.""")
+         the root directories for the individual launches.''')
 
-    review = param.Boolean(default=True, doc="""
-         Whether or not to perform a detailed review of the launch.""")
+    review = param.Boolean(default=True, doc='''
+         Whether or not to perform a detailed review of the launch.''')
 
-    launch_args = param.ClassSelector(default=None, allow_None=True, class_=core.Args,
-         doc= """An optional argument specifier to parameterise
-                 lancet, allowing multi-launch scripts.  For instance,
-                 this may be useful for collecting statistics over
-                 runs that are not deterministic or are affected by a
-                 random input seed.""")
+    launch_args = param.ClassSelector(default=None, allow_None=True, 
+        class_=core.Args, doc= '''An optional argument specifier to
+        parameterise lancet, allowing multi-launch scripts.  For
+        instance, this may be useful for collecting statistics over
+        runs that are not deterministic or are affected by a random
+        input seed.''')
 
-    launch_fn = param.Callable(doc="""The function that is to be applied.""")
+    launch_fn = param.Callable(doc='''The function that is to be decorated.''')
 
     def __init__(self, output_directory='.', **kwargs):
         self._pprint_args = ([],[],None,{})

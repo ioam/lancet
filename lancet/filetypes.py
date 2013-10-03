@@ -16,21 +16,21 @@ class FileType(PrettyPrinted, param.Parameterized):
     allow the file contents to be quickly visualized.
     """
 
-    hash_suffix = param.Boolean(default=True, doc="""
+    hash_suffix = param.Boolean(default=True, doc='''
        Whether to ensure the saved filename is unique by adding a
        short hash suffix. Note that this is a class level parameter
-       only.""")
+       only.''')
 
-    directory = param.String(default='.', allow_None=True, doc="""
+    directory = param.String(default='.', allow_None=True, doc='''
        Directory in which to load or save the file. Note that this
-       is a class level parameter only.""")
+       is a class level parameter only.''')
 
     extensions = param.List(default=[], constant=True,
-       doc= """The set of supported file extensions.""")
+       doc= '''The set of supported file extensions.''')
 
-    data_key = param.String(default='data', doc="""
+    data_key = param.String(default='data', doc='''
        The name (key) given to the file contents if the key cannot be
-       determined from the file itself.""")
+       determined from the file itself.''')
 
     def __init__(self, **kwargs):
         super(FileType, self).__init__(**kwargs)
@@ -80,6 +80,10 @@ class FileType(PrettyPrinted, param.Parameterized):
 
     @classmethod
     def file_supported(cls, filename):
+        """
+        Returns a boolean indicating whether the filename has an
+        appropriate extension for this class.
+        """
         if not isinstance(filename, str):
             return False
         (_, ext) = os.path.splitext(filename)
@@ -131,11 +135,11 @@ class FileOption(FileType):
     .npz Numpy filenames, the ImageFile() | NumpyFile() object an
     handle either type of filename appropriately.
     """
-    first = param.ClassSelector(class_=FileType, doc="""
-       The first possible FileType to handle a given filename.""")
+    first = param.ClassSelector(class_=FileType, doc='''
+       The first potential FileType to handle a given filename.''')
 
-    second = param.ClassSelector(class_=FileType, doc="""
-       The second possible FileType to handle a given filename.""")
+    second = param.ClassSelector(class_=FileType, doc='''
+       The second potential FileType to handle a given filename.''')
 
     def __init__(self, first, second, **kwargs):
         if set(first.extensions) & set(second.extensions):
@@ -179,13 +183,13 @@ class CustomFile(FileType):
     them to the loading interface for all FileTypes.
     """
 
-    data_fn = param.Callable(doc="""
+    data_fn = param.Callable(doc='''
        A callable that takes a filename and returns a dictionary of
-       data values""")
+       data values''')
 
-    metadata_fn = param.Callable(doc="""
+    metadata_fn = param.Callable(doc='''
         A callable that takes a filename and returns a dictionary of
-        metadata values""")
+        metadata values''')
 
     def __init__(self, data_fn=None, metadata_fn=None, **kwargs):
         zipped = zip(['data_fn','metadata_fn'], [data_fn, metadata_fn])
@@ -289,17 +293,17 @@ class ImageFile(FileType):
     extensions = param.List(default=['.png', '.jpg'], constant=True)
 
     image_info = param.Dict(default={'mode':'mode', 'size':'size', 'format':'format'},
-        doc="""Dictionary of the metadata to load. Each key is the
+        doc='''Dictionary of the metadata to load. Each key is the
         name given to the metadata item and each value is the PIL
-        Image attribute to return.""")
+        Image attribute to return.''')
 
     data_mode = param.ObjectSelector(default='RGBA',
                                      objects=['L', 'RGB', 'RGBA', 'I','F'],
-        doc="""Sets the mode of the mode of the Image object. Palette
-        mode'P is not supported""")
+        doc='''Sets the mode of the mode of the Image object. Palette
+        mode'P is not supported''')
 
-    data_key = param.String(default='images', doc="""
-       The name (key) given to the loaded image data.""")
+    data_key = param.String(default='images', doc='''
+       The name (key) given to the loaded image data.''')
 
     def __init__(self, **kwargs):
         import Image
@@ -404,7 +408,7 @@ class SVGFile(FileType):
     """
     There is no standard way to handle SVG files in Python, therefore
     this class implements display only. For custom SVG handling, this
-    can be subclassed by the user.
+    can be subclassed by the user for a more complete implementation.
     """
 
     def save(self, filename, data):
@@ -440,18 +444,18 @@ class ViewFrame(param.ParameterizedFunction):
     Requires both Pandas and IPython Notebook.
     """
 
-    size = param.Number(default=256, doc="""
-       The size of the display image to generate.""")
+    size = param.Number(default=256, doc='''
+       The size of the display image to generate.''')
 
     format = param.ObjectSelector(default='png', objects=['png','svg'],
-       doc=""" The image format of the display. Either 'png' or 'svg'.""")
+       doc=''' The image format of the display. Either 'png' or 'svg'.''')
 
     display_fns = param.List(default=[ImageFile.display,
                                       MatplotlibFile.display,
                                       SVGFile.display],
-       doc="""A list of display functions that return raster images
+       doc='''A list of display functions that return raster images
        (base64 encoded png images) based on filename or Python objects
-       as input.""")
+       as input.''')
 
 
     def formatter(self,x):
