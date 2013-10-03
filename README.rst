@@ -21,34 +21,25 @@ ________
 
 * A simple, useful core with advanced functionality strictly optional. Use what you need without learning about all components.
 
+* Declarative style to help ensure your work is reproducible.
+
 * The core and the optional Topographica interface are actively being used for research.
 
 * Succinctly express the high dimensional parameter spaces you wish to explore, without nested loops. For example, using the Cartesian product:
 
- >>> from lancet import LinearArgs
- >>> pspace = ( LinearArgs('exc',1, 20, steps=100)
-                * LinearArgs('inh',-10, -20, steps=100)
-                * LinearArgs('gNa',0.05, 0.10,  steps=10))
- >>> len(pspace) # 3-dimensional parameter space of 100000 points.
+>>> from lancet import Range
+>>> space = ( Range('exc',1, 20, steps=100)
+             * Range('inh',-10, -20, steps=100)
+             * Range('gNa',0.05, 0.10,  steps=10))
+>>> len(space) # 3-dimensional parameter space of 100000 points.
  100000
-
-* Review your chosen settings *before* running hundreds of jobs:
-
- >>> for kwargs in pspace(log_file='mylog'):
- ...:   slow_simulation_and_analysis(**kwargs)
- 0: exc=1.0, inh=-10.0, gNa=0.05
- 1: exc=1.0, inh=-10.0, gNa=0.0556
- ...
- 99998: exc=20.0, inh=-20.0, gNa=0.0944
- 99999: exc=20.0, inh=-20.0, gNa=0.1
- Continue? [y, N]:
 
 * Automatically log your work to a file, serialised as JSON::
 
-   $ less mylog
-   0 {"gNa": 0.050000000000000003, "inh": -10.0, "exc": 1.0}
-   1 {"gNa": 0.055555555555555559, "inh": -10.0, "exc": 1.0}
-   2 {"gNa": 0.061111111111111116, "inh": -10.0, "exc": 1.0}
+   $ less example.log
+   0 {"gNa": 0.050, "inh": -10.0, "exc": 1.0}
+   1 {"gNa": 0.055, "inh": -10.0, "exc": 1.0}
+   2 {"gNa": 0.061, "inh": -10.0, "exc": 1.0}
    ...
 
 * Easily use external tools outside of Python to launch hundreds of concurrent simulations, locally or on a cluster (e.g. using Grid Engine). Quickly switch between working locally and working on a cluster::
@@ -60,20 +51,20 @@ ________
 
 * Get the appropriate review for your chosen workflow, according to the components you chose, keeping your output in one place::
 
-   from lancet import review_and_launch
+   from lancet import review_and_launch, Range
 
-   @review_and_launch(Launcher, output_directory='./factors', review=True)
+   @review_and_launch(output_directory='./factors', review=True)
    def model_analysis():
-     # pspace = LinearArgs('exc',1, 20, 10) * LinearArgs('inh',-10, -20, 10)
+     # pspace = Range('exc',1, 20, 10) * Range('inh',-10, -20, 10)
      " Set up your launch settings and the tool you want to use here "
      ...
      return launcher
 
 .. Consider using factor N as an example
 
-* Core classes designed to be extended to match your workflow. Optional components available for tight integration with the `Topographica simulator <https://github.com/ioam/topographica>`_. These allow you to analyze your model both within simulations as they run and across simulations once all the data is collected.
+* Core classes designed to be extended to match your workflow. Components for integration with the `Topographica simulator <https://github.com/ioam/topographica>`_ are available in the corresponding Topographica Lancet extension. These allow you to analyze your model both within simulations as they run and across simulations once all the data is collected.
 
-* Ongoing work on (optional) tools for easily storing your data using HDF5 (using `PyTables <http://www.pytables.org/>`_), automated version control and analysis.
+* Supports an interactive, reproducible workflow with `Pandas <http://pandas.pydata.org/>`_ and `IPython <http://ipython.org/>`_.
 
 ..
   ## Background
