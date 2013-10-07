@@ -820,7 +820,7 @@ class review_and_launch(core.PrettyPrinted, param.Parameterized):
         # Across all the launchers...
         for launcher in launchers:
             # Ensure a shared timestamp throughout
-            launcher.__class__.timestamp = current_timestamp
+            launcher.timestamp = current_timestamp
             # Set the output directory appropriately
             if self.output_directory is not None:
                 launcher.output_directory = self.output_directory
