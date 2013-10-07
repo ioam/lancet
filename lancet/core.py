@@ -272,7 +272,8 @@ class Args(BaseArgs):
                            if k not in extra_kwargs])
             rounded_specs = list(self.round_floats([extra_kwargs],
                                                    fp_precision))
-            return rounded_specs, kwargs, False
+            explicit = True if (rounded_specs==[{}]) else False
+            return rounded_specs, kwargs, explicit
 
     def __iter__(self):
         self._exhausted = False
