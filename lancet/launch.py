@@ -96,6 +96,13 @@ class CommandTemplate(core.PrettyPrinted, param.Parameterized):
         """
         return
 
+    def finalize(self, info):
+        """
+        Optional method that allows a CommandTemplate to save state
+        before launch. The info argument is supplied by the Launcher.
+        """
+        return
+
     def summary(self):
         """
         A succinct summary of the CommandTemplate configuration.
@@ -443,6 +450,7 @@ class Launcher(core.PrettyPrinted, param.Parameterized):
         """
         launchinfo = self._setup_launch()
         streams_path = self._setup_streams_path()
+        self.command_template.finalize(launchinfo)
 
         self.record_info(launchinfo)
 
