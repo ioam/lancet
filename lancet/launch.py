@@ -797,6 +797,8 @@ class review_and_launch(core.PrettyPrinted, param.Parameterized):
             arg_specifier = launcher.arg_specifier
             command_template.verify(arg_specifier)
             root_directory = launcher.get_root_directory()
+            if os.path.isdir(root_directory):
+                raise Exception("Root directory already exists: %r" % root_directory)
             if root_directory in root_directories:
                 raise Exception("Each launcher requires a unique root directory")
             root_directories.append(root_directory)
