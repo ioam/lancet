@@ -86,13 +86,13 @@ class CommandTemplate(core.PrettyPrinted, param.Parameterized):
         file_handle.write(full_string)
         file_handle.flush()
 
-    def validate_arguments(self, args):
+    def verify(self, args):
         """
-        Allows a final check that ensures valid arguments have been
+        Optional, final check that ensures valid arguments have been
         passed before launch. Allows the constant and varying_keys to
         be be checked and can inspect the specs attribute if an
         instance of Args. If invalid, raise an Exception with the
-        appropriate error message.
+        appropriate error message, otherwise return None.
         """
         return
 
@@ -795,7 +795,7 @@ class review_and_launch(core.PrettyPrinted, param.Parameterized):
         for launcher in launchers:
             command_template = launcher.command_template
             arg_specifier = launcher.arg_specifier
-            command_template.validate_arguments(arg_specifier)
+            command_template.verify(arg_specifier)
             root_directory = launcher.get_root_directory()
             if root_directory in root_directories:
                 raise Exception("Each launcher requires a unique root directory")
