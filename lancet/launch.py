@@ -773,10 +773,9 @@ class review_and_launch(core.PrettyPrinted, param.Parameterized):
 
     launch_fn = param.Callable(doc='''The function that is to be decorated.''')
 
-    def __init__(self, output_directory='.', **kwargs):
+    def __init__(self, **kwargs):
         self._pprint_args = ([],[],None,{})
-        super(review_and_launch, self).__init__(output_directory=output_directory,
-                                                **kwargs)
+        super(review_and_launch, self).__init__(**kwargs)
         self.pprint_args(['output_directory', 'launch_fn'],
                          ['review', 'launch_args'])
 
