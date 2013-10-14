@@ -230,6 +230,7 @@ class BaseArgs(PrettyPrinted, param.Parameterized):
         a summary does not have to be complete but must supply the
         most relevant information about the object to the user.
         """
+        print("Items: %s" % len(self))
         varying_keys = ', '.join('%r' % k for k in self.varying_keys)
         print("Varying Keys: %s" % varying_keys)
         items = ', '.join(['%s=%r' % (k,v)
