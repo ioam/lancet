@@ -765,7 +765,10 @@ class FileInfo(Args):
 
     load_contents = param.Boolean(default=False, constant=True, doc='''
        Whether the main contents of the files are to be loaded along
-       with the associated metadata.''')
+       with the associated metadata. Note that this can be slow when
+       handling large numbers of files - it may be better to select
+       only the required data with a pandas DataFrame and use the
+       load_dframe method instead.''')
 
     ignore = param.List(default=[], constant=True, doc='''
        Metadata keys that are to be explicitly ignored. ''')
@@ -785,6 +788,21 @@ class FileInfo(Args):
         self.unsortable_keys = list(data_keys)
         self.pprint_args(['source', 'key', 'filetype'],
                          ['load_contents', 'ignore'])
+
+    def load(self, dframe):
+        """
+        Load the file contents into the supplied dataframe using the
+        specified key and filetype. This allows a specific selection
+        to be made using pandas over the metadata before loading the
+        file contents (which may be slow).
+        """
+        if DataFrame is None: print "Pandas not available"
+        filename_series = dframe[self.key]
+        loaded_data = filename_series.map(self.filetype.data)
+        keys = [el.keys() for el in loaded_data.values]
+        for key in set().union(*keys):
+            dframe[key] = loaded_data.map(lambda x: x.get(key, np.nan))
+        return dframe
 
     def _info(self, source, key, filetype, load_contents, ignore):
         """
