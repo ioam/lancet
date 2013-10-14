@@ -523,7 +523,7 @@ class Log(Args):
               relative path is given, the absolute path is computed
               relative to os.getcwd().''')
 
-    tid_key = param.String(default='tid', constant=True, allow_None=True, 
+    tid_key = param.String(default='tid', constant=True, allow_None=True,
          doc='''If not None, the key given to the tid values included
                in the loaded specifications. If None, the tid number
                is ignored.''')
@@ -576,7 +576,7 @@ class Log(Args):
         start = int(log_file.readlines()[-1].split()[0])+1 if append else 0
         ascending_indices = range(start, start+len(data))
 
-        log_str = '\n'.join(['%d %s' % (tid, json.dumps(el)) 
+        log_str = '\n'.join(['%d %s' % (tid, json.dumps(el))
                              for (tid, el) in zip(ascending_indices,specs)])
         log_file.write("\n"+log_str if append else log_str)
         log_file.close()
@@ -588,11 +588,11 @@ class Log(Args):
         if tid_key is None:
             log_specs = [spec for (_, spec) in log_items]
         else:
-            log_specs = [dict(spec.items()+[(tid_key,idx)]) 
+            log_specs = [dict(spec.items()+[(tid_key,idx)])
                          for (idx, spec) in log_items]
 
-        super(Log, self).__init__(log_specs, 
-                                  log_path=log_path, 
+        super(Log, self).__init__(log_specs,
+                                  log_path=log_path,
                                   tid_key=tid_key,
                                   **kwargs)
         self.pprint_args(['log_path'], ['tid_key'])
@@ -632,13 +632,13 @@ class FilePattern(Args):
     filenames anyway).
     """
 
-    key = param.String(default=None, allow_None=True, constant=True, 
+    key = param.String(default=None, allow_None=True, constant=True,
        doc='''The key name given to the matched file path strings.''')
 
     pattern = param.String(default=None, allow_None=True, constant=True,
        doc='''The pattern files are to be searched against.''')
 
-    root = param.String(default=None, allow_None=True, constant=True, 
+    root = param.String(default=None, allow_None=True, constant=True,
        doc='''The root directory from which patterns are to be loaded.
        The root is set relative to os.getcwd().''')
 
@@ -719,7 +719,7 @@ class FilePattern(Args):
         """
         sep = '~lancet~sep~'
         float_codes = ['e','E','f', 'F','g', 'G', 'n']
-        typecodes = dict([(k,float) for k in float_codes] 
+        typecodes = dict([(k,float) for k in float_codes]
                          + [('b',bin), ('d',int), ('o',oct), ('x',hex)])
         parse = list(string.Formatter().parse(pattern))
         text, fields, codes, _ = zip(*parse)
@@ -770,9 +770,9 @@ class FileInfo(Args):
     ignore = param.List(default=[], constant=True, doc='''
        Metadata keys that are to be explicitly ignored. ''')
 
-    def __init__(self, source, key, filetype, 
+    def __init__(self, source, key, filetype,
                  load_contents=False, ignore = [], **kwargs):
-        specs, data_keys = self._info(source, key, filetype, 
+        specs, data_keys = self._info(source, key, filetype,
                                       load_contents, ignore)
         super(FileInfo, self).__init__(specs,
                                        source = source,
@@ -783,7 +783,7 @@ class FileInfo(Args):
                                        **kwargs)
         # Do not attempt to sort data fields.
         self.unsortable_keys = list(data_keys)
-        self.pprint_args(['source', 'key', 'filetype'], 
+        self.pprint_args(['source', 'key', 'filetype'],
                          ['load_contents', 'ignore'])
 
     def _info(self, source, key, filetype, load_contents, ignore):
@@ -816,4 +816,3 @@ class FileInfo(Args):
         if datakey_clashes:
             print "WARNING: Loaded data keys overriding source and/or metadata keys"
         return specs, data_keys
-

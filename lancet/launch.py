@@ -409,11 +409,11 @@ class Launcher(core.PrettyPrinted, param.Parameterized):
             """
             result = False
             # list creates copy of keys, as dict is modified in loop
-            for proc in list(processes): 
+            for proc in list(processes):
                 if wait: proc.wait()
                 if proc.poll() is not None:
                     # process is done, free up slot
-                    logging.debug("Process %d exited with code %d." 
+                    logging.debug("Process %d exited with code %d."
                                   % (processes[proc]['tid'], proc.poll()))
                     processes[proc]['stdout'].close()
                     processes[proc]['stderr'].close()
@@ -423,13 +423,13 @@ class Launcher(core.PrettyPrinted, param.Parameterized):
 
         for cmd, tid in process_commands:
             logging.debug("Starting process %d..." % tid)
-            stdout_handle = open(os.path.join(streams_path, "%s.o.%d" 
+            stdout_handle = open(os.path.join(streams_path, "%s.o.%d"
                                               % (self.batch_name, tid)), "wb")
-            stderr_handle = open(os.path.join(streams_path, "%s.e.%d" 
+            stderr_handle = open(os.path.join(streams_path, "%s.e.%d"
                                               % (self.batch_name, tid)), "wb")
             proc = subprocess.Popen(cmd, stdout=stdout_handle, stderr=stderr_handle)
-            processes[proc] = { 'tid' : tid, 
-                                'stdout' : stdout_handle, 
+            processes[proc] = { 'tid' : tid,
+                                'stdout' : stdout_handle,
                                 'stderr' : stderr_handle }
 
             if self.max_concurrency:
@@ -750,7 +750,7 @@ class QLauncher(Launcher):
         the <batch_name>* pattern . Necessary when StopIteration is
         raised with scheduled jobs left on the queue.
         """
-        p = subprocess.Popen(['qdel', '%s_%s*' % (self.batch_name, 
+        p = subprocess.Popen(['qdel', '%s_%s*' % (self.batch_name,
                                                   self.job_timestamp)],
                              stdout=subprocess.PIPE)
         (stdout, stderr) = p.communicate()
@@ -772,7 +772,7 @@ class review_and_launch(core.PrettyPrinted, param.Parameterized):
     review = param.Boolean(default=True, doc='''
          Whether or not to perform a detailed review of the launch.''')
 
-    launch_args = param.ClassSelector(default=None, allow_None=True, 
+    launch_args = param.ClassSelector(default=None, allow_None=True,
         class_=core.Args, doc= '''An optional argument specifier to
         parameterise lancet, allowing multi-launch scripts.  For
         instance, this may be useful for collecting statistics over
