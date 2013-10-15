@@ -5,7 +5,6 @@
 import os, sys, time, pipes, subprocess, types
 import fnmatch
 import json, pickle
-import logging
 
 import param
 
@@ -299,6 +298,7 @@ class Launcher(core.PrettyPrinted, param.Parameterized):
     def __init__(self, batch_name, arg_specifier, command_template, **kwargs):
 
         self._pprint_args = ([],[],None,{})
+        if 'name' not in kwargs: kwargs['name'] = self.__class__.__name__
         super(Launcher,self).__init__(batch_name=batch_name,
                                       arg_specifier=arg_specifier,
                                       command_template = command_template,
@@ -413,8 +413,8 @@ class Launcher(core.PrettyPrinted, param.Parameterized):
                 if wait: proc.wait()
                 if proc.poll() is not None:
                     # process is done, free up slot
-                    logging.debug("Process %d exited with code %d."
-                                  % (processes[proc]['tid'], proc.poll()))
+                    self.debug("Process %d exited with code %d."
+                               % (processes[proc]['tid'], proc.poll()))
                     processes[proc]['stdout'].close()
                     processes[proc]['stderr'].close()
                     del processes[proc]
@@ -422,7 +422,7 @@ class Launcher(core.PrettyPrinted, param.Parameterized):
             return result
 
         for cmd, tid in process_commands:
-            logging.debug("Starting process %d..." % tid)
+            self.debug("Starting process %d..." % tid)
             stdout_handle = open(os.path.join(streams_path, "%s.o.%d"
                                               % (self.batch_name, tid)), "wb")
             stderr_handle = open(os.path.join(streams_path, "%s.e.%d"
@@ -465,7 +465,7 @@ class Launcher(core.PrettyPrinted, param.Parameterized):
 
             self.append_log(list(zip(tids,groupspecs)))
 
-            logging.info("Group %d: executing %d processes..." % (gid, len(allcommands)))
+            self.message("Group %d: executing %d processes..." % (gid, len(allcommands)))
             self.launch_process_group(zip(allcommands,tids), streams_path)
 
             last_tids = tids[:]
@@ -667,8 +667,8 @@ class QLauncher(Launcher):
         (stdout, stderr) = p.communicate()
 
         self.collate_count += 1
-        logging.debug(stdout)
-        logging.info("Invoked qsub for next batch.")
+        self.debug(stdout)
+        self.message("Invoked qsub for next batch.")
         return job_name
 
     def static_qsub(self, output_dir, error_dir, tid_specs):
@@ -691,10 +691,10 @@ class QLauncher(Launcher):
                                         cmd_args)
             p = subprocess.Popen(popen_args, stdout=subprocess.PIPE)
             (stdout, stderr) = p.communicate()
-            logging.debug(stdout)
+            self.debug(stdout)
             processes.append(p)
 
-        logging.info("Invoked qsub for %d commands" % len(processes))
+        self.message("Invoked qsub for %d commands" % len(processes))
         if self.reduction_fn is not None:
             self.qsub_collate_and_launch(output_dir, error_dir, job_names)
 

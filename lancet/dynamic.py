@@ -45,7 +45,7 @@ class DynamicArgs(BaseArgs):
             pfiles = [open(os.path.join(metrics_dir, match),'rb') for match in matches]
             self._update_state([self.metric_loader(pfile) for pfile in pfiles])
         except:
-            logging.error("Cannot load required metric files. Cannot continue.")
+            self.warning("Cannot load required metric files. Cannot continue.")
             return None # StopIteration should be raised by the argument specifier
 
     def schedule(self):
