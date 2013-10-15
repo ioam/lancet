@@ -1,8 +1,15 @@
 import os, tempfile, StringIO, json, pickle
 import param
-import numpy as np
 from core import PrettyPrinted
 
+try:    import numpy
+except: pass
+
+try:    import Image
+except: pass
+
+try:    from matplotlib import pyplot
+except: pass
 
 
 class FileType(PrettyPrinted, param.Parameterized):
@@ -252,18 +259,16 @@ class NumpyFile(FileType):
     compress = param.Boolean(default=True)
 
     def __init__(self, **kwargs):
-        import numpy as np
-        global np
         super(NumpyFile, self).__init__(**kwargs)
         self.pprint_args(['hash_suffix'], ['compress']) # CHECK!
 
     def save(self, filename, metadata={}, **data):
         super(NumpyFile, self).save(filename, metadata, **data)
-        savefn = np.savez_compressed if self.compress else np.savez
+        savefn = numpy.savez_compressed if self.compress else numpy.savez
         savefn(self._savepath(filename), metadata=metadata, **data)
 
     def metadata(self, filename):
-        npzfile = np.load(self._loadpath(filename))
+        npzfile = numpy.load(self._loadpath(filename))
         metadata = (npzfile['metadata'].tolist()
                     if 'metadata' in npzfile.keys() else {})
         # Numpy load may return a Python dictionary.
@@ -271,7 +276,7 @@ class NumpyFile(FileType):
         return metadata
 
     def data(self, filename):
-        npzfile = np.load(self._loadpath(filename))
+        npzfile = numpy.load(self._loadpath(filename))
         keys = [k for k in npzfile.keys() if k != 'metadata']
         data = dict((k,npzfile[k]) for k in keys)
 
@@ -306,8 +311,6 @@ class ImageFile(FileType):
        The name (key) given to the loaded image data.''')
 
     def __init__(self, **kwargs):
-        import Image
-        global Image
         super(ImageFile, self).__init__(**kwargs)
         self.pprint_args(['hash_suffix'],
                          ['data_key', 'data_mode', 'image_info'])
@@ -321,8 +324,8 @@ class ImageFile(FileType):
         """
         Data may be either a PIL Image object or a Numpy array.
         """
-        if isinstance(imdata, np.ndarray):
-            imdata = Image.fromarray(np.uint8(imdata))
+        if isinstance(imdata, numpy.ndarray):
+            imdata = Image.fromarray(numpy.uint8(imdata))
         elif isinstance(imdata, Image.Image):
             imdata.save(self._savepath(filename))
 
@@ -360,8 +363,6 @@ class MatplotlibFile(FileType):
     extensions = param.List(default=['.mpkl'], constant=True)
 
     def __init__(self, **kwargs):
-        from matplotlib import pyplot
-        global pyplot
         super(MatplotlibFile, self).__init__(**kwargs)
         self.pprint_args(['hash_suffix'], [])
 
