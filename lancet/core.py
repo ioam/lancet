@@ -263,9 +263,7 @@ class Args(BaseArgs):
         Returns the specs, the remaining kwargs and whether or not the
         constructor was called with kwarg or explicit specs.
         """
-        if isinstance(specs, list):
-            return list(self.round_floats(specs, fp_precision)), kwargs, True
-        elif specs is None:
+        if specs is None:
             overrides = param.ParamOverrides(self, kwargs,
                                              allow_extra_keywords=True)
             extra_kwargs = overrides.extra_keywords()
@@ -275,6 +273,8 @@ class Args(BaseArgs):
                                                    fp_precision))
             explicit = True if (rounded_specs==[{}]) else False
             return rounded_specs, kwargs, explicit
+
+        return list(self.round_floats(specs, fp_precision)), kwargs, True
 
     def __iter__(self):
         self._exhausted = False
