@@ -49,7 +49,7 @@ class PrettyPrinted(object):
         (kwargs,_,_,_) = self._pprint_args
         self._pprint_args = (keyword_args + kwargs, pos_args, infix_operator, extra_params)
 
-    def _pprint(self, cycle=False, flat=False, annotate=False, level=1, tab = '   '):
+    def _pprint(self, cycle=False, flat=False, annotate=False, onlychanged=True, level=1, tab = '   '):
         """
         Pretty printer that prints only the modified keywords and
         generates flat representations (for repr) and optionally
@@ -62,7 +62,7 @@ class PrettyPrinted(object):
 
         params = dict(self.get_param_values())
         show_lexsort = getattr(self, '_lexorder', None) is not None
-        modified = [k for (k,v) in self.get_param_values(onlychanged=True)]
+        modified = [k for (k,v) in self.get_param_values(onlychanged=onlychanged)]
         pkwargs = [(k, params[k])  for k in kwargs if (k in modified)] + extra_params.items()
         arg_list = [(k,params[k]) for k in pos_args] + pkwargs
 
@@ -94,7 +94,7 @@ class PrettyPrinted(object):
         return ''.join(lines)
 
     def __repr__(self):
-        return self._pprint(flat=True)
+        return self._pprint(flat=True, onlychanged=False)
 
     def __str__(self):
         return self._pprint()
