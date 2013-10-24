@@ -916,7 +916,7 @@ class review_and_launch(core.PrettyPrinted, param.Parameterized):
         template_name = command_template.__class__.__name__
         print('%s\n' % self.summary_heading(template_name))
         command_template.summary()
-
+        print "\n"
         response = self.input_options(['y', 'N','quit','save'],
                                       '\nShow available command entries?',
                                       default='n')
