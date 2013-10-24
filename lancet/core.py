@@ -664,7 +664,7 @@ class FilePattern(Args):
         super(FilePattern, self).__init__(specs, key=key, pattern=pattern,
                                           root=root, **kwargs)
         if len(specs) == 0:
-            print("%r: No matches found." % self)
+            self.warning("%r: No matches found." % self)
         self.pprint_args(['key', 'pattern'], ['root'])
 
     def fields(self):
@@ -801,7 +801,12 @@ class FileInfo(Args):
         loaded_data = filename_series.map(self.filetype.data)
         keys = [el.keys() for el in loaded_data.values]
         for key in set().union(*keys):
-            dframe[key] = loaded_data.map(lambda x: x.get(key, np.nan))
+            key_exists = key in dframe.columns
+            if key_exists:
+                self.warning("Appending '_data' suffix to data key %r to avoid"
+                             "overwriting existing metadata with the same name." % key)
+            suffix = '_data' if key_exists else ''
+            dframe[key+suffix] = loaded_data.map(lambda x: x.get(key, np.nan))
         return dframe
 
     def _info(self, source, key, filetype, load_contents, ignore):
@@ -830,7 +835,7 @@ class FileInfo(Args):
 
         # Metadata clashes can be avoided by using the ignore list.
         if mdata_clashes:
-            print "WARNING: Loaded metadata keys overriding source keys."
+            self.warning("Loaded metadata keys overriding source keys.")
         if datakey_clashes:
-            print "WARNING: Loaded data keys overriding source and/or metadata keys"
+            self.warning("Loaded data keys overriding source and/or metadata keys")
         return specs, data_keys
