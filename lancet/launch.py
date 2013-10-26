@@ -858,6 +858,7 @@ class review_and_launch(core.PrettyPrinted, param.Parameterized):
         # Run review of launch args if necessary
         if self.launch_args is not None:
             proceed = self.review_args(self.launch_args,
+                                       show_repr=True,
                                        heading='Meta Arguments')
             if not proceed: return False
 
@@ -894,7 +895,7 @@ class review_and_launch(core.PrettyPrinted, param.Parameterized):
             print("\n%s\n" % launcher)
         return True
 
-    def review_args(self, obj, heading='Arguments'):
+    def review_args(self, obj, show_repr=False, heading='Arguments'):
         """
         Reviews the given argument specification. Can review the
         meta-arguments (launch_args) or the arguments themselves.
@@ -902,7 +903,7 @@ class review_and_launch(core.PrettyPrinted, param.Parameterized):
         arg_specifier = obj.arg_specifier if isinstance(obj, Launcher) else obj
         print('\n%s\n' % self.summary_heading(heading))
         arg_specifier.summary()
-
+        if show_repr: print "\n%s\n" % arg_specifier
         response = self.input_options(['y', 'N','quit'],
                 '\nShow available argument specifier entries?', default='n')
         if response == 'quit': return False
