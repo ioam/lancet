@@ -271,8 +271,9 @@ class Args(BaseArgs):
                            if k not in extra_kwargs])
             rounded_specs = list(self.round_floats([extra_kwargs],
                                                    fp_precision))
-            explicit = True if (rounded_specs==[{}]) else False
-            return rounded_specs, kwargs, explicit
+
+            if extra_kwargs=={}: return [], kwargs, True
+            else:                return rounded_specs, kwargs, False
 
         return list(self.round_floats(specs, fp_precision)), kwargs, True
 
@@ -498,8 +499,6 @@ class List(Args):
          The key assigned to the elements of the supplied list.''')
 
     def __init__(self, key, values, **kwargs):
-
-        assert values != [], "Empty list not allowed."
         specs = [{key:val} for val in values]
         super(List, self).__init__(specs, key=key, values=values, **kwargs)
         self.pprint_args(['key', 'values'], [])
