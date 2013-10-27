@@ -662,8 +662,6 @@ class FilePattern(Args):
         specs = self._load_expansion(key, root, pattern)
         super(FilePattern, self).__init__(specs, key=key, pattern=pattern,
                                           root=root, **kwargs)
-        if len(specs) == 0:
-            self.warning("%r: No matches found." % self)
         self.pprint_args(['key', 'pattern'], ['root'])
 
     def fields(self):
