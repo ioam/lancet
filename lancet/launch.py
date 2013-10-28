@@ -591,6 +591,7 @@ class QLauncher(Launcher):
         collate_and_launch().
         """
         self._launchinfo = self._setup_launch()
+        self.command_template.finalize(self._launchinfo)
         self.job_timestamp = time.strftime('%H%M%S')
 
         streams_path = self._setup_streams_path()
