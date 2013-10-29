@@ -67,7 +67,7 @@ class CommandTemplate(core.PrettyPrinted, param.Parameterized):
                 'batch_name':         '<batch_name>',
                 'batch_tag':          '<batch_tag>',
                 'batch_description':  '<batch_description>',
-                'launch_repr':        '<launch_repr>',
+                'launcher':        '<launcher>',
                 'timestamp_format':   '<timestamp_format>',
                 'timestamp':          tuple(time.localtime()),
                 'varying_keys':       args.varying_keys,
@@ -376,12 +376,12 @@ class Launcher(core.PrettyPrinted, param.Parameterized):
                 'batch_name':        self.batch_name,
                 'batch_tag':         self.tag,
                 'batch_description': self.description,
-                'launch_repr':       repr(self),
+                'launcher':          repr(self),
                 'timestamp':         self.timestamp,
                 'timestamp_format':  self.timestamp_format,
                 'varying_keys':      self.args.varying_keys,
                 'constant_keys':     self.args.constant_keys,
-                'constant_items':     self.args.constant_items}
+                'constant_items':    self.args.constant_items}
 
     def _setup_streams_path(self):
         streams_path = os.path.join(self.root_directory, "streams")
