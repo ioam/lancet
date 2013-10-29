@@ -61,7 +61,7 @@ class CommandTemplate(core.PrettyPrinted, param.Parameterized):
         if self.do_format: return core.BaseArgs.spec_formatter(spec)
         else             : return spec
 
-    def show(self, arg_specifier, file_handle=sys.stdout, **kwargs):
+    def show(self, args, file_handle=sys.stdout, **kwargs):
         full_string = ''
         info = {'root_directory':     '<root_directory>',
                 'batch_name':         '<batch_name>',
@@ -70,13 +70,13 @@ class CommandTemplate(core.PrettyPrinted, param.Parameterized):
                 'launch_repr':        '<launch_repr>',
                 'timestamp_format':   '<timestamp_format>',
                 'timestamp':          tuple(time.localtime()),
-                'varying_keys':       arg_specifier.varying_keys,
-                'constant_keys':      arg_specifier.constant_keys,
-                'constant_items':     arg_specifier.constant_items}
+                'varying_keys':       args.varying_keys,
+                'constant_keys':      args.constant_keys,
+                'constant_items':     args.constant_items}
 
         quoted_cmds = [ subprocess.list2cmdline(
                 [el for el in self(self._formatter(s),'<tid>',info)])
-                        for s in arg_specifier.specs]
+                        for s in args.specs]
 
         cmd_lines = ['%d: %s\n' % (i, qcmds) for (i,qcmds)
                      in enumerate(quoted_cmds)]
@@ -246,7 +246,7 @@ class Launcher(core.PrettyPrinted, param.Parameterized):
     batch_name = param.String(default=None, allow_None=True, constant=True,
        doc='''A unique identifier for the current batch''')
 
-    arg_specifier = param.ClassSelector(core.BaseArgs, constant=True, doc='''
+    args = param.ClassSelector(core.BaseArgs, constant=True, doc='''
        The specifier used to generate the varying parameters for the tasks.''')
 
     command_template = param.ClassSelector(CommandTemplate, constant=True, doc='''
@@ -295,18 +295,18 @@ class Launcher(core.PrettyPrinted, param.Parameterized):
       name.''')
 
 
-    def __init__(self, batch_name, arg_specifier, command_template, **kwargs):
+    def __init__(self, batch_name, args, command_template, **kwargs):
 
         self._pprint_args = ([],[],None,{})
         if 'name' not in kwargs: kwargs['name'] = self.__class__.__name__
         super(Launcher,self).__init__(batch_name=batch_name,
-                                      arg_specifier=arg_specifier,
+                                      args=args,
                                       command_template = command_template,
                                       **kwargs)
         self._spec_log = []
         if self.timestamp == (0,)*9:
             self.timestamp = tuple(time.localtime())
-        self.pprint_args(['batch_name','arg_specifier','command_template'],
+        self.pprint_args(['batch_name','args','command_template'],
                          ['description', 'tag', 'output_directory',
                           'subdir','metadata'])
 
@@ -379,9 +379,9 @@ class Launcher(core.PrettyPrinted, param.Parameterized):
                 'launch_repr':       repr(self),
                 'timestamp':         self.timestamp,
                 'timestamp_format':  self.timestamp_format,
-                'varying_keys':      self.arg_specifier.varying_keys,
-                'constant_keys':     self.arg_specifier.constant_keys,
-                'constant_items':     self.arg_specifier.constant_items}
+                'varying_keys':      self.args.varying_keys,
+                'constant_keys':     self.args.constant_keys,
+                'constant_items':     self.args.constant_items}
 
     def _setup_streams_path(self):
         streams_path = os.path.join(self.root_directory, "streams")
@@ -456,7 +456,7 @@ class Launcher(core.PrettyPrinted, param.Parameterized):
 
         last_tid = 0
         last_tids = []
-        for gid, groupspecs in enumerate(self.arg_specifier):
+        for gid, groupspecs in enumerate(self.args):
             tids = list(range(last_tid, last_tid+len(groupspecs)))
             last_tid += len(groupspecs)
             allcommands = [self.command_template(
@@ -470,8 +470,8 @@ class Launcher(core.PrettyPrinted, param.Parameterized):
 
             last_tids = tids[:]
 
-            if isinstance(self.arg_specifier, DynamicArgs):
-                self.arg_specifier.update(last_tids, launchinfo)
+            if isinstance(self.args, DynamicArgs):
+                self.args.update(last_tids, launchinfo)
 
         self.record_info()
         if self.reduction_fn is not None:
@@ -528,8 +528,8 @@ class QLauncher(Launcher):
        keywords in the dict constructor: ie. using
        qsub_flag_options=dict(key1=value1, key2=value2, ....)''')
 
-    def __init__(self, batch_name, arg_specifier, command_template, **kwargs):
-        super(QLauncher, self).__init__(batch_name, arg_specifier,
+    def __init__(self, batch_name, args, command_template, **kwargs):
+        super(QLauncher, self).__init__(batch_name, args,
                 command_template, **kwargs)
 
         self._launchinfo = None
@@ -539,13 +539,13 @@ class QLauncher(Launcher):
         self.last_tid = 0
         self.last_scheduled_tid = 0
         self.collate_count = 0
-        self.spec_iter = iter(self.arg_specifier)
+        self.spec_iter = iter(self.args)
 
         self.max_concurrency = None # Inherited
 
         # The necessary conditions for reserving jobs before specification known.
-        self.is_dynamic_qsub = all([isinstance(self.arg_specifier, DynamicArgs),
-                                    hasattr(self.arg_specifier, 'schedule'),
+        self.is_dynamic_qsub = all([isinstance(self.args, DynamicArgs),
+                                    hasattr(self.args, 'schedule'),
                                     hasattr(self.command_template,   'queue'),
                                     hasattr(self.command_template,   'specify')])
 
@@ -626,8 +626,8 @@ class QLauncher(Launcher):
         self.append_log(tid_specs)
 
         # Updating the argument specifier
-        if isinstance(self.arg_specifier,DynamicArgs):
-            self.arg_specifier.update(self.last_tids, self._launchinfo)
+        if isinstance(self.args,DynamicArgs):
+            self.args.update(self.last_tids, self._launchinfo)
         self.last_tids = [tid for (tid,_) in tid_specs]
 
         output_dir = self.qsub_flag_options['-o']
@@ -636,7 +636,7 @@ class QLauncher(Launcher):
         else:            self.static_qsub(output_dir, error_dir, tid_specs)
 
         # Pickle launcher before exit if necessary.
-        if isinstance(self.arg_specifier,DynamicArgs) or (self.reduction_fn is not None):
+        if isinstance(self.args,DynamicArgs) or (self.reduction_fn is not None):
             pickle_path = os.path.join(self.root_directory, 'qlauncher.pkl')
             pickle.dump(self, open(pickle_path,'wb'))
 
@@ -714,7 +714,7 @@ class QLauncher(Launcher):
 
         # If schedule is empty (or on first initialization)...
         if (self.schedule == []) or (self.schedule is None):
-            self.schedule = self.arg_specifier.schedule()
+            self.schedule = self.args.schedule()
             assert len(tid_specs)== self.schedule[0], "Number of specs don't match schedule!"
 
             # Generating the scheduled tasks (ie the queue commands)
@@ -802,8 +802,8 @@ class review_and_launch(core.PrettyPrinted, param.Parameterized):
         root_directories = []
         for launcher in launchers:
             command_template = launcher.command_template
-            arg_specifier = launcher.arg_specifier
-            command_template.verify(arg_specifier)
+            args = launcher.args
+            command_template.verify(args)
             root_directory = launcher.get_root_directory()
             if os.path.isdir(root_directory):
                 raise Exception("Root directory already exists: %r" % root_directory)
@@ -901,14 +901,14 @@ class review_and_launch(core.PrettyPrinted, param.Parameterized):
         Reviews the given argument specification. Can review the
         meta-arguments (launch_args) or the arguments themselves.
         """
-        arg_specifier = obj.arg_specifier if isinstance(obj, Launcher) else obj
+        args = obj.args if isinstance(obj, Launcher) else obj
         print('\n%s\n' % self.summary_heading(heading))
-        arg_specifier.summary()
-        if show_repr: print "\n%s\n" % arg_specifier
+        args.summary()
+        if show_repr: print "\n%s\n" % args
         response = self.input_options(['y', 'N','quit'],
                 '\nShow available argument specifier entries?', default='n')
         if response == 'quit': return False
-        if response == 'y':  arg_specifier.show()
+        if response == 'y':  args.show()
         print
         return True
 
@@ -923,19 +923,19 @@ class review_and_launch(core.PrettyPrinted, param.Parameterized):
                                       '\nShow available command entries?',
                                       default='n')
 
-        arg_specifier = launcher.arg_specifier
+        args = launcher.args
         isdynamic = (isinstance(launcher, QLauncher)
                      and launcher.is_dynamic_qsub)
 
         if response == 'quit': return False
         elif response == 'y' and not isdynamic:
-            command_template.show(arg_specifier)
+            command_template.show(args)
         elif response == 'y' and isdynamic:
-            command_template.show(arg_specifier, queue_cmd_only=True)
+            command_template.show(args, queue_cmd_only=True)
         elif response == 'save':
             fname = raw_input('Filename: ').replace(' ','_')
             with open(os.path.abspath(fname),'w') as f:
-                command_template.show(arg_specifier, file_handle=f)
+                command_template.show(args, file_handle=f)
         print
         return True
 

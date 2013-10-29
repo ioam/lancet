@@ -241,15 +241,15 @@ class DynamicCommandTemplate(CommandTemplate):
     def queue(self,tid, info):
         raise NotImplementedError
 
-    def show(self, arg_specifier, file_handle=sys.stdout, queue_cmd_only=False):
+    def show(self, args, file_handle=sys.stdout, queue_cmd_only=False):
         info = {'root_directory':     '<root_directory>',
                 'batch_name':         '<batch_name>',
                 'batch_tag':          '<batch_tag>',
                 'batch_description':  '<batch_description>',
                 'timestamp':          tuple(time.localtime()),
-                'varying_keys':       arg_specifier.varying_keys,
-                'constant_keys':      arg_specifier.constant_keys,
-                'constant_items':     arg_specifier.constant_items}
+                'varying_keys':       args.varying_keys,
+                'constant_keys':      args.constant_keys,
+                'constant_items':     args.constant_items}
 
         if queue_cmd_only and not hasattr(self, 'queue'):
             print("Cannot show queue: CommandTemplate does not allow queueing")
@@ -257,7 +257,7 @@ class DynamicCommandTemplate(CommandTemplate):
         elif queue_cmd_only:
             full_string = 'Queue command: '+ ' '.join([pipes.quote(el) for el in self.queue('<tid>',info)])
         elif (queue_cmd_only is False):
-            copied = arg_specifier.copy()
+            copied = args.copy()
             full_string = ''
             enumerated = list(enumerate(copied))
             for (group_ind, specs) in enumerated:
