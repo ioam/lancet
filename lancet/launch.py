@@ -249,7 +249,7 @@ class Launcher(core.PrettyPrinted, param.Parameterized):
     args = param.ClassSelector(core.BaseArgs, constant=True, doc='''
        The specifier used to generate the varying parameters for the tasks.''')
 
-    command_template = param.ClassSelector(CommandTemplate, constant=True, doc='''
+    command = param.ClassSelector(CommandTemplate, constant=True, doc='''
        The command template used to generate the commands for the current tasks.''')
 
     output_directory = param.String(default='.', doc='''
@@ -295,18 +295,18 @@ class Launcher(core.PrettyPrinted, param.Parameterized):
       name.''')
 
 
-    def __init__(self, batch_name, args, command_template, **kwargs):
+    def __init__(self, batch_name, args, command, **kwargs):
 
         self._pprint_args = ([],[],None,{})
         if 'name' not in kwargs: kwargs['name'] = self.__class__.__name__
         super(Launcher,self).__init__(batch_name=batch_name,
                                       args=args,
-                                      command_template = command_template,
+                                      command = command,
                                       **kwargs)
         self._spec_log = []
         if self.timestamp == (0,)*9:
             self.timestamp = tuple(time.localtime())
-        self.pprint_args(['batch_name','args','command_template'],
+        self.pprint_args(['batch_name','args','command'],
                          ['description', 'tag', 'output_directory',
                           'subdir','metadata'])
 
@@ -450,7 +450,7 @@ class Launcher(core.PrettyPrinted, param.Parameterized):
         """
         launchinfo = self._setup_launch()
         streams_path = self._setup_streams_path()
-        self.command_template.finalize(launchinfo)
+        self.command.finalize(launchinfo)
 
         self.record_info(launchinfo)
 
@@ -459,8 +459,8 @@ class Launcher(core.PrettyPrinted, param.Parameterized):
         for gid, groupspecs in enumerate(self.args):
             tids = list(range(last_tid, last_tid+len(groupspecs)))
             last_tid += len(groupspecs)
-            allcommands = [self.command_template(
-                                self.command_template._formatter(spec), tid, launchinfo) \
+            allcommands = [self.command(
+                                self.command._formatter(spec), tid, launchinfo) \
                            for (spec,tid) in zip(groupspecs,tids)]
 
             self.append_log(list(zip(tids,groupspecs)))
@@ -528,9 +528,9 @@ class QLauncher(Launcher):
        keywords in the dict constructor: ie. using
        qsub_flag_options=dict(key1=value1, key2=value2, ....)''')
 
-    def __init__(self, batch_name, args, command_template, **kwargs):
+    def __init__(self, batch_name, args, command, **kwargs):
         super(QLauncher, self).__init__(batch_name, args,
-                command_template, **kwargs)
+                command, **kwargs)
 
         self._launchinfo = None
         self.schedule = None
@@ -546,8 +546,8 @@ class QLauncher(Launcher):
         # The necessary conditions for reserving jobs before specification known.
         self.is_dynamic_qsub = all([isinstance(self.args, DynamicArgs),
                                     hasattr(self.args, 'schedule'),
-                                    hasattr(self.command_template,   'queue'),
-                                    hasattr(self.command_template,   'specify')])
+                                    hasattr(self.command,   'queue'),
+                                    hasattr(self.command,   'specify')])
 
     def qsub_args(self, override_options, cmd_args, append_options=[]):
         """
@@ -591,7 +591,7 @@ class QLauncher(Launcher):
         collate_and_launch().
         """
         self._launchinfo = self._setup_launch()
-        self.command_template.finalize(self._launchinfo)
+        self.command.finalize(self._launchinfo)
         self.job_timestamp = time.strftime('%H%M%S')
 
         streams_path = self._setup_streams_path()
@@ -660,7 +660,7 @@ class QLauncher(Launcher):
                       "launcher = pickle.load(open(pickle_path,'rb'))",
                       "launcher.collate_and_launch()"]
 
-        cmd_args = [self.command_template.executable,
+        cmd_args = [self.command.executable,
                     '-c', ';'.join(resume_cmds)]
         popen_args = self.qsub_args(overrides, cmd_args)
 
@@ -684,8 +684,8 @@ class QLauncher(Launcher):
         for (tid, spec) in tid_specs:
             job_name = "%s_%s_job_%d" % (self.batch_name, self.job_timestamp, tid)
             job_names.append(job_name)
-            cmd_args = self.command_template(
-                    self.command_template._formatter(spec),
+            cmd_args = self.command(
+                    self.command._formatter(spec),
                     tid, self._launchinfo)
 
             popen_args = self.qsub_args([("-e",error_dir), ('-N',job_name), ("-o",output_dir)],
@@ -708,8 +708,8 @@ class QLauncher(Launcher):
 
         # Write out the specification files in anticipation of execution
         for (tid, spec) in tid_specs:
-            self.command_template.specify(
-                    self.command_template._formatter(spec),
+            self.command.specify(
+                    self.command._formatter(spec),
                     tid, self._launchinfo)
 
         # If schedule is empty (or on first initialization)...
@@ -721,7 +721,7 @@ class QLauncher(Launcher):
             collate_name = None
             for batch_size in self.schedule:
                 schedule_tids = [tid + self.last_scheduled_tid for tid in range(batch_size) ]
-                schedule_tasks = [(tid, self.command_template.queue(tid, self._launchinfo)) for
+                schedule_tasks = [(tid, self.command.queue(tid, self._launchinfo)) for
                                       tid in schedule_tids]
 
                 # Queueing with the scheduled tasks with appropriate job id dependencies
@@ -801,9 +801,9 @@ class review_and_launch(core.PrettyPrinted, param.Parameterized):
 
         root_directories = []
         for launcher in launchers:
-            command_template = launcher.command_template
+            command = launcher.command
             args = launcher.args
-            command_template.verify(args)
+            command.verify(args)
             root_directory = launcher.get_root_directory()
             if os.path.isdir(root_directory):
                 raise Exception("Root directory already exists: %r" % root_directory)
@@ -864,7 +864,7 @@ class review_and_launch(core.PrettyPrinted, param.Parameterized):
             if not proceed: return False
 
         reviewers = [self.review_args,
-                     self.review_command_template,
+                     self.review_command,
                      self.review_launcher]
 
         for (count, launcher) in enumerate(launchers):
@@ -912,12 +912,12 @@ class review_and_launch(core.PrettyPrinted, param.Parameterized):
         print
         return True
 
-    def review_command_template(self, launcher):
+    def review_command(self, launcher):
 
-        command_template = launcher.command_template
-        template_name = command_template.__class__.__name__
+        command = launcher.command
+        template_name = command.__class__.__name__
         print('%s\n' % self.summary_heading(template_name))
-        command_template.summary()
+        command.summary()
         print "\n"
         response = self.input_options(['y', 'N','quit','save'],
                                       '\nShow available command entries?',
@@ -929,13 +929,13 @@ class review_and_launch(core.PrettyPrinted, param.Parameterized):
 
         if response == 'quit': return False
         elif response == 'y' and not isdynamic:
-            command_template.show(args)
+            command.show(args)
         elif response == 'y' and isdynamic:
-            command_template.show(args, queue_cmd_only=True)
+            command.show(args, queue_cmd_only=True)
         elif response == 'save':
             fname = raw_input('Filename: ').replace(' ','_')
             with open(os.path.abspath(fname),'w') as f:
-                command_template.show(args, file_handle=f)
+                command.show(args, file_handle=f)
         print
         return True
 
