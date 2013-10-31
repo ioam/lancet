@@ -50,10 +50,59 @@ launch. The goal is to help users identify mistakes early before
 consuming computational time and resources.
 """
 
+import os, subprocess
+import param
+
 from lancet.core import *
 from lancet.dynamic import *
 from lancet.launch import *
 from lancet.filetypes import *
+
+
+class vcs_metadata(param.ParameterizedFunction):
+    """
+    Simple utility to capture basic version control information for
+    Git, SVN and Mercurial. Returns a dictionary with the version,
+    latest commit message and the diffs relative to the current
+    working directories. Can be customized by setting the commands
+    dictionary at the class level.
+    """
+
+    commands = param.Dict(default={'.git':(['git', 'rev-parse', 'HEAD'],
+                                           ['git', 'log', '--oneline', '-n', '1'],
+                                           ['git', 'diff']),
+                                   '.svn':(['svnversion'],
+                                           ['svn', 'log', '-l', '1', '-q'],
+                                           ['svn', 'diff']),
+                                   '.hg': (['hg', 'log', '-r', 'tip'],
+                                           ['hg', 'log',  '-l', '1'],
+                                           ['hg', 'diff'])},
+
+       doc="""The subprocess command lists to get the version, commit
+       message and diffs for different version control systems. The
+       commands are executed if a subdirectory matching the dictionary
+       key exists""")
+
+    def __call__(self, paths):
+        """
+        Takes a single path string or a list of path strings and
+        returns the corresponing version control information.
+        """
+        if isinstance(paths, str): paths = [paths]
+
+        def _desc(path, ind):
+            for vcs in self.commands.keys():
+                if os.path.exists(os.path.join(path, vcs)):
+                    proc = subprocess.Popen(self.commands[vcs][ind],
+                                            stdout=subprocess.PIPE,
+                                            stderr=subprocess.PIPE, cwd=path)
+                    return str(proc.communicate()[0].decode()).strip()
+
+        abspaths = [os.path.abspath(path) for path in paths]
+        return {'version' : dict((path, _desc(path,0)) for path in abspaths),
+                'message':  dict((path, _desc(path,1)) for path in abspaths),
+                'diffs':    dict((path, _desc(path,2)) for path in abspaths)}
+
 
 # IPython pretty printing support (optional)
 try:
