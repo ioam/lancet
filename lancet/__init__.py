@@ -74,7 +74,7 @@ class vcs_metadata(param.ParameterizedFunction):
                                    '.svn':(['svnversion'],
                                            ['svn', 'log', '-l', '1', '-q'],
                                            ['svn', 'diff']),
-                                   '.hg': (['hg', 'log', '-r', 'tip'],
+                                   '.hg': (['hg', 'parents', '--template', '"{rev}:{node}"'],
                                            ['hg', 'log',  '-l', '1'],
                                            ['hg', 'diff'])},
 
@@ -99,9 +99,9 @@ class vcs_metadata(param.ParameterizedFunction):
                     return str(proc.communicate()[0].decode()).strip()
 
         abspaths = [os.path.abspath(path) for path in paths]
-        return {'version' : dict((path, _desc(path,0)) for path in abspaths),
-                'message':  dict((path, _desc(path,1)) for path in abspaths),
-                'diffs':    dict((path, _desc(path,2)) for path in abspaths)}
+        return {'vcs_versions' : dict((path, _desc(path,0)) for path in abspaths),
+                'vcs_messages':  dict((path, _desc(path,1)) for path in abspaths),
+                'vcs_diffs':     dict((path, _desc(path,2)) for path in abspaths)}
 
 
 # IPython pretty printing support (optional)
