@@ -2,7 +2,7 @@
 # Experimental code (WIP)
 #
 
-import os, sys,pickle
+import os, sys, pickle, time, fnmatch, pipes, subprocess
 import param
 from core import BaseArgs, Concatenate, CartesianProduct
 
@@ -140,9 +140,9 @@ class DynamicConcatenate(DynamicArgs):
         return list(set(self.first.varying_keys) | set(self.second.varying_keys))
 
     def update(self, tids, info):
-        if (self.isinstance(first,DynamicArgs) and not self._exhausted):
+        if (self.isinstance(self.first,DynamicArgs) and not self._exhausted):
             self.first.update(tids, info)
-        elif (self.isinstance(second,DynamicArgs) and self._first_sent):
+        elif (self.isinstance(self.second,DynamicArgs) and self._first_sent):
             self.second.update(tids, info)
 
     def next(self):
@@ -186,8 +186,8 @@ class DynamicCartesianProduct(DynamicArgs):
         return list(set(self.first.varying_keys) | set(self.second.varying_keys))
 
     def update(self, tids, info):
-        if self.isinstance(first,DynamicArgs):  self.first.update(tids, info)
-        if self.isinstance(second,DynamicArgs): self.second.update(tids, info)
+        if self.isinstance(self.first,DynamicArgs):  self.first.update(tids, info)
+        if self.isinstance(self.second,DynamicArgs): self.second.update(tids, info)
 
     def schedule(self):
         if self._first_cached is None:

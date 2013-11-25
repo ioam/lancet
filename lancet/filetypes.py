@@ -8,10 +8,6 @@ except: pass
 try:    import Image
 except: pass
 
-try:    from matplotlib import pyplot
-except: pass
-
-
 class FileType(PrettyPrinted, param.Parameterized):
     """
     The base class for all supported file types in Lancet. This class

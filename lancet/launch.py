@@ -3,7 +3,6 @@
 #
 
 import os, sys, time, pipes, subprocess, types
-import fnmatch
 import json, pickle
 
 import param
@@ -725,7 +724,6 @@ class QLauncher(Launcher):
                                       tid in schedule_tids]
 
                 # Queueing with the scheduled tasks with appropriate job id dependencies
-                hold_jid_cmd = []
                 group_names = []
 
                 for (tid, schedule_task) in schedule_tasks:

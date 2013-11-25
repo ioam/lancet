@@ -53,10 +53,10 @@ consuming computational time and resources.
 import os, subprocess
 import param
 
-from lancet.core import *
-from lancet.dynamic import *
-from lancet.launch import *
-from lancet.filetypes import *
+from lancet.core import *       # pyflakes:ignore (appropriate import)
+from lancet.dynamic import *    # pyflakes:ignore (appropriate import)
+from lancet.launch import *     # pyflakes:ignore (appropriate import)
+from lancet.filetypes import *  # pyflakes:ignore (appropriate import)
 
 
 class vcs_metadata(param.ParameterizedFunction):

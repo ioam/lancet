@@ -2,8 +2,8 @@
 # Lancet core
 #
 
-import os, time, itertools, copy
-import re, glob, string, re
+import os, itertools, copy
+import re, glob, string
 import json
 
 import param
@@ -681,7 +681,6 @@ class FilePattern(Args):
 
         specs=[]
         for (path, tags) in expanded_paths:
-            rootdir = path if os.path.isdir(path) else os.path.split(path)[0]
             filelist = [os.path.join(path,f) for f in os.listdir(path)] if os.path.isdir(path) else [path]
             for filepath in filelist:
                 specs.append(dict(tags,**{key:os.path.abspath(filepath)}))
