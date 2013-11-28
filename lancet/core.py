@@ -15,7 +15,7 @@ except:
     np, np_ftypes = None, []
 
 try:    from pandas import DataFrame
-except: DataFrame = None
+except: DataFrame = None # pyflakes:ignore (try/except import)
 
 from collections import defaultdict
 
