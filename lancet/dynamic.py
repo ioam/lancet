@@ -1,5 +1,5 @@
 #
-# Experimental code (WIP)
+# Work in progress. Only SimpleOptimization is currently available.
 #
 
 import os, sys, json, time, fnmatch, pipes, subprocess
@@ -126,9 +126,87 @@ class DynamicArgs(BaseArgs):
             return CartesianProduct(self, other)
 
 
-#=============================#
-# Dynamic argument specifiers #
-#=============================#
+
+class SimpleOptimization(DynamicArgs):
+    """
+    Very simple optimizer designed to illustrate how Dynamic Args may
+    be implemented. The implementation uses is chosen for simplicity
+    of understanding and not for efficiency. For instance, it could be
+    made much more efficient by caching the values of previously
+    explored states.
+
+    It works by greedily maximizing or minimizing some value via
+    greedy gradient ascent/descent. The local parameter space is
+    explored by examining the change in output value when an increment
+    or decrement of 'stepsize' is made in the parameter space from the
+    current position, initialized at the 'start' value. The
+    optimization terminates when either a local minima/maxima has been
+    found or when 'max_steps' is reached.
+    """
+
+    key = param.String(constant=True, doc="""
+        The name of the argument that will be optimized in a greedy fashion.""")
+
+    mode = param.ObjectSelector(default='minimum', objects=['minimum', 'maximum'], constant=True,
+       doc="""Whether a local minimum or maximum is sought.""")
+
+    start = param.Number(default=0.0, constant=True, doc="""
+        The starting argument value for the gradient ascent or descent""")
+
+    stepsize = param.Number(default=1.0, constant=True, doc="""
+        The size of the steps taken in parameter space.""")
+
+    max_steps=param.Integer(default=100, constant=True, doc="""
+        Once max_steps is reached, the optimization terminates.""")
+
+    def __init__(self, key, **kwargs):
+        super(SimpleOptimization, self).__init__(key=key, **kwargs)
+        self.pprint_args(['key', 'start', 'stepsize'],[])
+
+    def _initial_state(self, **kwargs):
+        self._steps_complete = 0
+        self._best_val = float('inf')
+        self._arg = self.start
+        return [{self.key:self.start+1}, {self.key:self.start-1}]
+
+    def _update_state(self, vals):
+        """
+        Takes as input a list or tuple of two elements. First the
+        value returned by incrementing by 'stepsize' followed by the
+        value returned after a 'stepsize' decrement.
+        """
+        self._steps_complete += 1
+        if self._steps_complete == self.max_steps:
+            self.warning('Maximum step limit of %d reached.' % self.max_steps)
+            return StopIteration
+
+        arg_inc, arg_dec = vals
+        evaluator = max if self.mode == 'maximize' else min
+        best_val = evaluator(arg_inc, arg_dec, self._best_val)
+        if best_val == self._best_val:
+            info = (self.mode.capitalize(), best_val, self._arg)
+            self.message("%s value '%r' found at argmin '%r'"  % info)
+            return StopIteration
+
+        increment = (self.mode=='minimum') and (arg_dec > arg_inc)
+        self._arg += self.stepsize if increment else -self.stepsize
+        self._best_val= best_val
+        return [{self.key:self._arg+self.stepsize},
+                {self.key:self._arg-self.stepsize}]
+
+    @property
+    def constant_keys(self):  return []
+    @property
+    def constant_items(self): return []
+    @property
+    def varying_keys(self):   return [self.key]
+
+    def __len__(self): return self.max_steps
+
+
+#=========================#
+# Experimental code (WIP) #
+#=========================#
 
 
 class DynamicConcatenate(DynamicArgs):
