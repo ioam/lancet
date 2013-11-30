@@ -422,10 +422,12 @@ class Launcher(core.PrettyPrinted, param.Parameterized):
 
         for cmd, tid in process_commands:
             self.debug("Starting process %d..." % tid)
+            job_timestamp = time.strftime('%H%M%S')
+            basename = "%s_%s_tid_%d" % (self.batch_name, job_timestamp, tid)
             stdout_handle = open(os.path.join(streams_path, "%s.o.%d"
-                                              % (self.batch_name, tid)), "wb")
+                                              % (basename, tid)), "wb")
             stderr_handle = open(os.path.join(streams_path, "%s.e.%d"
-                                              % (self.batch_name, tid)), "wb")
+                                              % (basename, tid)), "wb")
             proc = subprocess.Popen(cmd, stdout=stdout_handle, stderr=stderr_handle)
             processes[proc] = { 'tid' : tid,
                                 'stdout' : stdout_handle,
@@ -681,7 +683,7 @@ class QLauncher(Launcher):
         job_names = []
 
         for (tid, spec) in tid_specs:
-            job_name = "%s_%s_job_%d" % (self.batch_name, self.job_timestamp, tid)
+            job_name = "%s_%s_tid_%d" % (self.batch_name, self.job_timestamp, tid)
             job_names.append(job_name)
             cmd_args = self.command(
                     self.command._formatter(spec),
