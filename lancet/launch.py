@@ -493,6 +493,8 @@ class Launcher(core.PrettyPrinted, param.Parameterized):
         if self.description:
             print("Description: %s" % self.description)
 
+
+
 class QLauncher(Launcher):
     """
     Launcher that operates with Grid Engine using default arguments
@@ -534,21 +536,14 @@ class QLauncher(Launcher):
                 command, **kwargs)
 
         self._launchinfo = None
-        self.schedule = None
         self.last_tids = []
         self._spec_log = []
         self.last_tid = 0
-        self.last_scheduled_tid = 0
         self.collate_count = 0
         self.spec_iter = iter(self.args)
 
         self.max_concurrency = None # Inherited
 
-        # The necessary conditions for reserving jobs before specification known.
-        self.is_dynamic_qsub = all([isinstance(self.args, DynamicArgs),
-                                    hasattr(self.args, 'schedule'),
-                                    hasattr(self.command,   'queue'),
-                                    hasattr(self.command,   'specify')])
 
     def qsub_args(self, override_options, cmd_args, append_options=[]):
         """
@@ -607,11 +602,10 @@ class QLauncher(Launcher):
     def collate_and_launch(self):
         """
         Method that collates the previous jobs and launches the next
-        block of concurrent jobs. The launch type can be either static
-        or dynamic (using schedule, queue and specify for dynamic
-        argument specifiers).  This method is invoked on initial
-        launch and then subsequently via the commandline to collate
-        the previously run jobs and launching the next block of jobs.
+        block of concurrent jobs when using DynamicArgs. This method
+        is invoked on initial launch and then subsequently via a
+        commandline call (to Python via qsub) to collate the
+        previously run jobs and launch the next block of jobs.
         """
 
         try:   specs = next(self.spec_iter)
@@ -633,8 +627,7 @@ class QLauncher(Launcher):
 
         output_dir = self.qsub_flag_options['-o']
         error_dir = self.qsub_flag_options['-e']
-        if self.is_dynamic_qsub: self.dynamic_qsub(output_dir, error_dir, tid_specs)
-        else:            self.static_qsub(output_dir, error_dir, tid_specs)
+        self.static_qsub(output_dir, error_dir, tid_specs)
 
         # Pickle launcher before exit if necessary.
         if isinstance(self.args,DynamicArgs) or (self.reduction_fn is not None):
@@ -700,50 +693,6 @@ class QLauncher(Launcher):
         if self.reduction_fn is not None:
             self.qsub_collate_and_launch(output_dir, error_dir, job_names)
 
-    def dynamic_qsub(self, output_dir, error_dir, tid_specs):
-        """
-        This method handles dynamic argument specifiers where the
-        dynamic argument specifier can be queued before the arguments
-        are computed.
-        """
-
-        # Write out the specification files in anticipation of execution
-        for (tid, spec) in tid_specs:
-            self.command.specify(
-                    self.command._formatter(spec),
-                    tid, self._launchinfo)
-
-        # If schedule is empty (or on first initialization)...
-        if (self.schedule == []) or (self.schedule is None):
-            self.schedule = self.args.schedule()
-            assert len(tid_specs)== self.schedule[0], "Number of specs don't match schedule!"
-
-            # Generating the scheduled tasks (ie the queue commands)
-            collate_name = None
-            for batch_size in self.schedule:
-                schedule_tids = [tid + self.last_scheduled_tid for tid in range(batch_size) ]
-                schedule_tasks = [(tid, self.command.queue(tid, self._launchinfo)) for
-                                      tid in schedule_tids]
-
-                # Queueing with the scheduled tasks with appropriate job id dependencies
-                group_names = []
-
-                for (tid, schedule_task) in schedule_tasks:
-                    job_name = "%s_%s_job_%d" % (self.batch_name, self.job_timestamp, tid)
-                    overrides = [("-e",error_dir), ('-N',job_name), ("-o",output_dir)]
-                    if collate_name is not None: overrides += [('-hold_jid', collate_name)]
-                    popen_args = self.qsub_args(overrides, schedule_task)
-                    p = subprocess.Popen(popen_args, stdout=subprocess.PIPE)
-                    (stdout, stderr) = p.communicate()
-                    group_names.append(job_name)
-
-                collate_name = self.qsub_collate_and_launch(output_dir,
-                                                            error_dir,
-                                                            group_names)
-                self.last_scheduled_tid += batch_size
-
-            # Popping the currently specified tasks off the schedule
-            self.schedule = self.schedule[1:]
 
     def qdel_batch(self):
         """
@@ -924,14 +873,9 @@ class review_and_launch(core.PrettyPrinted, param.Parameterized):
                                       default='n')
 
         args = launcher.args
-        isdynamic = (isinstance(launcher, QLauncher)
-                     and launcher.is_dynamic_qsub)
-
         if response == 'quit': return False
-        elif response == 'y' and not isdynamic:
+        elif response == 'y':
             command.show(args)
-        elif response == 'y' and isdynamic:
-            command.show(args, queue_cmd_only=True)
         elif response == 'save':
             fname = raw_input('Filename: ').replace(' ','_')
             with open(os.path.abspath(fname),'w') as f:
