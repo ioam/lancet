@@ -308,6 +308,7 @@ class Launcher(core.PrettyPrinted, param.Parameterized):
         self.pprint_args(['batch_name','args','command'],
                          ['description', 'tag', 'output_directory',
                           'subdir','metadata'])
+        self.dynamic = isinstance(args, DynamicArgs)
 
     def get_root_directory(self, timestamp=None):
         """
@@ -471,7 +472,7 @@ class Launcher(core.PrettyPrinted, param.Parameterized):
 
             last_tids = tids[:]
 
-            if isinstance(self.args, DynamicArgs):
+            if self.dynamic:
                 self.args.update(last_tids, launchinfo)
 
         self.record_info()
@@ -621,7 +622,7 @@ class QLauncher(Launcher):
         self.append_log(tid_specs)
 
         # Updating the argument specifier
-        if isinstance(self.args,DynamicArgs):
+        if self.dynamic:
             self.args.update(self.last_tids, self._launchinfo)
         self.last_tids = [tid for (tid,_) in tid_specs]
 
@@ -630,7 +631,7 @@ class QLauncher(Launcher):
         self._qsub_block(output_dir, error_dir, tid_specs)
 
         # Pickle launcher before exit if necessary.
-        if isinstance(self.args,DynamicArgs) or (self.reduction_fn is not None):
+        if self.dynamic or (self.reduction_fn is not None):
             pickle_path = os.path.join(self.root_directory, 'qlauncher.pkl')
             pickle.dump(self, open(pickle_path,'wb'))
 
@@ -690,7 +691,7 @@ class QLauncher(Launcher):
             processes.append(p)
 
         self.message("Invoked qsub for %d commands" % len(processes))
-        if (self.reduction_fn is not None) or :
+        if (self.reduction_fn is not None) or self.dynamic:
             self._qsub_collate_and_launch(output_dir, error_dir, job_names)
 
 
