@@ -149,9 +149,6 @@ class SimpleGradientDescent(DynamicArgs):
     key = param.String(constant=True, doc="""
         The name of the argument that will be optimized in a greedy fashion.""")
 
-    mode = param.ObjectSelector(default='minimum', objects=['minimum', 'maximum'], constant=True,
-       doc="""Whether a local minimum or maximum is sought.""")
-
     start = param.Number(default=0.0, constant=True, doc="""
         The starting argument value for the gradient ascent or descent""")
 
@@ -183,15 +180,13 @@ class SimpleGradientDescent(DynamicArgs):
             return StopIteration
 
         arg_inc, arg_dec = vals
-        evaluator = max if self.mode == 'maximize' else min
-        best_val = evaluator(arg_inc, arg_dec, self._best_val)
+        best_val = min(arg_inc, arg_dec, self._best_val)
         if best_val == self._best_val:
-            info = (self.mode.capitalize(), best_val, self._arg)
-            self.message("%s value '%r' found at argmin '%r'"  % info)
+            self.message("Minimum value '%r' found at argmin '%r'"
+                         % (best_val, self._arg))
             return StopIteration
 
-        increment = (self.mode=='minimum') and (arg_dec > arg_inc)
-        self._arg += self.stepsize if increment else -self.stepsize
+        self._arg += self.stepsize if (arg_dec > arg_inc) else -self.stepsize
         self._best_val= best_val
         return [{self.key:self._arg+self.stepsize},
                 {self.key:self._arg-self.stepsize}]
