@@ -545,7 +545,7 @@ class QLauncher(Launcher):
         self.max_concurrency = None # Inherited
 
 
-    def qsub_args(self, override_options, cmd_args, append_options=[]):
+    def _qsub_args(self, override_options, cmd_args, append_options=[]):
         """
         Method to generate Popen style argument list for qsub using
         the qsub_switches and qsub_flag_options parameters. Switches
@@ -627,14 +627,14 @@ class QLauncher(Launcher):
 
         output_dir = self.qsub_flag_options['-o']
         error_dir = self.qsub_flag_options['-e']
-        self.static_qsub(output_dir, error_dir, tid_specs)
+        self._qsub_block(output_dir, error_dir, tid_specs)
 
         # Pickle launcher before exit if necessary.
         if isinstance(self.args,DynamicArgs) or (self.reduction_fn is not None):
             pickle_path = os.path.join(self.root_directory, 'qlauncher.pkl')
             pickle.dump(self, open(pickle_path,'wb'))
 
-    def qsub_collate_and_launch(self, output_dir, error_dir, job_names):
+    def _qsub_collate_and_launch(self, output_dir, error_dir, job_names):
         """
         The method that actually runs qsub to invoke the python
         process with the necessary commands to trigger the next
@@ -656,7 +656,7 @@ class QLauncher(Launcher):
 
         cmd_args = [self.command.executable,
                     '-c', ';'.join(resume_cmds)]
-        popen_args = self.qsub_args(overrides, cmd_args)
+        popen_args = self._qsub_args(overrides, cmd_args)
 
         p = subprocess.Popen(popen_args, stdout=subprocess.PIPE)
         (stdout, stderr) = p.communicate()
@@ -666,7 +666,7 @@ class QLauncher(Launcher):
         self.message("Invoked qsub for next batch.")
         return job_name
 
-    def static_qsub(self, output_dir, error_dir, tid_specs):
+    def _qsub_block(self, output_dir, error_dir, tid_specs):
         """
         This method handles static argument specifiers and cases where
         the dynamic specifiers cannot be queued before the arguments
@@ -682,7 +682,7 @@ class QLauncher(Launcher):
                     self.command._formatter(spec),
                     tid, self._launchinfo)
 
-            popen_args = self.qsub_args([("-e",error_dir), ('-N',job_name), ("-o",output_dir)],
+            popen_args = self._qsub_args([("-e",error_dir), ('-N',job_name), ("-o",output_dir)],
                                         cmd_args)
             p = subprocess.Popen(popen_args, stdout=subprocess.PIPE)
             (stdout, stderr) = p.communicate()
@@ -690,8 +690,8 @@ class QLauncher(Launcher):
             processes.append(p)
 
         self.message("Invoked qsub for %d commands" % len(processes))
-        if self.reduction_fn is not None:
-            self.qsub_collate_and_launch(output_dir, error_dir, job_names)
+        if (self.reduction_fn is not None) or :
+            self._qsub_collate_and_launch(output_dir, error_dir, job_names)
 
 
     def qdel_batch(self):
