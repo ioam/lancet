@@ -326,7 +326,7 @@ class Launcher(core.PrettyPrinted, param.Parameterized):
                                 *(self.subdir+[root_name]))
         return os.path.abspath(path)
 
-    def append_log(self, specs):
+    def _append_log(self, specs):
         """
         The log contains the tids and corresponding specifications
         used during launch with the specifications in JSON format.
@@ -335,7 +335,7 @@ class Launcher(core.PrettyPrinted, param.Parameterized):
         log_path = os.path.join(self.root_directory, ("%s.log" % self.batch_name))
         core.Log.write_log(log_path, [spec for (_, spec) in specs], allow_append=True)
 
-    def record_info(self, setup_info=None):
+    def _record_info(self, setup_info=None):
         """
         All launchers should call this method to write the info file
         at the end of the launch. The .info file is saved given
@@ -392,7 +392,7 @@ class Launcher(core.PrettyPrinted, param.Parameterized):
         while not os.path.isdir(streams_path): pass
         return streams_path
 
-    def launch_process_group(self, process_commands, streams_path):
+    def _launch_process_group(self, process_commands, streams_path):
         """
         Launches processes defined by process_commands, but only
         executes max_concurrency processes at a time; if a process
@@ -454,7 +454,7 @@ class Launcher(core.PrettyPrinted, param.Parameterized):
         streams_path = self._setup_streams_path()
         self.command.finalize(launchinfo)
 
-        self.record_info(launchinfo)
+        self._record_info(launchinfo)
 
         last_tid = 0
         last_tids = []
@@ -465,17 +465,17 @@ class Launcher(core.PrettyPrinted, param.Parameterized):
                                 self.command._formatter(spec), tid, launchinfo) \
                            for (spec,tid) in zip(groupspecs,tids)]
 
-            self.append_log(list(zip(tids,groupspecs)))
+            self._append_log(list(zip(tids,groupspecs)))
 
             self.message("Group %d: executing %d processes..." % (gid, len(allcommands)))
-            self.launch_process_group(zip(allcommands,tids), streams_path)
+            self._launch_process_group(zip(allcommands,tids), streams_path)
 
             last_tids = tids[:]
 
             if self.dynamic:
                 self.args.update(last_tids, launchinfo)
 
-        self.record_info()
+        self._record_info()
         if self.reduction_fn is not None:
             self.reduction_fn(self._spec_log, self.root_directory)
 
@@ -598,7 +598,7 @@ class QLauncher(Launcher):
 
         self.collate_and_launch()
 
-        self.record_info(self._launchinfo)
+        self._record_info(self._launchinfo)
 
     def collate_and_launch(self):
         """
@@ -614,12 +614,12 @@ class QLauncher(Launcher):
             self.qdel_batch()
             if self.reduction_fn is not None:
                 self.reduction_fn(self._spec_log, self.root_directory)
-            self.record_info()
+            self._record_info()
             return
 
         tid_specs = [(self.last_tid + i, spec) for (i,spec) in enumerate(specs)]
         self.last_tid += len(specs)
-        self.append_log(tid_specs)
+        self._append_log(tid_specs)
 
         # Updating the argument specifier
         if self.dynamic:
