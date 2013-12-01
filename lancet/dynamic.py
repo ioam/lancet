@@ -7,6 +7,27 @@ import param
 from core import BaseArgs, Concatenate, CartesianProduct
 
 class DynamicArgs(BaseArgs):
+    """
+    DynamicArgs are declarative specifications that specify a
+    parameter space via a dynamic algorithmic process instead of using
+    precomputed arguments. Unlike the static Args objects, new
+    arguments can only be generated in response to some feedback from
+    the processes that are executed. This type of dynamic feedback is
+    a common feature for many algorithms such as hill climbing
+    optimization, genetic algorithms, bisection search and other
+    sophisticated optimization and search procedures.
+
+    Like the Args objects, a DynamicArgs object is an iterator. On
+    each iteration, one or more argument sets defining a collection of
+    independent jobs are returned (these jobs should be possible to
+    execute concurrently). Between iterations, the output_extractor
+    function is used to extract the necessary information from the
+    standard output streams of the previously executed jobs. This
+    information is used to update the internal state of the
+    DynamicArgs object can then generate more arguments to explore or
+    terminate. All DynamicArgs classes need to declare the expected
+    return format of the output_extractor function.
+    """
 
     output_extractor = param.Callable(default=json.loads, doc="""
        The function that returns the relevant data from the standard
@@ -14,7 +35,7 @@ class DynamicArgs(BaseArgs):
        information must be retyrned in a format suitable for updating
        the specifier.. By default uses json.loads but pickle.loads
        could also be a valid option. The callable must take a string
-       and return a python object suitable for updating the specifier.""")
+       and return a Python object suitable for updating the specifier.""")
 
 
     def __init__(self, **kwargs):
@@ -126,6 +147,17 @@ class DynamicArgs(BaseArgs):
             return CartesianProduct(self, other)
 
 
+    def __len__(self):
+        """
+        Many DynamicArgs won't have a length that can be
+        precomputed. Most DynamicArgs objects will have an iteration
+        limit to guarantee eventual termination. If so, the maximum
+        possible number of arguments that could be generated should be
+        returned.
+        """
+        raise NotImplementedError
+
+
 
 class SimpleGradientDescent(DynamicArgs):
     """
@@ -137,13 +169,16 @@ class SimpleGradientDescent(DynamicArgs):
     routines offered in scipy.optimize).
 
     This particular algorithm greedily minimizes an output value via
-    greedy gradientdescent. The local parameter space is explored by
+    greedy gradient descent. The local parameter space is explored by
     examining the change in output value when an increment or
     decrement of 'stepsize' is made in the parameter space, centered
     around the current position. The initial parameter is initialized
     with the 'start' value and the optimization process terminates
     when either a local minima/maxima has been found or when
     'max_steps' is reached.
+
+    The 'output_extractor' function is expected to return a single
+    scalar number to drive the gradient descent algorithm forwards.
     """
 
     key = param.String(constant=True, doc="""
@@ -198,7 +233,8 @@ class SimpleGradientDescent(DynamicArgs):
     @property
     def varying_keys(self):   return [self.key]
 
-    def __len__(self): return self.max_steps
+    def __len__(self):
+        return 2*self.max_steps # Each step specifies 2 concurrent jobs
 
 
 #=========================#
