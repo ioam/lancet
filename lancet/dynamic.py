@@ -127,21 +127,23 @@ class DynamicArgs(BaseArgs):
 
 
 
-class SimpleOptimization(DynamicArgs):
+class SimpleGradientDescent(DynamicArgs):
     """
-    Very simple optimizer designed to illustrate how Dynamic Args may
-    be implemented. The implementation uses is chosen for simplicity
-    of understanding and not for efficiency. For instance, it could be
-    made much more efficient by caching the values of previously
-    explored states.
+    Very simple gradient descent optimizer designed to illustrate how
+    Dynamic Args may be implemented. This class has been deliberately
+    kept simple to clearly illustrate how Dynamic Args may be
+    implemented. A more practical example would likely probably make
+    use of mature, third party optimization libraries (such as the
+    routines offered in scipy.optimize).
 
-    It works by greedily maximizing or minimizing some value via
-    greedy gradient ascent/descent. The local parameter space is
-    explored by examining the change in output value when an increment
-    or decrement of 'stepsize' is made in the parameter space from the
-    current position, initialized at the 'start' value. The
-    optimization terminates when either a local minima/maxima has been
-    found or when 'max_steps' is reached.
+    This particular algorithm greedily minimizes an output value via
+    greedy gradientdescent. The local parameter space is explored by
+    examining the change in output value when an increment or
+    decrement of 'stepsize' is made in the parameter space, centered
+    around the current position. The initial parameter is initialized
+    with the 'start' value and the optimization process terminates
+    when either a local minima/maxima has been found or when
+    'max_steps' is reached.
     """
 
     key = param.String(constant=True, doc="""
@@ -160,7 +162,7 @@ class SimpleOptimization(DynamicArgs):
         Once max_steps is reached, the optimization terminates.""")
 
     def __init__(self, key, **kwargs):
-        super(SimpleOptimization, self).__init__(key=key, **kwargs)
+        super(SimpleGradientDescent, self).__init__(key=key, **kwargs)
         self.pprint_args(['key', 'start', 'stepsize'],[])
 
     def _initial_state(self, **kwargs):
