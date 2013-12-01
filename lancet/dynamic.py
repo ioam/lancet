@@ -40,9 +40,10 @@ class DynamicArgs(BaseArgs):
 
     def __init__(self, **kwargs):
         super(DynamicArgs, self).__init__(**kwargs)
-        # Returned next iteration and updated by _updated_state method
+        # Returned on next iteration and updated by _updated_state method
         self._next_val = self._initial_state(**kwargs)
-
+        # Trace of inputs from output_extractor and returned arguments
+        self.trace = [(None, self._next_val)]
 
     def _update_state(self, data):
         """
@@ -60,7 +61,8 @@ class DynamicArgs(BaseArgs):
         """
         Reset the the DynamicArgs object to its initial state and used
         to reset the object adter the iterator is exhausted. The
-        return value is the initial argument to be returned by next().
+        return value is the initial argument to be returned by
+        next().
         """
         raise NotImplementedError
 
@@ -96,9 +98,10 @@ class DynamicArgs(BaseArgs):
                 outputs.append(self.output_extractor(contents))
 
             self._next_val = self._update_state(outputs)
+            self.trace.append((outputs, self._next_val))
         except:
             self.warning("Cannot load required output files. Cannot continue.")
-            return None # StopIteration should be raised by the argument specifier
+            self._next_val = StopIteration
 
 
     def show(self):
@@ -116,6 +119,23 @@ class DynamicArgs(BaseArgs):
 
         print('Remaining arguments not available for %s' % self.__class__.__name__)
 
+
+    def _trace_summary(self):
+        """
+        Summarizes the trace of values used to update the DynamicArgs
+        and the arguments subsequently returned. May be used to
+        implement the summary method.
+        """
+        for (i, (val, args)) in enumerate(self.trace):
+            if args is StopIteration:
+                info = "Terminated"
+            else:
+                pprint = ','.join('{' + ','.join('%s=%r' % (k,v)
+                         for (k,v) in arg.items()) + '}' for arg in args)
+                info = ("exploring argument sets %s" % pprint )
+
+            if i == 0: print "%d: Initially %s." % (i, info)
+            else:      print "%d: %s in response to input(s) %s." % (i, info.capitalize(), val)
 
     def __add__(self, other):
         """
@@ -196,6 +216,7 @@ class SimpleGradientDescent(DynamicArgs):
     def __init__(self, key, **kwargs):
         super(SimpleGradientDescent, self).__init__(key=key, **kwargs)
         self.pprint_args(['key', 'start', 'stepsize'],[])
+        self._termination_info = None
 
     def _initial_state(self, **kwargs):
         self._steps_complete = 0
@@ -211,14 +232,13 @@ class SimpleGradientDescent(DynamicArgs):
         """
         self._steps_complete += 1
         if self._steps_complete == self.max_steps:
-            self.warning('Maximum step limit of %d reached.' % self.max_steps)
+            self._termination_info = (False, self._best_val, self._arg)
             return StopIteration
 
         arg_inc, arg_dec = vals
         best_val = min(arg_inc, arg_dec, self._best_val)
         if best_val == self._best_val:
-            self.message("Minimum value '%r' found at argmin '%r'"
-                         % (best_val, self._arg))
+            self._termination_info = (True, best_val, self._arg)
             return StopIteration
 
         self._arg += self.stepsize if (arg_dec > arg_inc) else -self.stepsize
@@ -233,8 +253,18 @@ class SimpleGradientDescent(DynamicArgs):
     @property
     def varying_keys(self):   return [self.key]
 
+    def summary(self):
+        print 'Varying Keys: %r\n' % self.key
+        self._trace_summary()
+        (val, arg) = (self.trace[-1])
+        if self._termination_info:
+            (success, best_val, arg) = self._termination_info
+            condition =  'Successfully converged.' if success else 'Maximum step limit reached.'
+            print "\n%s Minimum value of %r found at argmin %r." % (condition, best_val, arg)
+
     def __len__(self):
         return 2*self.max_steps # Each step specifies 2 concurrent jobs
+
 
 
 #=========================#
