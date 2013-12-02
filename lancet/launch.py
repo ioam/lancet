@@ -132,6 +132,10 @@ class ShellCommand(BaseCommand):
        The list of positional argument keys. Positional arguments are
        always supplied at the end of a command in the order given.''')
 
+    short_prefix = param.String(default='-',  constant=True, doc='''
+       Although the single dash is a GNU coding convention, the
+       argument prefix may depend on the applications and/or platform.''')
+
     long_prefix = param.String(default='--',  constant=True, doc='''
        Although the double dash is a GNU coding convention, some
        applications use single dashes for long options.''')
@@ -158,7 +162,7 @@ class ShellCommand(BaseCommand):
         for (k, v) in expanded.items():
             if k in self.posargs or spec[k] == False:
                 continue
-            options.append('%s%s' % (self.long_prefix if len(k) > 1 else '-', k))
+            options.append('%s%s' % (self.long_prefix if len(k) > 1 else self.short_prefix, k))
             if spec[k] != True:
                 options.append(v)
 
