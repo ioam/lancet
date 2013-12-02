@@ -132,10 +132,10 @@ class DynamicArgs(BaseArgs):
             else:
                 pprint = ','.join('{' + ','.join('%s=%r' % (k,v)
                          for (k,v) in arg.items()) + '}' for arg in args)
-                info = ("exploring argument sets %s" % pprint )
+                info = ("exploring arguments [%s]" % pprint )
 
-            if i == 0: print "%d: Initially %s." % (i, info)
-            else:      print "%d: %s in response to input(s) %s." % (i, info.capitalize(), val)
+            if i == 0: print "Step %d: Initially %s." % (i, info)
+            else:      print "Step %d: %s after receiving input(s) %s." % (i, info.capitalize(), val)
 
     def __add__(self, other):
         """
@@ -254,13 +254,14 @@ class SimpleGradientDescent(DynamicArgs):
     def varying_keys(self):   return [self.key]
 
     def summary(self):
-        print 'Varying Keys: %r\n' % self.key
+        print 'Varying Keys: %r' % self.key
+        print 'Maximum steps allowed: %d' % self.max_steps
         self._trace_summary()
         (val, arg) = (self.trace[-1])
         if self._termination_info:
             (success, best_val, arg) = self._termination_info
             condition =  'Successfully converged.' if success else 'Maximum step limit reached.'
-            print "\n%s Minimum value of %r found at argmin %r." % (condition, best_val, arg)
+            print "%s Minimum value %r found at argmin %r." % (condition, best_val, arg)
 
     def __len__(self):
         return 2*self.max_steps # Each step specifies 2 concurrent jobs
