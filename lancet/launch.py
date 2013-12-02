@@ -14,12 +14,12 @@ from lancet.dynamic import DynamicArgs
 # Commands Template #
 #===================#
 
-class BaseCommand(core.PrettyPrinted, param.Parameterized):
+class Command(core.PrettyPrinted, param.Parameterized):
     """
-    A command template is a way of converting the dictionaries
-    returned by argument specifiers into a particular command. When
-    called with an argument specifier, a command template returns a
-    list of strings corresponding to a subprocess Popen argument list.
+    A command is a way of converting the dictionaries returned by
+    argument specifiers into a particular command. When called with an
+    argument specifier, a command template returns a list of strings
+    corresponding to a subprocess Popen argument list.
 
     __call__(self, spec, tid=None, info={}):
 
@@ -44,7 +44,7 @@ class BaseCommand(core.PrettyPrinted, param.Parameterized):
         if executable is None:
             executable = sys.executable
         self._pprint_args = ([],[],None,{})
-        super(BaseCommand,self).__init__(executable=executable, **kwargs)
+        super(Command,self).__init__(executable=executable, **kwargs)
         self.pprint_args([],[])
 
     def __call__(self, spec, tid=None, info={}):
@@ -57,7 +57,7 @@ class BaseCommand(core.PrettyPrinted, param.Parameterized):
         raise NotImplementedError
 
     def _formatter(self, spec):
-        if self.do_format: return core.BaseArgs.spec_formatter(spec)
+        if self.do_format: return core.Arguments.spec_formatter(spec)
         else             : return spec
 
     def show(self, args, file_handle=sys.stdout, **kwargs):
@@ -111,7 +111,7 @@ class BaseCommand(core.PrettyPrinted, param.Parameterized):
         raise NotImplementedError
 
 
-class ShellCommand(BaseCommand):
+class ShellCommand(Command):
     """
     A generic Command that can be used to invoke shell commands on
     most operating systems where Python can be run. By default,
@@ -156,7 +156,7 @@ class ShellCommand(BaseCommand):
                 expanded[k] = v
 
         expanded.update(spec)
-        expanded = core.BaseArgs.spec_formatter(expanded)
+        expanded = core.Arguments.spec_formatter(expanded)
 
         options = []
         for (k, v) in expanded.items():
@@ -249,10 +249,10 @@ class Launcher(core.PrettyPrinted, param.Parameterized):
     batch_name = param.String(default=None, allow_None=True, constant=True,
        doc='''A unique identifier for the current batch''')
 
-    args = param.ClassSelector(core.BaseArgs, constant=True, doc='''
+    args = param.ClassSelector(core.Arguments, constant=True, doc='''
        The specifier used to generate the varying parameters for the tasks.''')
 
-    command = param.ClassSelector(BaseCommand, constant=True, doc='''
+    command = param.ClassSelector(Command, constant=True, doc='''
        The command template used to generate the commands for the current tasks.''')
 
     output_directory = param.String(default='.', doc='''

@@ -27,7 +27,7 @@ def set_fp_precision(value):
     """
     Function to set the floating precision across lancet.
     """
-    BaseArgs.set_default('fp_precision', value)
+    Arguments.set_default('fp_precision', value)
 
 #=====================#
 # Argument Specifiers #
@@ -101,7 +101,7 @@ class PrettyPrinted(object):
 
 
 
-class BaseArgs(PrettyPrinted, param.Parameterized):
+class Arguments(PrettyPrinted, param.Parameterized):
     """
     The abstract, base class that defines the core interface and
     methods for all members of the Arguments family of classes,
@@ -127,7 +127,7 @@ class BaseArgs(PrettyPrinted, param.Parameterized):
     def __init__(self, **params):
         self._pprint_args = ([],[],None,{})
         self.pprint_args([],['fp_precision', 'dynamic'])
-        super(BaseArgs,self).__init__(**params)
+        super(Arguments,self).__init__(**params)
         # Some types cannot be sorted easily (e.g. numpy arrays)
         self.unsortable_keys = []
 
@@ -253,7 +253,7 @@ class BaseArgs(PrettyPrinted, param.Parameterized):
             print("Constant Items: %s" % items)
 
 
-class Args(BaseArgs):
+class Args(Arguments):
     """
     An Arguments class that supports statically specified or
     precomputed argument sets. It may be used directly to specify
@@ -288,7 +288,7 @@ class Args(BaseArgs):
           according to fp_precision.''')
 
     def __init__(self, specs=None, fp_precision=None, **kwargs):
-        if fp_precision is None: fp_precision = BaseArgs.fp_precision
+        if fp_precision is None: fp_precision = Arguments.fp_precision
         raw_specs, kwargs, explicit = self._build_specs(specs, kwargs, fp_precision)
         super(Args, self).__init__(fp_precision=fp_precision, specs=raw_specs, **kwargs)
 

@@ -4,9 +4,9 @@
 
 import os, sys, json, time, fnmatch, pipes, subprocess
 import param
-from core import BaseArgs, Concatenate, CartesianProduct
+from core import Arguments, Concatenate, CartesianProduct
 
-class DynamicArgs(BaseArgs):
+class DynamicArgs(Arguments):
     """
     DynamicArgs are declarative specifications that specify a
     parameter space via a dynamic algorithmic process instead of using
