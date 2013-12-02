@@ -102,6 +102,20 @@ class PrettyPrinted(object):
 
 
 class BaseArgs(PrettyPrinted, param.Parameterized):
+    """
+    The abstract, base class that defines the core interface and
+    methods for all members of the Arguments family of classes,
+    including either the simple, static members of Args below, or the
+    sophisticated parameter exploration algorithms subclassing from
+    DynamicArgs defined in dynamic.py.
+
+    The Args subclass may be used directly and forms the root of one
+    family of classes that have statically defined or precomputed
+    argument sets (defined below). The second subfamily are the
+    DynamicArgs, designed to allow more sophisticated, online
+    parameter space exploration techniques such as hill climbing,
+    bisection search, genetic algorithms and so on.
+    """
 
     fp_precision = param.Integer(default=4, constant=True, doc='''
          The floating point precision to use for floating point
@@ -240,6 +254,33 @@ class BaseArgs(PrettyPrinted, param.Parameterized):
 
 
 class Args(BaseArgs):
+    """
+    An Arguments class that supports statically specified or
+    precomputed argument sets. It may be used directly to specify
+    argument values but also forms the base class for a family of more
+    specific static Argument classes. Each subclass is less flexible
+    and general but allows arguments to be easily and succinctly
+    specified. For instance, the Range subclass allows parameter
+    ranges to be easily declared.
+
+    The constructor of Args accepts argument definitions in two
+    different formats. The keyword format allows constant arguments to
+    be specified directly and easily. For instance:
+
+    >>> Args(a=2, b=3)
+
+    The alternative input format takes an explicit list of the
+    argument specifications:
+
+    >>> Args([{'a':3, 'b':5}]) # Equivalent behaviour to above
+
+    This latter format is completely flexible and general, allowing
+    any arbitrary list of arguments to be specified as desired. This
+    is not generally recommended however as the structure of a
+    parameter space is often expressed more clearly by composing
+    together simpler, more succinct Args objects with the
+    CartesianProduct (*) or Concatenation (+) operators.
+    """
 
     specs = param.List(default=[], constant=True, doc='''
           The static list of specifications (ie. dictionaries) to be
