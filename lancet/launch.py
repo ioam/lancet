@@ -111,7 +111,7 @@ class CommandTemplate(core.PrettyPrinted, param.Parameterized):
         raise NotImplementedError
 
 
-class UnixCommand(CommandTemplate):
+class ShellCommand(CommandTemplate):
     """
     A generic CommandTemplate useable with most Unix commands. By
     default, follows the GNU coding convention for commandline
@@ -137,7 +137,7 @@ class UnixCommand(CommandTemplate):
        applications use single dashes for long options.''')
 
     def __init__(self, executable, **kwargs):
-        super(UnixCommand,self).__init__(executable = executable,
+        super(ShellCommand,self).__init__(executable = executable,
                                          do_format=False,
                                          **kwargs)
         self.pprint_args(['executable','posargs'],['long_prefix'])
@@ -178,7 +178,7 @@ class UnixCommand(CommandTemplate):
             return  info['root_directory']
 
         def __repr__(self):
-            return "UnixCommand.RootDirectory()"
+            return "ShellCommand.RootDirectory()"
 
     class LongFilename(object):
         """
@@ -202,7 +202,7 @@ class UnixCommand(CommandTemplate):
         def __repr__(self):
             items = ([self.extension, self.excluding]
                      if self.excluding else [self.extension])
-            return ("UnixCommand.LongFilename(%s)"
+            return ("ShellCommand.LongFilename(%s)"
                     % ', '.join('%r' % el for el in items))
 
     class Expand(object):
@@ -221,7 +221,7 @@ class UnixCommand(CommandTemplate):
             return self.template.format(**all_params)
 
         def __repr__(self):
-            return "UnixCommand.Expand(%r)" % self.template
+            return "ShellCommand.Expand(%r)" % self.template
 
 
 #===========#
