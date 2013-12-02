@@ -14,7 +14,7 @@ from lancet.dynamic import DynamicArgs
 # Commands Template #
 #===================#
 
-class CommandTemplate(core.PrettyPrinted, param.Parameterized):
+class BaseCommand(core.PrettyPrinted, param.Parameterized):
     """
     A command template is a way of converting the dictionaries
     returned by argument specifiers into a particular command. When
@@ -23,18 +23,18 @@ class CommandTemplate(core.PrettyPrinted, param.Parameterized):
 
     __call__(self, spec, tid=None, info={}):
 
-    All CommandTemplates must be callable. The tid argument is the
-    task id and info is a dictionary of run-time information supplied
-    by the launcher. See the _setup_launch method of Launcher to see
-    details about the launch information supplied.
+    All Commands must be callable. The tid argument is the task id and
+    info is a dictionary of run-time information supplied by the
+    launcher. See the _setup_launch method of Launcher to see details
+    about the launch information supplied.
     """
 
     executable = param.String(default='python', constant=True, doc='''
-        The executable that is to be run by this
-        CommandTemplate. Unless the executable is a standard command
-        expected on the system path, this should be an absolute
-        path. By default this invokes python or the python environment
-        used to invoke the CommandTemplate (eg. topographica).''')
+        The executable that is to be run by this Command. Unless the
+        executable is a standard command expected on the system path,
+        this should be an absolute path. By default this invokes
+        python or the python environment used to invoke the Command
+        (Topographica for instance).''')
 
     do_format = param.Boolean(default=True, doc= '''
         Set to True to receive input arguments as formatted strings,
@@ -44,7 +44,7 @@ class CommandTemplate(core.PrettyPrinted, param.Parameterized):
         if executable is None:
             executable = sys.executable
         self._pprint_args = ([],[],None,{})
-        super(CommandTemplate,self).__init__(executable=executable, **kwargs)
+        super(BaseCommand,self).__init__(executable=executable, **kwargs)
         self.pprint_args([],[])
 
     def __call__(self, spec, tid=None, info={}):
@@ -96,26 +96,26 @@ class CommandTemplate(core.PrettyPrinted, param.Parameterized):
 
     def finalize(self, info):
         """
-        Optional method that allows a CommandTemplate to save state
-        before launch. The info argument is supplied by the Launcher.
+        Optional method that allows a Command to save state before
+        launch. The info argument is supplied by the Launcher.
         """
         return
 
     def summary(self):
         """
-        A succinct summary of the CommandTemplate configuration.
-         Unlike the repr, a summary does not have to be complete but
-         must supply key information relevant to the user. Must begin
-         by stating the executable.
+        A succinct summary of the Command configuration.  Unlike the
+        repr, a summary does not have to be complete but must supply
+        key information relevant to the user. Must begin by stating
+        the executable.
         """
         raise NotImplementedError
 
 
-class ShellCommand(CommandTemplate):
+class ShellCommand(BaseCommand):
     """
-    A generic CommandTemplate useable with most Unix commands. By
-    default, follows the GNU coding convention for commandline
-    arguments.
+    A generic Command that can be used to invoke shell commands on
+    most operating systems where Python can be run. By default,
+    follows the GNU coding convention for commandline arguments.
     """
 
     expansions = param.Dict(default={}, constant=True, doc='''
@@ -248,7 +248,7 @@ class Launcher(core.PrettyPrinted, param.Parameterized):
     args = param.ClassSelector(core.BaseArgs, constant=True, doc='''
        The specifier used to generate the varying parameters for the tasks.''')
 
-    command = param.ClassSelector(CommandTemplate, constant=True, doc='''
+    command = param.ClassSelector(BaseCommand, constant=True, doc='''
        The command template used to generate the commands for the current tasks.''')
 
     output_directory = param.String(default='.', doc='''
