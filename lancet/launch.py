@@ -2,12 +2,13 @@
 # Lancet launchers and launch helpers
 #
 
-import os, sys, time, pipes, subprocess, types
+import os, sys, platform, time, pipes, subprocess, types
 import json, pickle
 
 import param
 
 import lancet.core as core
+from lancet import __version__ as lancet_version
 from lancet.dynamic import DynamicArgs
 
 #===================#
@@ -376,16 +377,25 @@ class Launcher(core.PrettyPrinted, param.Parameterized):
         if not os.path.isdir(self.root_directory):
             os.makedirs(self.root_directory)
 
+        platform_dict = {}
+        python_version = (platform.python_implementation()
+                          + platform.python_version())
+        platform_dict['platform']       = platform.platform()
+        platform_dict['python_version'] = python_version
+        platform_dict['lancet_version'] = lancet_version
+
         return {'root_directory':    self.root_directory,
                 'batch_name':        self.batch_name,
                 'batch_tag':         self.tag,
                 'batch_description': self.description,
                 'launcher':          repr(self),
+                'platform' :         platform_dict,
                 'timestamp':         self.timestamp,
                 'timestamp_format':  self.timestamp_format,
                 'varying_keys':      self.args.varying_keys,
                 'constant_keys':     self.args.constant_keys,
                 'constant_items':    self.args.constant_items}
+
 
     def _setup_streams_path(self):
         streams_path = os.path.join(self.root_directory, "streams")

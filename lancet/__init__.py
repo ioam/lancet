@@ -50,6 +50,8 @@ launch. The goal is to help users identify mistakes early before
 consuming computational time and resources.
 """
 
+__version__ = "2013.11.2"
+
 import os, subprocess
 import param
 
