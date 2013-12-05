@@ -117,7 +117,7 @@ try:
     ip = get_ipython()
     plaintext_formatter = ip.display_formatter.formatters['text/plain']
     plaintext_formatter.for_type(Args, repr_pretty_annotated)
-    plaintext_formatter.for_type(CommandTemplate, repr_pretty_unannotated)
+    plaintext_formatter.for_type(Command, repr_pretty_unannotated)
     plaintext_formatter.for_type(Launcher, repr_pretty_unannotated)
     plaintext_formatter.for_type(FileType, repr_pretty_unannotated)
     plaintext_formatter.for_type(review_and_launch, repr_pretty_unannotated)
