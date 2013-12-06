@@ -12,6 +12,7 @@
 
 |
 |
+
 .. figure:: _static/main_logo.png
    :align:   center
 
@@ -130,18 +131,6 @@ Reference Documentation
 
 Reference documentation will be made available here soon. Reading the code should help understand the components of Lancet as all modulules, classes and method make extensive use of docstrings.
 
-Pythonic origins
-~~~~~~~~~~~~~~~~
-
-.. figure:: _static/gumby.png
-   :align: center
-   :scale: 50 %
-   :alt: map to buried treasure
-
-   **WHERE'S THE BLOODY LANCET?**
-
-   | This reaction of a highly distinguished brain specialist
-   | starting a new research project in Python
 
 
 Contributors
@@ -159,9 +148,13 @@ James A. Bednar: For supporting the development of a solution that works with an
 
 Philipp Rudiger: Testing, feedback and suggestions.
 
+And now for something completely different...
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-
-
+|
+.. figure:: _static/pythons.svg
+   :align: center
+   :scale: 100 %
 
 .. Contents:
 
