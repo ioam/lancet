@@ -140,7 +140,7 @@ The following people have contributed to Lancet's design and implementation:
 
 Jean-Luc Stevens: Original coding and design
 
-`Marco Elver <https://github.com/melver>`_
+`Marco Elver <https://github.com/melver/lancet>`_
 : Python 3 fork, cleaned up many aspects of the design.
 
 James A. Bednar: For supporting the development of a solution that works with any tool and not just `Topographica <http://www.topographica.org>`_
