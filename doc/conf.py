@@ -11,10 +11,12 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
+import sys, os
+
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
-#sys.path.insert(0, os.path.abspath('.'))
+sys.path.insert(0, os.path.abspath('..'))
 
 # -- General configuration -----------------------------------------------------
 
@@ -242,3 +244,28 @@ texinfo_documents = [
 
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {'http://docs.python.org/': None}
+
+import param
+import inspect
+
+def param_doc(app, what, name, obj, options, lines):
+	if what == 'module':
+		lines = ["start"]
+
+	if what == 'class':
+		if isinstance(obj, param.parameterized.ParameterizedMetaclass):
+			params = obj.params()
+			for child in params:
+				if child not in ["print_level", "name"]:
+					doc = ""
+					if params[child].doc: doc = params[child].doc
+					members = inspect.getmembers(params[child])
+					params_str = ""
+					for m in members:
+						if m[0][0] != "_" and m[0] != "doc" and m[0] != "class_" and not inspect.ismethod(m[1]) and not inspect.isfunction(m[1]):
+							params_str += "%s=%s, " % (m[0], m[1])
+					params_str = params_str[:-2]
+					lines.extend(["","*param %s* ``%s`` (*%s*)" % (params[child].__class__.__name__, child, params_str), "    %s" % doc])
+
+def setup(app):
+	app.connect('autodoc-process-docstring', param_doc)
