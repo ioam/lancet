@@ -69,6 +69,8 @@ class vcs_metadata(param.ParameterizedFunction):
     working directories. Can be customized by setting the commands
     dictionary at the class level.
     """
+    paths = param.List(default=[], doc="""
+       List of repositories to generate version control information from.""")
 
     commands = param.Dict(default={'.git':(['git', 'rev-parse', 'HEAD'],
                                            ['git', 'log', '--oneline', '-n', '1'],
@@ -85,17 +87,21 @@ class vcs_metadata(param.ParameterizedFunction):
        commands are executed if a subdirectory matching the dictionary
        key exists""")
 
-    def __call__(self, paths):
+    def __call__(self, paths=[], **params_to_override):
         """
         Takes a single path string or a list of path strings and
         returns the corresponing version control information.
         """
-        if isinstance(paths, str): paths = [paths]
+        p=param.ParamOverrides(self, dict(params_to_override, paths=paths))
+        if p.paths == []:
+            raise Exception("No paths to version controlled repositories given.")
+
+        paths = [p.paths] if isinstance(p.paths, str) else p.paths
 
         def _desc(path, ind):
-            for vcs in self.commands.keys():
+            for vcs in p.commands.keys():
                 if os.path.exists(os.path.join(path, vcs)):
-                    proc = subprocess.Popen(self.commands[vcs][ind],
+                    proc = subprocess.Popen(p.commands[vcs][ind],
                                             stdout=subprocess.PIPE,
                                             stderr=subprocess.PIPE, cwd=path)
                     return str(proc.communicate()[0].decode()).strip()
