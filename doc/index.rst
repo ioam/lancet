@@ -78,14 +78,13 @@ The following example demonstrates how Lancet can be used to specify,
 launch and collate jobs (requires a factor command for factorizing
 integers in the style of the command in `GNU coreutils
 <http://www.gnu.org/software/coreutils/manual/coreutils.html>`_): ::
->>> import lancet
 
+   >>> import lancet
    >>> example_name   = 'prime_quintuplet'
    >>> integers       = lancet.Range('integer', 100, 115, steps=16, fp_precision=0)
    >>> factor_cmd     = lancet.ShellCommand(executable='factor', posargs=['integer'])
    # Runs locally. A QLauncher could be used to launch jobs with Grid Engine.
-   >>> lancet.Launcher(example_name, integers, factor_cmd, output_directory='output')() \n
-
+   >>> lancet.Launcher(example_name, integers, factor_cmd, output_directory='output')()
    # Collate and print the the primes in the input range of integers
    >>> def load_factors(filename):
    ...    "Return output of 'factor' command as dictionary of factors."
@@ -208,4 +207,3 @@ And now for something completely different...
   * :ref:`genindex`
   * :ref:`modindex`
   * :ref:`search`
-
