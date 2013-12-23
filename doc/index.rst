@@ -118,11 +118,10 @@ package. It may be installed using::
 Documentation
 _____________
 
-Lancet's code is well documented with docstrings and reference
-documentation will be made available here soon. The following
-tutorials and examples demonstrate how Lancet components are used and
-should help illustrate how Lancet can be integrated in a real research
-workflow.
+Lancet's code is well documented and a complete reference manual will
+be made available here soon. The following tutorials and examples
+demonstrate how Lancet components are used and should help illustrate
+how Lancet can be integrated in a real research workflow.
 
 Tutorials
 ~~~~~~~~~
@@ -166,10 +165,13 @@ The paper itself is available on the `Journal of Neuroscience website
 Reference Documentation
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Reference documentation will be made available here soon. Reading the
-code should help understand the components of Lancet as all modulules,
-classes and method make extensive use of docstrings.
-
+Work on the reference manual is ongoing and complete, official
+reference documentation will be made available shortly. Meanwhile, an
+automatically generated reference can be found in the Topographica
+project's `Reference Manual
+<http://topographica.org/Reference_Manual/lancet-module.html>`_. The
+Python code may also be inspected and read directly as the majority of
+modules, classes and methods contain extensive docstrings.
 
 
 Contributors
