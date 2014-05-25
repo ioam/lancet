@@ -112,20 +112,30 @@ class vcs_metadata(param.ParameterizedFunction):
                 'vcs_diffs':     dict((path, _desc(path,2)) for path in abspaths)}
 
 
-# IPython pretty printing support (optional)
-try:
-    def repr_pretty_annotated(obj, p, cycle):
-        p.text(obj._pprint(cycle, annotate=True))
 
-    def repr_pretty_unannotated(obj, p, cycle):
-        p.text(obj._pprint(cycle, annotate=False))
+def repr_pretty_annotated(obj, p, cycle):
+    p.text(obj._pprint(cycle, annotate=True))
 
-    ip = get_ipython()
-    plaintext_formatter = ip.display_formatter.formatters['text/plain']
-    plaintext_formatter.for_type(Args, repr_pretty_annotated)
-    plaintext_formatter.for_type(Command, repr_pretty_unannotated)
-    plaintext_formatter.for_type(Launcher, repr_pretty_unannotated)
-    plaintext_formatter.for_type(FileType, repr_pretty_unannotated)
-    plaintext_formatter.for_type(review_and_launch, repr_pretty_unannotated)
-except:
-    pass
+def repr_pretty_unannotated(obj, p, cycle):
+    p.text(obj._pprint(cycle, annotate=False))
+
+
+_loaded = False
+
+def load_ipython_extension(ip):
+    """
+
+    IPython pretty printing support (optional). To load the extension
+    you may execute the following in IPython:
+
+    %load_ext lancet
+    """
+    global _loaded
+    if not _loaded:
+        _loaded = True
+        plaintext_formatter = ip.display_formatter.formatters['text/plain']
+        plaintext_formatter.for_type(Args, repr_pretty_annotated)
+        plaintext_formatter.for_type(Command, repr_pretty_unannotated)
+        plaintext_formatter.for_type(Launcher, repr_pretty_unannotated)
+        plaintext_formatter.for_type(FileType, repr_pretty_unannotated)
+        plaintext_formatter.for_type(review_and_launch, repr_pretty_unannotated)
