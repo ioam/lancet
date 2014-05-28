@@ -257,7 +257,8 @@ class NumpyFile(FileType):
 
     extensions = param.List(default=['.npz'], constant=True)
 
-    compress = param.Boolean(default=True)
+    compress = param.Boolean(default=True, doc="""
+      Whether or not the compressed npz format should be used.""")
 
     def __init__(self, **kwargs):
         super(NumpyFile, self).__init__(**kwargs)
@@ -289,6 +290,70 @@ class NumpyFile(FileType):
         if not isinstance(npzfile, dict):
             npzfile.close()
         return data
+
+
+class ViewFile(FileType):
+    """
+    An .view file contains a collection of DataViews stored on an
+    AttrTree. The file itself is a NumpyFile containing a pickle of
+    the AttrTree object as well as any additional metadata.
+    """
+
+    extensions = param.List(default=['.view'], constant=True)
+
+    filters = param.List(default=[], doc="""
+      A list of path tuples used to select data from the loaded
+      AttrTree. The paths may specify complete path matches or just a
+      partial path in the tree (which selects the corresponding
+      subtree). If empty, no filtering is applied.""")
+
+    compress = param.Boolean(default=True, doc="""
+      Whether or not the compressed npz format should be used.""")
+
+    def __init__(self, **kwargs):
+        super(ViewFile, self).__init__(**kwargs)
+        self.pprint_args(['hash_suffix', 'filters'], ['compress'])
+
+    def save(self, filename, path_index, metadata={}):
+        super(ViewFile, self).save(filename, metadata, data=path_index)
+        savefn = numpy.savez_compressed if self.compress else numpy.savez
+        filename = self._savepath(filename)
+        savefn(open(filename, 'w'), metadata=metadata, data=path_index)
+
+    def metadata(self, filename):
+        npzfile = numpy.load(self._loadpath(filename))
+        metadata = (npzfile['metadata'].tolist()
+                    if 'metadata' in npzfile.keys() else {})
+        # Numpy load may return a Python dictionary.
+        if not isinstance(npzfile, dict): npzfile.close()
+        return metadata
+
+
+    def data(self, filename):
+        from dataviews.collector import AttrTree
+        npzfile = numpy.load(self._loadpath(filename))
+        keys = [k for k in npzfile.keys() if k != 'metadata']
+        data = dict((k,npzfile[k]) for k in keys)
+
+        for (k,val) in data.items():
+            if val.dtype.char == 'O' and val.shape == ():
+                data[k] = val[()]
+
+        if not isinstance(npzfile, dict):
+            npzfile.close()
+
+        # Filter the AttrTree using any specified filters
+        data = data['data']
+        filters = [(f,) if isinstance(f,str) else f for f in self.filters]
+        if filters:
+            retdata = AttrTree()
+            path_items = set((k,v) for (k,v) in data.path_items.items()
+                             for f in filters if k[:len(f)]==f)
+            retdata = AttrTree()
+            for path, val in path_items:
+                retdata.set_path(path, val)
+            data = retdata
+        return {'data':data}
 
 
 
