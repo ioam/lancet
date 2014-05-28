@@ -17,6 +17,9 @@ except:
 try:    from pandas import DataFrame
 except: DataFrame = None # pyflakes:ignore (try/except import)
 
+try: from dataviews import NdMapping
+except: NdMapping = None # pyflakes:ignore (try/except import)
+
 from collections import defaultdict
 
 float_types = [float] + np_ftypes
@@ -794,7 +797,7 @@ class FileInfo(Args):
     FilePattern. Unlike other explicit instances of Args, this object
     extends the values of an existing Args object. Once you have
     loaded the metadata, FileInfo allows you to load the file data
-    into a pandas DataFrame.
+    into a pandas DataFrame or a DataViews NdMapping.
     """
 
     source = param.ClassSelector(class_ = Args, doc='''
@@ -819,14 +822,60 @@ class FileInfo(Args):
                                        **kwargs)
         self.pprint_args(['source', 'key', 'filetype'], ['ignore'])
 
-    def load(self, dframe):
+
+    @property
+    def ndmapping(self):
+        """
+        Return an ndmapping of the loaded data using the filenames as
+        values and other data as keys.
+        """
+        all_dimension_labels = self.constant_keys + self.varying_keys
+        dimension_labels = [d for d in all_dimension_labels if d != self.key]
+
+        mapping = NdMapping(dimensions=dimension_labels)
+        for spec in self.specs:
+            value = spec[self.key]
+            key = [spec[k] for k in dimension_labels]
+            mapping[tuple(key)] = value
+        return mapping
+
+
+    def load(self, val, **kwargs):
+        """
+        Load the file contents into the supplied pandas dataframe or
+        DataViews Ndmapping. This allows a selection to be made over
+        the metadata before loading the file contents (may be slow).
+        """
+        if NdMapping and isinstance(val, NdMapping):
+            return self.load_ndmapping(val, **kwargs)
+        elif DataFrame and isinstance(val, DataFrame):
+            return self.load_dframe(val, **kwargs)
+        else:
+            raise Exception("Type %s not a DataFrame or NdMapping." % type(val))
+
+
+    def load_ndmapping(self, ndmapping, data_key=None):
+        """
+        Load the file contents into the supplied NdMapping using the
+        specified key and filetype. The input ndmapping should have
+        the filenames as values which will be replaced by the loaded
+        data. If data_key is specified, this key will be used to index
+        the loaded data to retrive the specified item.
+        """
+        for key, filename in ndmapping.items():
+            data_dict = self.filetype.data(filename)
+            if data_key is None:
+                ndmapping[key] = data_dict
+            else:
+                ndmapping[key] = data_dict[data_key]
+        return ndmapping
+
+
+    def load_dframe(self, dframe):
         """
         Load the file contents into the supplied dataframe using the
-        specified key and filetype. This allows a specific selection
-        to be made using pandas over the metadata before loading the
-        file contents (which may be slow).
+        specified key and filetype.
         """
-        if DataFrame is None: print("Pandas not available")
         filename_series = dframe[self.key]
         loaded_data = filename_series.map(self.filetype.data)
         keys = [list(el.keys()) for el in loaded_data.values]
@@ -846,7 +895,6 @@ class FileInfo(Args):
         dictionary loaded by the filetype object.
         """
         specs = []
-        data_keys = set()
         data, mdata = {}, {}
         mdata_clashes, datakey_clashes  = set(), set()
 
