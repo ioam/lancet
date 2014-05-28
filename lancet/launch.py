@@ -61,7 +61,8 @@ class Command(core.PrettyPrinted, param.Parameterized):
         if self.do_format: return core.Arguments.spec_formatter(spec)
         else             : return spec
 
-    def show(self, args, file_handle=sys.stdout, **kwargs):
+    def show(self, args, file_handle=None, **kwargs):
+        "Write to file_handle if supplied, othewise print output"
         full_string = ''
         info = {'root_directory':     '<root_directory>',
                 'batch_name':         '<batch_name>',
@@ -81,9 +82,11 @@ class Command(core.PrettyPrinted, param.Parameterized):
         cmd_lines = ['%d: %s\n' % (i, qcmds) for (i,qcmds)
                      in enumerate(quoted_cmds)]
         full_string += ''.join(cmd_lines)
-
-        file_handle.write(full_string)
-        file_handle.flush()
+        if file_handle:
+            file_handle.write(full_string)
+            file_handle.flush()
+        else:
+            print(full_string)
 
     def verify(self, args):
         """
