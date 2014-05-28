@@ -4,7 +4,7 @@
 
 import os, json, fnmatch
 import param
-from core import Arguments, Concatenate, CartesianProduct
+from lancet.core import Arguments, Concatenate, CartesianProduct
 
 class DynamicArgs(Arguments):
     """
@@ -66,14 +66,16 @@ class DynamicArgs(Arguments):
         """
         raise NotImplementedError
 
-
-    def next(self):
+    def __next__(self):
         if self._next_val is StopIteration:
             self._initial_state()
             raise StopIteration
         current_val =  self._next_val
         self._next_val = StopIteration
         return current_val
+
+    # Python 2 support
+    next = __next__
 
 
     def update(self, tids, info):
@@ -134,8 +136,8 @@ class DynamicArgs(Arguments):
                          for (k,v) in arg.items()) + '}' for arg in args)
                 info = ("exploring arguments [%s]" % pprint )
 
-            if i == 0: print "Step %d: Initially %s." % (i, info)
-            else:      print "Step %d: %s after receiving input(s) %s." % (i, info.capitalize(), val)
+            if i == 0: print("Step %d: Initially %s." % (i, info))
+            else:      print("Step %d: %s after receiving input(s) %s." % (i, info.capitalize(), val))
 
     def __add__(self, other):
         """
@@ -254,14 +256,14 @@ class SimpleGradientDescent(DynamicArgs):
     def varying_keys(self):   return [self.key]
 
     def summary(self):
-        print 'Varying Keys: %r' % self.key
-        print 'Maximum steps allowed: %d' % self.max_steps
+        print('Varying Keys: %r' % self.key)
+        print('Maximum steps allowed: %d' % self.max_steps)
         self._trace_summary()
         (val, arg) = (self.trace[-1])
         if self._termination_info:
             (success, best_val, arg) = self._termination_info
             condition =  'Successfully converged.' if success else 'Maximum step limit reached.'
-            print "%s Minimum value of %r at %s=%r." % (condition, best_val, self.key, arg)
+            print("%s Minimum value of %r at %s=%r." % (condition, best_val, self.key, arg))
 
     def __len__(self):
         return 2*self.max_steps # Each step specifies 2 concurrent jobs
@@ -304,8 +306,7 @@ class DynamicConcatenate(DynamicArgs):
         elif (self.isinstance(self.second,DynamicArgs) and self._first_sent):
             self.second.update(tids, info)
 
-
-    def next(self):
+    def __next__(self):
         if self._first_cached is None:
             try:  return next(self.first)
             except StopIteration:
@@ -317,6 +318,10 @@ class DynamicConcatenate(DynamicArgs):
                 return self._first_cached
             else:
                 return  next(self.second)
+
+    # Python 2 support
+    next = __next__
+
 
 class DynamicCartesianProduct(DynamicArgs):
 
@@ -352,7 +357,7 @@ class DynamicCartesianProduct(DynamicArgs):
         if self.isinstance(self.second,DynamicArgs): self.second.update(tids, info)
 
 
-    def next(self):
+    def __next__(self):
         if self._first_cached is None:
             first_spec = next(self.first)
             return self._cartesian_product(first_spec, self._second_cached)

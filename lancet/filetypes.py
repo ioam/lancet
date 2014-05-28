@@ -1,6 +1,11 @@
-import os, tempfile, StringIO, json, pickle
+import os, tempfile, json, pickle
 import param
-from core import PrettyPrinted
+from lancet.core import PrettyPrinted
+
+try:
+    from io import StringIO
+except:
+    from StringIO import StringIO
 
 try:    import numpy
 except: pass
@@ -266,7 +271,7 @@ class NumpyFile(FileType):
     def metadata(self, filename):
         npzfile = numpy.load(self._loadpath(filename))
         metadata = (npzfile['metadata'].tolist()
-                    if 'metadata' in npzfile.keys() else {})
+                    if 'metadata' in list(npzfile.keys()) else {})
         # Numpy load may return a Python dictionary.
         if not isinstance(npzfile, dict): npzfile.close()
         return metadata
@@ -342,7 +347,7 @@ class ImageFile(FileType):
             return None
 
         im.thumbnail((size,size))
-        buff = StringIO.StringIO()
+        buff = StringIO()
         assert format=='png', "Only png display enabled"
         im.save(buff, format='png')
         buff.seek(0)
@@ -391,7 +396,7 @@ class MatplotlibFile(FileType):
 
         inches = size / float(fig.dpi)
         fig.set_size_inches(inches, inches)
-        buff = StringIO.StringIO()
+        buff = StringIO()
         fig.savefig(buff, format=format)
         buff.seek(0)
         pyplot.close(fig)

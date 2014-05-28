@@ -63,7 +63,7 @@ class PrettyPrinted(object):
         params = dict(self.get_param_values())
         show_lexsort = getattr(self, '_lexorder', None) is not None
         modified = [k for (k,v) in self.get_param_values(onlychanged=onlychanged)]
-        pkwargs = [(k, params[k])  for k in kwargs if (k in modified)] + extra_params.items()
+        pkwargs = [(k, params[k])  for k in kwargs if (k in modified)] + list(extra_params.items())
         arg_list = [(k,params[k]) for k in pos_args] + pkwargs
 
         lines = []
@@ -178,12 +178,15 @@ class Arguments(PrettyPrinted, param.Parameterized):
         return (dict((k, _round(v, fp_precision) if (type(v) in float_types) else v)
                      for (k,v) in spec.items()) for spec in specs)
 
-    def next(self):
+    def __next__(self):
         """
         Called to get a list of specifications: dictionaries with
         parameter name keys and string values.
         """
         raise StopIteration
+
+    # Python 2 support
+    next = __next__
 
     def copy(self):
         """
@@ -322,7 +325,7 @@ class Args(Arguments):
         self._exhausted = False
         return self
 
-    def next(self):
+    def __next__(self):
         if self._exhausted:
             raise StopIteration
         else:
@@ -623,12 +626,12 @@ class Log(Args):
 
     def __init__(self, log_path, tid_key='tid', **kwargs):
 
-        log_items = sorted(Log.extract_log(log_path).iteritems())
+        log_items = sorted(Log.extract_log(log_path).items())
 
         if tid_key is None:
             log_specs = [spec for (_, spec) in log_items]
         else:
-            log_specs = [dict(spec.items()+[(tid_key,idx)])
+            log_specs = [dict(list(spec.items())+[(tid_key,idx)])
                          for (idx, spec) in log_items]
 
         super(Log, self).__init__(log_specs,
@@ -781,7 +784,7 @@ class FilePattern(Args):
 
 
 # Importing from filetypes requires PrettyPrinted to be defined first
-from filetypes import FileType
+from lancet.filetypes import FileType
 
 class FileInfo(Args):
     """
@@ -833,10 +836,10 @@ class FileInfo(Args):
         to be made using pandas over the metadata before loading the
         file contents (which may be slow).
         """
-        if DataFrame is None: print "Pandas not available"
+        if DataFrame is None: print("Pandas not available")
         filename_series = dframe[self.key]
         loaded_data = filename_series.map(self.filetype.data)
-        keys = [el.keys() for el in loaded_data.values]
+        keys = [list(el.keys()) for el in loaded_data.values]
         for key in set().union(*keys):
             key_exists = key in dframe.columns
             if key_exists:

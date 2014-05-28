@@ -11,6 +11,12 @@ import lancet.core as core
 from lancet import __version__ as lancet_version
 from lancet.dynamic import DynamicArgs
 
+# For Python 2 and 3 compatibility
+try:
+    input = raw_input
+except NameError:
+    pass
+
 #===================#
 # Commands Template #
 #===================#
@@ -857,7 +863,7 @@ class review_and_launch(core.PrettyPrinted, param.Parameterized):
         launcher_name = launcher.__class__.__name__
         print('%s\n' % self.summary_heading(launcher_name))
         launcher.summary()
-        print
+        print('')
         if self.input_options(['Y','n'],
                               '\nShow complete launch repr?', default='y') == 'y':
             print("\n%s\n" % launcher)
@@ -871,12 +877,12 @@ class review_and_launch(core.PrettyPrinted, param.Parameterized):
         args = obj.args if isinstance(obj, Launcher) else obj
         print('\n%s\n' % self.summary_heading(heading))
         args.summary()
-        if show_repr: print "\n%s\n" % args
+        if show_repr: print("\n%s\n" % args)
         response = self.input_options(['y', 'N','quit'],
                 '\nShow available argument specifier entries?', default='n')
         if response == 'quit': return False
         if response == 'y':  args.show()
-        print
+        print('')
         return True
 
     def review_command(self, launcher):
@@ -885,7 +891,7 @@ class review_and_launch(core.PrettyPrinted, param.Parameterized):
         template_name = command.__class__.__name__
         print('%s\n' % self.summary_heading(template_name))
         command.summary()
-        print "\n"
+        print("\n")
         response = self.input_options(['y', 'N','quit','save'],
                                       '\nShow available command entries?',
                                       default='n')
@@ -895,10 +901,10 @@ class review_and_launch(core.PrettyPrinted, param.Parameterized):
         elif response == 'y':
             command.show(args)
         elif response == 'save':
-            fname = raw_input('Filename: ').replace(' ','_')
+            fname = input('Filename: ').replace(' ','_')
             with open(os.path.abspath(fname),'w') as f:
                 command.show(args, file_handle=f)
-        print
+        print('')
         return True
 
     def summary_heading(self, text, car='=', carvert='|'):
@@ -913,7 +919,7 @@ class review_and_launch(core.PrettyPrinted, param.Parameterized):
         """
         check_options = [x.lower() for x in options]
         while True:
-            response = raw_input('%s [%s]: ' % (prompt, ', '.join(options))).lower()
+            response = input('%s [%s]: ' % (prompt, ', '.join(options))).lower()
             if response in check_options: return response.strip()
             elif response == '' and default is not None:
                 return default.lower().strip()
