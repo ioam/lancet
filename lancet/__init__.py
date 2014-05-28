@@ -52,7 +52,7 @@ consuming computational time and resources.
 
 __version__ = "2013.11.2"
 
-import os, subprocess
+import os, sys, subprocess
 import param
 
 from lancet.core import *       # pyflakes:ignore (appropriate import)
@@ -133,6 +133,10 @@ def load_ipython_extension(ip):
     global _loaded
     if not _loaded:
         _loaded = True
+        from lancet import launch
+        if sys.version_info[0] == 2:
+            launch.input = lambda *args, **kwargs: raw_input(*args, **kwargs)
+
         plaintext_formatter = ip.display_formatter.formatters['text/plain']
         plaintext_formatter.for_type(Args, repr_pretty_annotated)
         plaintext_formatter.for_type(Command, repr_pretty_unannotated)

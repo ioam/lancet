@@ -185,7 +185,6 @@ class Arguments(PrettyPrinted, param.Parameterized):
         """
         raise StopIteration
 
-    # Python 2 support
     next = __next__
 
     def copy(self):
@@ -331,6 +330,8 @@ class Args(Arguments):
         else:
             self._exhausted=True
             return self.specs
+
+    next = __next__
 
     def _unique(self, sequence, idfun=repr):
         """

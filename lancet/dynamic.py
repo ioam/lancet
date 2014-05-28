@@ -74,7 +74,6 @@ class DynamicArgs(Arguments):
         self._next_val = StopIteration
         return current_val
 
-    # Python 2 support
     next = __next__
 
 
@@ -319,7 +318,6 @@ class DynamicConcatenate(DynamicArgs):
             else:
                 return  next(self.second)
 
-    # Python 2 support
     next = __next__
 
 
@@ -364,3 +362,4 @@ class DynamicCartesianProduct(DynamicArgs):
         else:
             second_spec = next(self.second)
             return self._cartesian_product(self._first_cached, second_spec)
+    next = __next__
