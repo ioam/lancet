@@ -789,10 +789,12 @@ from lancet.filetypes import FileType
 
 class FileInfo(Args):
     """
-    Loads metadata (and optionally data) from a set of filenames. For
-    instance, you can load metadata associated with a series of image
-    files given by a FilePattern. Unlike other explicit instances of
-    Args, this object extends the values of an existing Args object.
+    Loads metadata from a set of filenames. For instance, you can load
+    metadata associated with a series of image files given by a
+    FilePattern. Unlike other explicit instances of Args, this object
+    extends the values of an existing Args object. Once you have
+    loaded the metadata, FileInfo allows you to load the file data
+    into a pandas DataFrame.
     """
 
     source = param.ClassSelector(class_ = Args, doc='''
@@ -804,31 +806,18 @@ class FileInfo(Args):
     key = param.String(constant=True, doc='''
        The key used to find the file paths for inspection.''')
 
-    load_contents = param.Boolean(default=False, constant=True, doc='''
-       Whether the main contents of the files are to be loaded along
-       with the associated metadata. Note that this can be slow when
-       handling large numbers of files - it may be better to select
-       only the required data with a pandas DataFrame and use the
-       load_dframe method instead.''')
-
     ignore = param.List(default=[], constant=True, doc='''
        Metadata keys that are to be explicitly ignored. ''')
 
-    def __init__(self, source, key, filetype,
-                 load_contents=False, ignore = [], **kwargs):
-        specs, data_keys = self._info(source, key, filetype,
-                                      load_contents, ignore)
+    def __init__(self, source, key, filetype, ignore = [], **kwargs):
+        specs = self._info(source, key, filetype, ignore)
         super(FileInfo, self).__init__(specs,
                                        source = source,
                                        filetype = filetype,
                                        key = key,
-                                       load_contents = load_contents,
                                        ignore=ignore,
                                        **kwargs)
-        # Do not attempt to sort data fields.
-        self.unsortable_keys = list(data_keys)
-        self.pprint_args(['source', 'key', 'filetype'],
-                         ['load_contents', 'ignore'])
+        self.pprint_args(['source', 'key', 'filetype'], ['ignore'])
 
     def load(self, dframe):
         """
@@ -850,11 +839,11 @@ class FileInfo(Args):
             dframe[key+suffix] = loaded_data.map(lambda x: x.get(key, np.nan))
         return dframe
 
-    def _info(self, source, key, filetype, load_contents, ignore):
+
+    def _info(self, source, key, filetype, ignore):
         """
         Generates the union of the source.specs and the metadata
-        dictionary loaded by the filetype object. Optionally, the the
-        file contents are also loaded.
+        dictionary loaded by the filetype object.
         """
         specs = []
         data_keys = set()
@@ -867,16 +856,10 @@ class FileInfo(Args):
 
             mdata = dict((k,v) for (k,v) in filetype.metadata(spec[key]).items()
                          if k not in ignore)
-            data = filetype.data(spec[key]) if load_contents else {}
-            data_keys = data_keys | set(data.keys())
             mdata_spec = dict(spec, **mdata)
-            specs.append(dict(mdata_spec, **data))
+            specs.append(mdata_spec)
             mdata_clashes = mdata_clashes | (set(spec.keys()) & set(mdata.keys()))
-            datakey_clashes = datakey_clashes | (set(data.keys()) & set(mdata_spec))
-
         # Metadata clashes can be avoided by using the ignore list.
         if mdata_clashes:
             self.warning("Loaded metadata keys overriding source keys.")
-        if datakey_clashes:
-            self.warning("Loaded data keys overriding source and/or metadata keys")
-        return specs, data_keys
+        return specs
