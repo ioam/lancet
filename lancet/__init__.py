@@ -50,10 +50,10 @@ launch. The goal is to help users identify mistakes early before
 consuming computational time and resources.
 """
 
-__version__ = "2013.11.2"
-
 import os, sys, subprocess
 import param
+
+__version__ = param.Version(release=(0,8,0), fpath=__file__, commit="$Format:%h$")
 
 from lancet.core import *       # pyflakes:ignore (appropriate import)
 from lancet.dynamic import *    # pyflakes:ignore (appropriate import)
