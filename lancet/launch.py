@@ -391,7 +391,7 @@ class Launcher(core.PrettyPrinted, param.Parameterized):
                           + platform.python_version())
         platform_dict['platform']       = platform.platform()
         platform_dict['python_version'] = python_version
-        platform_dict['lancet_version'] = lancet_version
+        platform_dict['lancet_version'] = str(lancet_version)
 
         return {'root_directory':    self.root_directory,
                 'batch_name':        self.batch_name,
