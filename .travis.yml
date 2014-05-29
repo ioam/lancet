@@ -1,0 +1,18 @@
+language: python
+python:
+  - "2.7"
+  - "3.2"
+  - "3.3"
+  - "3.4"
+
+notifications:
+  email:
+    on_failure: change # [always|never|change] default: always
+
+install: true
+
+install:
+  - pip install git+https://github.com/ioam/param.git
+
+script:
+  - nosetests --with-doctest
