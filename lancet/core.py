@@ -273,11 +273,13 @@ class Args(Arguments):
     be specified directly and easily. For instance:
 
     >>> Args(a=2, b=3)
+    Args(fp_precision=4,a=2,b=3)
 
     The alternative input format takes an explicit list of the
     argument specifications:
 
     >>> Args([{'a':3, 'b':5}]) # Equivalent behaviour to above
+    Args(specs=[{'a': 3, 'b': 5}],fp_precision=4)
 
     This latter format is completely flexible and general, allowing
     any arbitrary list of arguments to be specified as desired. This
