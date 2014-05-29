@@ -12,7 +12,6 @@ import lancet
 from io import BytesIO
 from contextlib import contextmanager
 import sys
-from cStringIO import StringIO
 from contextlib import contextmanager
 
 
