@@ -11,6 +11,7 @@ notifications:
 
 install: true
 
+# Should be set to PyPI package on next release
 install:
   - pip install git+https://github.com/ioam/param.git
 
