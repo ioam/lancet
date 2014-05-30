@@ -9,7 +9,11 @@ cwd = os.path.abspath(os.path.split(__file__)[0])
 sys.path.insert(0, os.path.join(cwd, '..'))
 import lancet
 
-from io import BytesIO
+if sys.version_info[0] == 2:
+  from io import BytesIO as IO
+else:
+  from io import StringIO as IO
+
 from contextlib import contextmanager
 import sys
 from contextlib import contextmanager
@@ -17,7 +21,7 @@ from contextlib import contextmanager
 
 @contextmanager
 def capture(command, *args, **kwargs):
-    out, sys.stdout = sys.stdout, BytesIO()
+    out, sys.stdout = sys.stdout, IO()
     command(*args, **kwargs)
     sys.stdout.seek(0)
     yield sys.stdout.read()
@@ -127,9 +131,14 @@ class TestArgs(TestArgSpecs):
         arg = lancet.Args(a=4, b=6)
         self.assertEquals(str(arg), 'Args(\n   a=4,\n   b=6\n)')
 
-    def test_args_str1(self):
+    def test_args_str2(self):
+        """
+        As OrderedDicts not used internally, the dictionaries shown in
+        the full specification list can change between calls.
+        """
         arg = lancet.Args(self.specs1)
-        self.assertEquals(str(arg), "Args(\n   specs=[{'a': 3, 'b': 5}, {'a': 4, 'b': 6}]\n)")
+        self.assertEquals(str(arg).startswith('Args(\n   specs=[{'), True)
+        self.assertEquals(str(arg).endswith('}]\n)'), True)
 
     def test_args_repr1(self):
         arg = lancet.Args(a=4, b=6)
@@ -137,9 +146,13 @@ class TestArgs(TestArgSpecs):
                           'Args(fp_precision=4,a=4,b=6)')
 
     def test_args_repr2(self):
+        """
+        As OrderedDicts not used internally, the dictionaries shown in
+        the full specification list can change between calls.
+        """
         arg = lancet.Args(self.specs1)
-        self.assertEquals(repr(arg),
-                          "Args(specs=[{'a': 3, 'b': 5}, {'a': 4, 'b': 6}],fp_precision=4)")
+        self.assertEquals(repr(arg).startswith('Args(specs=[{'), True)
+        self.assertEquals(repr(arg).endswith('}],fp_precision=4)'), True)
 
     def test_args_show(self):
         arg = lancet.Args(self.specs1)
