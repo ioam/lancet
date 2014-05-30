@@ -1,3 +1,6 @@
+|BuildStatus|_
+
+
 Lancet
 ======
 
@@ -78,4 +81,8 @@ works with any tool and not just `Topographica
 <http://www.topographica.org>`_ .
 
 Philipp Rudiger: Testing, feedback and suggestions.
+
+.. |BuildStatus| image:: https://travis-ci.org/ioam/lancet.svg?branch=master
+.. _BuildStatus: https://travis-ci.org/ioam/lancet
+
 
