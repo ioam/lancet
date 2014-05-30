@@ -15,9 +15,6 @@ else:
   from io import StringIO as IO
 
 from contextlib import contextmanager
-import sys
-from contextlib import contextmanager
-
 
 @contextmanager
 def capture(command, *args, **kwargs):
@@ -95,7 +92,7 @@ class TestArgs(TestArgSpecs):
                            {'a': 1, 'b': 5, 'c': 3},
                            {'a': 2, 'b': 6, 'c': 2}])
 
-    def test_args_lexsort3(self):
+    def test_args_lexsort4(self):
         arg = lancet.Args(self.specs2)
         arg2 = arg.lexsort('+b', '-c')
         self.assertEquals(arg2.specs,
