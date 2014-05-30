@@ -20,7 +20,7 @@ except: DataFrame = None # pyflakes:ignore (try/except import)
 try: from dataviews import NdMapping
 except: NdMapping = None # pyflakes:ignore (try/except import)
 
-from collections import defaultdict
+from collections import defaultdict, OrderedDict
 
 float_types = [float] + np_ftypes
 def identityfn(x): return x
@@ -304,7 +304,7 @@ class Args(Arguments):
             self.pprint_args(['specs'],[])
         else: # Present in kwarg format
             self.pprint_args([], self.constant_keys, None,
-                             dict(self.constant_items))
+                             OrderedDict(sorted(self.constant_items)))
 
     def _build_specs(self, specs, kwargs, fp_precision):
         """
