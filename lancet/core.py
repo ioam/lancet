@@ -898,9 +898,8 @@ class FileInfo(Args):
         Generates the union of the source.specs and the metadata
         dictionary loaded by the filetype object.
         """
-        specs = []
-        data, mdata = {}, {}
-        mdata_clashes, datakey_clashes  = set(), set()
+        specs, mdata = [], {}
+        mdata_clashes  = set()
 
         for spec in source.specs:
             if key not in spec:
