@@ -1,0 +1,7 @@
+Lancet Modules
+==============
+
+.. toctree::
+   :maxdepth: 4
+
+   lancet

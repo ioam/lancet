@@ -1,0 +1,7 @@
+<map id="inheritance40f68afc84" name="inheritance40f68afc84">
+<area shape="rect" id="node1" href="#lancet.core.Arguments" title="The abstract, base class that defines the core interface and" alt="" coords="312,54,480,79"/>
+<area shape="rect" id="node4" href="#lancet.dynamic.DynamicArgs" title="DynamicArgs are declarative specifications that specify a" alt="" coords="528,54,736,79"/>
+<area shape="rect" id="node2" href="#lancet.core.PrettyPrinted" title="A mixin class for generating pretty&#45;printed representations." alt="" coords="45,29,225,54"/>
+<area shape="rect" id="node3" title="Base class for named objects that support Parameters and message" alt="" coords="5,78,264,103"/>
+<area shape="rect" id="node7" href="#lancet.dynamic.SimpleGradientDescent" title="Very simple gradient descent optimizer designed to illustrate how" alt="" coords="792,103,1067,129"/>
+</map>

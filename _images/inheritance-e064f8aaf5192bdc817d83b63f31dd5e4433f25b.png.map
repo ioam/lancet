@@ -1,0 +1,13 @@
+<map id="inheritancefc96a479df" name="inheritancefc96a479df">
+<area shape="rect" id="node1" href="#lancet.core.Args" title="An Arguments class that supports statically specified or" alt="" coords="529,153,655,178"/>
+<area shape="rect" id="node5" href="#lancet.core.CartesianProduct" title="CartesianProduct is the Cartesian product of two specifiers. The" alt="" coords="705,5,911,30"/>
+<area shape="rect" id="node6" href="#lancet.core.Concatenate" title="Concatenate is the sequential composition of two specifiers. The" alt="" coords="719,54,897,79"/>
+<area shape="rect" id="node7" href="#lancet.core.FileInfo" title="Loads metadata from a set of filenames. For instance, you can load" alt="" coords="738,103,878,129"/>
+<area shape="rect" id="node8" href="#lancet.core.FilePattern" title="A FilePattern specifier allows files to be matched and information" alt="" coords="727,153,889,178"/>
+<area shape="rect" id="node9" href="#lancet.core.List" title="An argument specifier that takes its values from a given list." alt="" coords="749,202,867,227"/>
+<area shape="rect" id="node10" href="#lancet.core.Log" title="Specifier that loads arguments from a log file in task id (tid)" alt="" coords="748,251,868,277"/>
+<area shape="rect" id="node11" href="#lancet.core.Range" title="Range generates an argument from a numerically interpolated range" alt="" coords="739,301,877,326"/>
+<area shape="rect" id="node2" href="#lancet.core.Arguments" title="The abstract, base class that defines the core interface and" alt="" coords="312,153,480,178"/>
+<area shape="rect" id="node3" href="#lancet.core.PrettyPrinted" title="A mixin class for generating pretty&#45;printed representations." alt="" coords="45,127,225,153"/>
+<area shape="rect" id="node4" title="Base class for named objects that support Parameters and message" alt="" coords="5,177,264,202"/>
+</map>

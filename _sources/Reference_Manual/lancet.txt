@@ -1,0 +1,58 @@
+lancet.lancet Package
+=====================
+
+:mod:`lancet` Package
+---------------------
+
+.. inheritance-diagram:: lancet.__init__
+
+
+.. automodule:: lancet.__init__
+    :members:
+    :inherited-members:
+    :show-inheritance:
+
+:mod:`core` Module
+------------------
+
+.. inheritance-diagram:: lancet.core
+
+
+.. automodule:: lancet.core
+    :members:
+    :inherited-members:
+    :show-inheritance:
+
+:mod:`dynamic` Module
+---------------------
+
+.. inheritance-diagram:: lancet.dynamic
+
+
+.. automodule:: lancet.dynamic
+    :members:
+    :inherited-members:
+    :show-inheritance:
+
+:mod:`filetypes` Module
+-----------------------
+
+.. inheritance-diagram:: lancet.filetypes
+
+
+.. automodule:: lancet.filetypes
+    :members:
+    :inherited-members:
+    :show-inheritance:
+
+:mod:`launch` Module
+--------------------
+
+.. inheritance-diagram:: lancet.launch
+
+
+.. automodule:: lancet.launch
+    :members:
+    :inherited-members:
+    :show-inheritance:
+

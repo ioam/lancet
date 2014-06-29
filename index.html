@@ -6,15 +6,16 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Introduction &mdash; Lancet 2013.11.02 documentation</title>
+    <title>Introduction &mdash; Lancet 0.8-dev documentation</title>
     
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/custom.css" type="text/css" />
     
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '2013.11.02',
+        VERSION:     '0.8-dev',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +25,8 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="Lancet 2013.11.02 documentation" href="#" /> 
+    <script type="text/javascript" src="_static/custom.js"></script>
+    <link rel="top" title="Lancet 0.8-dev documentation" href="#" /> 
   </head>
   <body>
     <div class="related">
@@ -36,7 +38,17 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="#">Lancet 2013.11.02 documentation</a> &raquo;</li> 
+
+<li><a href="#">Lancet Home</a></li>
+<li><a href="Tutorials/index.html">Tutorials</a></li>
+<li><a href="Reference_Manual/lancet.html">Reference Manual</a></li>
+
+
+
+
+
+
+
       </ul>
     </div>  
 
@@ -124,11 +136,13 @@ integers in the style of the command in <a class="reference external" href="http
 <h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
 <p>A PyPI package will be made available shortly. The development version
 can be obtained from Lancet&#8217;s <a class="reference external" href="https://github.com/ioam/lancet">repository on GitHub</a>  using:</p>
-<div class="highlight-python"><pre>git clone git://github.com/ioam/lancet.git</pre>
+<div class="highlight-python"><div class="highlight"><pre>git clone git://github.com/ioam/lancet.git
+</pre></div>
 </div>
 <p>Lancet uses the lightweight <a class="reference external" href="https://github.com/ioam/param">param</a>
 package. It may be installed using:</p>
-<div class="highlight-python"><pre>pip install param</pre>
+<div class="highlight-python"><div class="highlight"><pre>pip install param
+</pre></div>
 </div>
 </div>
 <div class="section" id="documentation">
@@ -156,9 +170,9 @@ an interactive workflow are only [Coming soon]:</p>
 simulations results. All the code, notebooks and other assets used in
 this research along with more information on how to reproduce this
 paper may be found <a class="reference external" href="https://github.com/ioam/topographica/tree/master/models/stevens.jn13">here</a>.</p>
-<div class="highlight-python"><pre>@article{Stevens2013,
+<div class="highlight-python"><div class="highlight"><pre>@article{Stevens2013,
    author = {Stevens, Jean-Luc R. and Law, Judith S. and
-   Antol\'{i}k, J\'{a}n and Bednar, James A.},
+   Antol\&#39;{i}k, J\&#39;{a}n and Bednar, James A.},
    title = {Mechanisms for Stable, Robust, and Adaptive
    Development of Orientation Maps in the Primary Visual Cortex},
    journal = {The Journal of Neuroscience},
@@ -168,7 +182,8 @@ paper may be found <a class="reference external" href="https://github.com/ioam/t
    year = {2013},
    doi = {10.1523/JNEUROSCI.1037-13.2013},
    url = {http://www.jneurosci.org/content/33/40/15747.full}
-}</pre>
+}
+</pre></div>
 </div>
 <p>The paper itself is available on the <a class="reference external" href="http://www.jneurosci.org/content/33/40/15747.full">Journal of Neuroscience website</a>.</p>
 </div>
@@ -212,8 +227,17 @@ works with any tool and not just <a class="reference external" href="http://www.
             <p class="logo"><a href="#">
               <img class="logo" src="_static/mini_logo.png" alt="Logo"/>
             </a></p>
-  <h3><a href="#">Table Of Contents</a></h3>
-  <ul>
+<ul class="global-toc">
+
+<li><a href="#">Home</a></li>
+<li><a href="Tutorials/index.html">Tutorials</a></li>
+<li><a href="Reference_Manual/lancet.html">Reference Manual</a></li>
+<li><a href="http://github.com/ioam/lancet">Github Source Code</a></li>
+<li><a href="site_map.html">Site Map</a></li>
+</ul>
+<h3><a href="#">Table Of Contents</a></h3>
+
+<ul>
 <li><a class="reference internal" href="#">Introduction</a></li>
 <li><a class="reference internal" href="#features">Features</a></li>
 <li><a class="reference internal" href="#quickstart-example">Quickstart Example</a></li>
@@ -228,11 +252,12 @@ works with any tool and not just <a class="reference external" href="http://www.
 </li>
 </ul>
 
-  <h3>This Page</h3>
-  <ul class="this-page-menu">
-    <li><a href="_sources/index.txt"
-           rel="nofollow">Show Source</a></li>
-  </ul>
+
+<h3>This Page</h3>
+<ul class="this-page-menu">
+	<li><a	href="https://github.com/ioam/lancet/edit/master/doc/index.rst" rel="nofollow">Edit on GitHub</a></li>
+</ul>
+
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
@@ -259,12 +284,22 @@ works with any tool and not just <a class="reference external" href="http://www.
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="#">Lancet 2013.11.02 documentation</a> &raquo;</li> 
+
+<li><a href="#">Lancet Home</a></li>
+<li><a href="Tutorials/index.html">Tutorials</a></li>
+<li><a href="Reference_Manual/lancet.html">Reference Manual</a></li>
+
+
+
+
+
+
+
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2013, Jean-Luc Stevens.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.
+        &copy; Copyright 2014, IOAM.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
     </div>
   </body>
 </html>
