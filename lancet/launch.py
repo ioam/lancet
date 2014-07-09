@@ -729,6 +729,52 @@ class QLauncher(Launcher):
                              stdout=subprocess.PIPE)
         (stdout, stderr) = p.communicate()
 
+
+class ScriptLauncher(Launcher):
+    """
+    Script-based launcher. Calls a script with a path to a JSON file containing
+    process group job options. This easily supports more environment-specific
+    job-submission schemes without having to create a new Launcher every time.
+    """
+    script_path = param.String(default=os.path.join(os.getcwd(), 'launch_process_group.py'), doc='''
+        Path to script which is called for every group, with JSON file and
+        max_concurrency as arguments.''')
+
+    json_name = param.String(default='processes_%s.json', doc='''
+        Name of the JSON file output per process group.''')
+
+    def __init__(self, batch_name, args, command, **kwargs):
+        super(ScriptLauncher, self).__init__(batch_name, args,
+                command, **kwargs)
+
+    def _launch_process_group(self, process_commands, streams_path):
+        """
+        Aggregates all process_commands and the designated output files into a
+        list, and outputs it as JSON, after which the wrapper script is called.
+        """
+        processes = []
+        for cmd, tid in process_commands:
+            job_timestamp = time.strftime('%H%M%S')
+            basename = "%s_%s_tid_%d" % (self.batch_name, job_timestamp, tid)
+            stdout_path = os.path.join(streams_path, "%s.o.%d" % (basename, tid))
+            stderr_path = os.path.join(streams_path, "%s.e.%d" % (basename, tid))
+            process = { 'tid' : tid,
+                        'cmd' : cmd,
+                        'stdout' : stdout_path,
+                        'stderr' : stderr_path }
+            processes.append(process)
+
+        # To make the JSON filename unique per group, we use the last tid in
+        # this group.
+        json_path = os.path.join(self.root_directory, self.json_name % (tid))
+        with open(json_path, 'w') as json_file:
+            json.dump(processes, json_file, sort_keys=True, indent=4)
+
+        p = subprocess.Popen([self.script_path,
+                              json_path, str(self.max_concurrency)])
+        if p.wait() != 0:
+            raise Exception("Script command exit with code: %d" % p.poll())
+
 #===============#
 # Launch Helper #
 #===============#
