@@ -738,7 +738,8 @@ class ScriptLauncher(Launcher):
     """
     script_path = param.String(default=os.path.join(os.getcwd(), 'launch_process_group.py'), doc='''
         Path to script which is called for every group, with JSON file,
-        batch_name and max_concurrency as arguments.''')
+        batch_name, number of commands for this group and max_concurrency as
+        arguments.''')
 
     json_name = param.String(default='processes_%s.json', doc='''
         Name of the JSON file output per process group.''')
@@ -770,8 +771,8 @@ class ScriptLauncher(Launcher):
         with open(json_path, 'w') as json_file:
             json.dump(processes, json_file, sort_keys=True, indent=4)
 
-        p = subprocess.Popen([self.script_path, json_path,
-                              self.batch_name, str(self.max_concurrency)])
+        p = subprocess.Popen([self.script_path, json_path, self.batch_name,
+                              str(len(processes)), str(self.max_concurrency)])
         if p.wait() != 0:
             raise Exception("Script command exit with code: %d" % p.poll())
 
