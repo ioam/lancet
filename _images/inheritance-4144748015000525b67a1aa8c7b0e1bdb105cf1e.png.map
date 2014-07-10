@@ -1,0 +1,10 @@
+<map id="inheritance8744d36cfd" name="inheritance8744d36cfd">
+<area shape="rect" id="node1" href="#lancet.core.PrettyPrinted" title="A mixin class for generating pretty&#45;printed representations." alt="" coords="45,30,225,55"/>
+<area shape="rect" id="node2" href="#lancet.launch.Command" title="A command is a way of converting the dictionaries returned by" alt="" coords="339,5,517,30"/>
+<area shape="rect" id="node4" href="#lancet.launch.Launcher" title="A Launcher is constructed using a name, an argument specifier and" alt="" coords="343,54,513,79"/>
+<area shape="rect" id="node8" href="#lancet.launch.review_and_launch" title="A helper decorator that always checks for consistency and can" alt="" coords="313,103,543,129"/>
+<area shape="rect" id="node7" href="#lancet.launch.ShellCommand" title="A generic Command that can be used to invoke shell commands on" alt="" coords="593,5,802,30"/>
+<area shape="rect" id="node3" title="Base class for named objects that support Parameters and message" alt="" coords="5,79,264,105"/>
+<area shape="rect" id="node5" href="#lancet.launch.QLauncher" title="Launcher that operates with Grid Engine using default arguments" alt="" coords="607,103,787,129"/>
+<area shape="rect" id="node6" href="#lancet.launch.ScriptLauncher" title="Script&#45;based launcher. Calls a script with a path to a JSON file containing" alt="" coords="594,54,801,79"/>
+</map>

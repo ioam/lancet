@@ -795,10 +795,57 @@
                              <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">)</span>
         <span class="p">(</span><span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span><span class="p">)</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">communicate</span><span class="p">()</span>
 
+</div></div>
+<div class="viewcode-block" id="ScriptLauncher"><a class="viewcode-back" href="../../Reference_Manual/lancet.html#lancet.launch.ScriptLauncher">[docs]</a><span class="k">class</span> <span class="nc">ScriptLauncher</span><span class="p">(</span><span class="n">Launcher</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Script-based launcher. Calls a script with a path to a JSON file containing</span>
+<span class="sd">    process group job options. This easily supports more environment-specific</span>
+<span class="sd">    job-submission schemes without having to create a new Launcher every time.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">script_path</span> <span class="o">=</span> <span class="n">param</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="s">&#39;launch_process_group.py&#39;</span><span class="p">),</span> <span class="n">doc</span><span class="o">=</span><span class="s">&#39;&#39;&#39;</span>
+<span class="s">        Path to script which is called for every group, with JSON file,</span>
+<span class="s">        batch_name, number of commands for this group and max_concurrency as</span>
+<span class="s">        arguments.&#39;&#39;&#39;</span><span class="p">)</span>
+
+    <span class="n">json_name</span> <span class="o">=</span> <span class="n">param</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s">&#39;processes_</span><span class="si">%s</span><span class="s">.json&#39;</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s">&#39;&#39;&#39;</span>
+<span class="s">        Name of the JSON file output per process group.&#39;&#39;&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch_name</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">command</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">ScriptLauncher</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">batch_name</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span>
+                <span class="n">command</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_launch_process_group</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">process_commands</span><span class="p">,</span> <span class="n">streams_path</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Aggregates all process_commands and the designated output files into a</span>
+<span class="sd">        list, and outputs it as JSON, after which the wrapper script is called.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">processes</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">cmd</span><span class="p">,</span> <span class="n">tid</span> <span class="ow">in</span> <span class="n">process_commands</span><span class="p">:</span>
+            <span class="n">job_timestamp</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s">&#39;%H%M%S&#39;</span><span class="p">)</span>
+            <span class="n">basename</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s">_</span><span class="si">%s</span><span class="s">_tid_</span><span class="si">%d</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_name</span><span class="p">,</span> <span class="n">job_timestamp</span><span class="p">,</span> <span class="n">tid</span><span class="p">)</span>
+            <span class="n">stdout_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">streams_path</span><span class="p">,</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s">.o.</span><span class="si">%d</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">basename</span><span class="p">,</span> <span class="n">tid</span><span class="p">))</span>
+            <span class="n">stderr_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">streams_path</span><span class="p">,</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s">.e.</span><span class="si">%d</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">basename</span><span class="p">,</span> <span class="n">tid</span><span class="p">))</span>
+            <span class="n">process</span> <span class="o">=</span> <span class="p">{</span> <span class="s">&#39;tid&#39;</span> <span class="p">:</span> <span class="n">tid</span><span class="p">,</span>
+                        <span class="s">&#39;cmd&#39;</span> <span class="p">:</span> <span class="n">cmd</span><span class="p">,</span>
+                        <span class="s">&#39;stdout&#39;</span> <span class="p">:</span> <span class="n">stdout_path</span><span class="p">,</span>
+                        <span class="s">&#39;stderr&#39;</span> <span class="p">:</span> <span class="n">stderr_path</span> <span class="p">}</span>
+            <span class="n">processes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">process</span><span class="p">)</span>
+
+        <span class="c"># To make the JSON filename unique per group, we use the last tid in</span>
+        <span class="c"># this group.</span>
+        <span class="n">json_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">root_directory</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">json_name</span> <span class="o">%</span> <span class="p">(</span><span class="n">tid</span><span class="p">))</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">json_path</span><span class="p">,</span> <span class="s">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">json_file</span><span class="p">:</span>
+            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">processes</span><span class="p">,</span> <span class="n">json_file</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+
+        <span class="n">p</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">script_path</span><span class="p">,</span> <span class="n">json_path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_name</span><span class="p">,</span>
+                              <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">processes</span><span class="p">)),</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">max_concurrency</span><span class="p">)])</span>
+        <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&quot;Script command exit with code: </span><span class="si">%d</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">p</span><span class="o">.</span><span class="n">poll</span><span class="p">())</span>
+
 <span class="c">#===============#</span>
 <span class="c"># Launch Helper #</span>
 <span class="c">#===============#</span>
-</div></div>
+</div>
 <div class="viewcode-block" id="review_and_launch"><a class="viewcode-back" href="../../Reference_Manual/lancet.html#lancet.launch.review_and_launch">[docs]</a><span class="k">class</span> <span class="nc">review_and_launch</span><span class="p">(</span><span class="n">core</span><span class="o">.</span><span class="n">PrettyPrinted</span><span class="p">,</span> <span class="n">param</span><span class="o">.</span><span class="n">Parameterized</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A helper decorator that always checks for consistency and can</span>
