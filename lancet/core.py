@@ -103,6 +103,22 @@ class PrettyPrinted(object):
         return self._pprint()
 
 
+class Identity(object):
+    """
+    The identity element for any Arguments object 'args' under the *
+    operator (CartesianProduct). The following identities hold:
+
+    args is (Identity() * args)
+    args is (args * Identity())
+
+    Note that the empty Args() object fulfills the role of the False
+    (or 'null') Arguments object.
+    """
+    def __eq__(self, other): return isinstance(other, Identity)
+    def __repr__(self): return "Identity()"
+    def __str__(self): return repr(self)
+
+
 
 class Arguments(PrettyPrinted, param.Parameterized):
     """
@@ -215,19 +231,22 @@ class Arguments(PrettyPrinted, param.Parameterized):
         Concatenates two argument specifiers.
         """
         if not other: return self
-        return Concatenate(self,other)
+        else:         return Concatenate(self,other)
 
     def __mul__(self, other):
         """
         Takes the Cartesian product of two argument specifiers.
         """
-        return CartesianProduct(self, other)
+        if isinstance(other, Identity): return self
+        elif not (self and other):      return Args()
+        else:                           return CartesianProduct(self, other)
 
     def __radd__(self, other):
         if not other: return self
 
     def __rmul__(self, other):
-        if not other: return []
+        if isinstance(other, Identity): return self
+        elif not (self and other):      return Args()
 
     def _cartesian_product(self, first_specs, second_specs):
         """
@@ -468,6 +487,7 @@ class Concatenate(Args):
         super(Concatenate, self).__init__(specs, fp_precision=max_precision,
                                                 first=first, second=second)
         self.pprint_args(['first', 'second'],[], infix_operator='+')
+
 
 class CartesianProduct(Args):
     """
