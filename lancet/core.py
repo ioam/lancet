@@ -103,22 +103,6 @@ class PrettyPrinted(object):
         return self._pprint()
 
 
-class Identity(object):
-    """
-    The identity element for any Arguments object 'args' under the *
-    operator (CartesianProduct). The following identities hold:
-
-    args is (Identity() * args)
-    args is (args * Identity())
-
-    Note that the empty Args() object fulfills the role of the False
-    (or 'null') Arguments object.
-    """
-    def __eq__(self, other): return isinstance(other, Identity)
-    def __repr__(self): return "Identity()"
-    def __str__(self): return repr(self)
-
-
 
 class Arguments(PrettyPrinted, param.Parameterized):
     """
@@ -275,6 +259,35 @@ class Arguments(PrettyPrinted, param.Parameterized):
                            for (k,v) in self.constant_items])
         if self.constant_items:
             print("Constant Items: %s" % items)
+
+
+class Identity(Arguments):
+    """
+    The identity element for any Arguments object 'args' under the *
+    operator (CartesianProduct). The following identities hold:
+
+    args is (Identity() * args)
+    args is (args * Identity())
+
+    Note that the empty Args() object fulfills the role of the False
+    (or 'null') Arguments object.
+    """
+
+    fp_precision = param.Integer(default=None, allow_None=True,
+                                 precedence=(-1), constant=True, doc='''
+       fp_precision is disabled as Identity() never contains any
+       arguments.''')
+
+    def __eq__(self, other): return isinstance(other, Identity)
+
+    def __mul__(self, other):
+        if isinstance(other, Identity):
+            return Identity()
+        else:
+            return other
+
+    def __repr__(self): return "Identity()"
+    def __str__(self): return repr(self)
 
 
 class Args(Arguments):
@@ -465,6 +478,7 @@ class Args(Arguments):
         return DataFrame(self.specs) if DataFrame else "Pandas not available"
 
     def __len__(self): return len(self.specs)
+
 
 
 class Concatenate(Args):
