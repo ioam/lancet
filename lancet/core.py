@@ -515,7 +515,7 @@ class Range(Args):
     end_value = param.Number(default=None, allow_None=True, constant=True,
        doc='''The ending numeric value of the range (inclusive).''')
 
-    steps = param.Integer(default=2, constant=True, bounds=(2,None),
+    steps = param.Integer(default=2, constant=True, bounds=(1,None),
        doc='''The number of steps to interpolate over. Default is 2
          which returns the start and end values without interpolation.''')
 
@@ -536,6 +536,7 @@ class Range(Args):
 
     def linspace(self, start, stop, n):
         """ Simple replacement for numpy linspace"""
+        if n == 1: return [start]
         L = [0.0] * n
         nm1 = n - 1
         nm1inv = 1.0 / nm1
