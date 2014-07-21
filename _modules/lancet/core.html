@@ -281,19 +281,22 @@
 <span class="sd">        Concatenates two argument specifiers.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">other</span><span class="p">:</span> <span class="k">return</span> <span class="bp">self</span>
-        <span class="k">return</span> <span class="n">Concatenate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">other</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>         <span class="k">return</span> <span class="n">Concatenate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">other</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__mul__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Takes the Cartesian product of two argument specifiers.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">CartesianProduct</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Identity</span><span class="p">):</span> <span class="k">return</span> <span class="bp">self</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="p">(</span><span class="bp">self</span> <span class="ow">and</span> <span class="n">other</span><span class="p">):</span>      <span class="k">return</span> <span class="n">Args</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>                           <span class="k">return</span> <span class="n">CartesianProduct</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__radd__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">other</span><span class="p">:</span> <span class="k">return</span> <span class="bp">self</span>
 
     <span class="k">def</span> <span class="nf">__rmul__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">other</span><span class="p">:</span> <span class="k">return</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Identity</span><span class="p">):</span> <span class="k">return</span> <span class="bp">self</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="p">(</span><span class="bp">self</span> <span class="ow">and</span> <span class="n">other</span><span class="p">):</span>      <span class="k">return</span> <span class="n">Args</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">_cartesian_product</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">first_specs</span><span class="p">,</span> <span class="n">second_specs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -324,6 +327,35 @@
             <span class="k">print</span><span class="p">(</span><span class="s">&quot;Constant Items: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">items</span><span class="p">)</span>
 
 </div></div>
+<div class="viewcode-block" id="Identity"><a class="viewcode-back" href="../../Reference_Manual/lancet.html#lancet.core.Identity">[docs]</a><span class="k">class</span> <span class="nc">Identity</span><span class="p">(</span><span class="n">Arguments</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The identity element for any Arguments object &#39;args&#39; under the *</span>
+<span class="sd">    operator (CartesianProduct). The following identities hold:</span>
+
+<span class="sd">    args is (Identity() * args)</span>
+<span class="sd">    args is (args * Identity())</span>
+
+<span class="sd">    Note that the empty Args() object fulfills the role of the False</span>
+<span class="sd">    (or &#39;null&#39;) Arguments object.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">fp_precision</span> <span class="o">=</span> <span class="n">param</span><span class="o">.</span><span class="n">Integer</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">allow_None</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+                                 <span class="n">precedence</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">constant</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s">&#39;&#39;&#39;</span>
+<span class="s">       fp_precision is disabled as Identity() never contains any</span>
+<span class="s">       arguments.&#39;&#39;&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span> <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Identity</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__mul__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Identity</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">Identity</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">other</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="k">return</span> <span class="s">&quot;Identity()&quot;</span>
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="k">return</span> <span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+</div>
 <div class="viewcode-block" id="Args"><a class="viewcode-back" href="../../Reference_Manual/lancet.html#lancet.core.Args">[docs]</a><span class="k">class</span> <span class="nc">Args</span><span class="p">(</span><span class="n">Arguments</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    An Arguments class that supports statically specified or</span>
@@ -513,6 +545,7 @@
 
     <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">specs</span><span class="p">)</span>
 
+
 </div>
 <div class="viewcode-block" id="Concatenate"><a class="viewcode-back" href="../../Reference_Manual/lancet.html#lancet.core.Concatenate">[docs]</a><span class="k">class</span> <span class="nc">Concatenate</span><span class="p">(</span><span class="n">Args</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -534,6 +567,7 @@
         <span class="nb">super</span><span class="p">(</span><span class="n">Concatenate</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">specs</span><span class="p">,</span> <span class="n">fp_precision</span><span class="o">=</span><span class="n">max_precision</span><span class="p">,</span>
                                                 <span class="n">first</span><span class="o">=</span><span class="n">first</span><span class="p">,</span> <span class="n">second</span><span class="o">=</span><span class="n">second</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pprint_args</span><span class="p">([</span><span class="s">&#39;first&#39;</span><span class="p">,</span> <span class="s">&#39;second&#39;</span><span class="p">],[],</span> <span class="n">infix_operator</span><span class="o">=</span><span class="s">&#39;+&#39;</span><span class="p">)</span>
+
 </div>
 <div class="viewcode-block" id="CartesianProduct"><a class="viewcode-back" href="../../Reference_Manual/lancet.html#lancet.core.CartesianProduct">[docs]</a><span class="k">class</span> <span class="nc">CartesianProduct</span><span class="p">(</span><span class="n">Args</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -581,7 +615,7 @@
     <span class="n">end_value</span> <span class="o">=</span> <span class="n">param</span><span class="o">.</span><span class="n">Number</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">allow_None</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">constant</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
        <span class="n">doc</span><span class="o">=</span><span class="s">&#39;&#39;&#39;The ending numeric value of the range (inclusive).&#39;&#39;&#39;</span><span class="p">)</span>
 
-    <span class="n">steps</span> <span class="o">=</span> <span class="n">param</span><span class="o">.</span><span class="n">Integer</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">constant</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="bp">None</span><span class="p">),</span>
+    <span class="n">steps</span> <span class="o">=</span> <span class="n">param</span><span class="o">.</span><span class="n">Integer</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">constant</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="bp">None</span><span class="p">),</span>
        <span class="n">doc</span><span class="o">=</span><span class="s">&#39;&#39;&#39;The number of steps to interpolate over. Default is 2</span>
 <span class="s">         which returns the start and end values without interpolation.&#39;&#39;&#39;</span><span class="p">)</span>
 
@@ -602,6 +636,7 @@
 
 <div class="viewcode-block" id="Range.linspace"><a class="viewcode-back" href="../../Reference_Manual/lancet.html#lancet.core.Range.linspace">[docs]</a>    <span class="k">def</span> <span class="nf">linspace</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Simple replacement for numpy linspace&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span> <span class="k">return</span> <span class="p">[</span><span class="n">start</span><span class="p">]</span>
         <span class="n">L</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]</span> <span class="o">*</span> <span class="n">n</span>
         <span class="n">nm1</span> <span class="o">=</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">1</span>
         <span class="n">nm1inv</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">nm1</span>
