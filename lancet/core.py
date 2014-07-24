@@ -210,27 +210,24 @@ class Arguments(PrettyPrinted, param.Parameterized):
         for (k,v) in allkeys: collection[k].append(v)
         return collection
 
+    def _operator(self, operator, other):
+        identities = [isinstance(el, Identity) for el in [self, other]]
+        if  not any(identities): return operator(self,other)
+        if all(identities):      return Identity()
+        elif identities[1]:      return self
+        else:                    return other
+
     def __add__(self, other):
         """
         Concatenates two argument specifiers.
         """
-        if not other: return self
-        else:         return Concatenate(self,other)
+        return self._operator(Concatenate, other)
 
     def __mul__(self, other):
         """
         Takes the Cartesian product of two argument specifiers.
         """
-        if isinstance(other, Identity): return self
-        elif not (self and other):      return Args()
-        else:                           return CartesianProduct(self, other)
-
-    def __radd__(self, other):
-        if not other: return self
-
-    def __rmul__(self, other):
-        if isinstance(other, Identity): return self
-        elif not (self and other):      return Args()
+        return self._operator(CartesianProduct, other)
 
     def _cartesian_product(self, first_specs, second_specs):
         """
@@ -264,13 +261,17 @@ class Arguments(PrettyPrinted, param.Parameterized):
 class Identity(Arguments):
     """
     The identity element for any Arguments object 'args' under the *
-    operator (CartesianProduct). The following identities hold:
+    operator (CartesianProduct) and + operator (Concatenate). The
+    following identities hold:
 
     args is (Identity() * args)
     args is (args * Identity())
 
-    Note that the empty Args() object fulfills the role of the False
-    (or 'null') Arguments object.
+    args is (Identity() + args)
+    args is (args + Identity())
+
+    Note that the empty Args() object can also fulfill the role of
+    Identity under the addition operator.
     """
 
     fp_precision = param.Integer(default=None, allow_None=True,
@@ -279,15 +280,10 @@ class Identity(Arguments):
        arguments.''')
 
     def __eq__(self, other): return isinstance(other, Identity)
-
-    def __mul__(self, other):
-        if isinstance(other, Identity):
-            return Identity()
-        else:
-            return other
-
     def __repr__(self): return "Identity()"
     def __str__(self): return repr(self)
+    def __nonzero__(self): raise ValueError("The boolean value of Identity is undefined")
+    def __bool__(self): raise ValueError("The boolean value of Identity is undefined")
 
 
 class Args(Arguments):
