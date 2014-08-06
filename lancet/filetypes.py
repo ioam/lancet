@@ -353,7 +353,7 @@ class ViewFile(FileType):
             for path, val in path_items:
                 retdata.set_path(path, val)
             data = retdata
-        return {'data':data}
+        return {self.data_key:data}
 
 
 
