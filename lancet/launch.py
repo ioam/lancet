@@ -685,8 +685,11 @@ class QLauncher(Launcher):
         p = subprocess.Popen(popen_args, stdout=subprocess.PIPE)
         (stdout, stderr) = p.communicate()
 
-        self.collate_count += 1
         self.debug(stdout)
+        if p.poll() != 0:
+            raise EnvironmentError("qsub command exit with code: %d" % p.poll())
+
+        self.collate_count += 1
         self.message("Invoked qsub for next batch.")
         return job_name
 
@@ -710,7 +713,11 @@ class QLauncher(Launcher):
                                         cmd_args)
             p = subprocess.Popen(popen_args, stdout=subprocess.PIPE)
             (stdout, stderr) = p.communicate()
+
             self.debug(stdout)
+            if p.poll() != 0:
+                raise EnvironmentError("qsub command exit with code: %d" % p.poll())
+
             processes.append(p)
 
         self.message("Invoked qsub for %d commands" % len(processes))
@@ -723,11 +730,13 @@ class QLauncher(Launcher):
         Runs qdel command to remove all remaining queued jobs using
         the <batch_name>* pattern . Necessary when StopIteration is
         raised with scheduled jobs left on the queue.
+        Returns exit-code of qdel.
         """
         p = subprocess.Popen(['qdel', '%s_%s*' % (self.batch_name,
                                                   self.job_timestamp)],
                              stdout=subprocess.PIPE)
         (stdout, stderr) = p.communicate()
+        return p.poll()
 
 
 class ScriptLauncher(Launcher):
@@ -774,7 +783,7 @@ class ScriptLauncher(Launcher):
         p = subprocess.Popen([self.script_path, json_path, self.batch_name,
                               str(len(processes)), str(self.max_concurrency)])
         if p.wait() != 0:
-            raise Exception("Script command exit with code: %d" % p.poll())
+            raise EnvironmentError("Script command exit with code: %d" % p.poll())
 
 #===============#
 # Launch Helper #
