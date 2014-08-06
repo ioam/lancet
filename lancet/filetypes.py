@@ -346,7 +346,6 @@ class ViewFile(FileType):
         data = data['data']
         filters = [(f,) if isinstance(f,str) else f for f in self.filters]
         if filters:
-            retdata = AttrTree()
             path_items = set((k,v) for (k,v) in data.path_items.items()
                              for f in filters if k[:len(f)]==f)
             retdata = AttrTree()
