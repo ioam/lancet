@@ -751,8 +751,11 @@
         <span class="n">p</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span><span class="n">popen_args</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">)</span>
         <span class="p">(</span><span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span><span class="p">)</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">communicate</span><span class="p">()</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">collate_count</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">stdout</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">poll</span><span class="p">()</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">EnvironmentError</span><span class="p">(</span><span class="s">&quot;qsub command exit with code: </span><span class="si">%d</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">p</span><span class="o">.</span><span class="n">poll</span><span class="p">())</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">collate_count</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">(</span><span class="s">&quot;Invoked qsub for next batch.&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">job_name</span>
 
@@ -776,7 +779,11 @@
                                         <span class="n">cmd_args</span><span class="p">)</span>
             <span class="n">p</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span><span class="n">popen_args</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">)</span>
             <span class="p">(</span><span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span><span class="p">)</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">communicate</span><span class="p">()</span>
+
             <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">stdout</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">poll</span><span class="p">()</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">EnvironmentError</span><span class="p">(</span><span class="s">&quot;qsub command exit with code: </span><span class="si">%d</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">p</span><span class="o">.</span><span class="n">poll</span><span class="p">())</span>
+
             <span class="n">processes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">(</span><span class="s">&quot;Invoked qsub for </span><span class="si">%d</span><span class="s"> commands&quot;</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">processes</span><span class="p">))</span>
@@ -789,11 +796,13 @@
 <span class="sd">        Runs qdel command to remove all remaining queued jobs using</span>
 <span class="sd">        the &lt;batch_name&gt;* pattern . Necessary when StopIteration is</span>
 <span class="sd">        raised with scheduled jobs left on the queue.</span>
+<span class="sd">        Returns exit-code of qdel.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">p</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">([</span><span class="s">&#39;qdel&#39;</span><span class="p">,</span> <span class="s">&#39;</span><span class="si">%s</span><span class="s">_</span><span class="si">%s</span><span class="s">*&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_name</span><span class="p">,</span>
                                                   <span class="bp">self</span><span class="o">.</span><span class="n">job_timestamp</span><span class="p">)],</span>
                              <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">)</span>
         <span class="p">(</span><span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span><span class="p">)</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">communicate</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">p</span><span class="o">.</span><span class="n">poll</span><span class="p">()</span>
 
 </div></div>
 <div class="viewcode-block" id="ScriptLauncher"><a class="viewcode-back" href="../../Reference_Manual/lancet.html#lancet.launch.ScriptLauncher">[docs]</a><span class="k">class</span> <span class="nc">ScriptLauncher</span><span class="p">(</span><span class="n">Launcher</span><span class="p">):</span>
@@ -840,7 +849,7 @@
         <span class="n">p</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">script_path</span><span class="p">,</span> <span class="n">json_path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_name</span><span class="p">,</span>
                               <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">processes</span><span class="p">)),</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">max_concurrency</span><span class="p">)])</span>
         <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&quot;Script command exit with code: </span><span class="si">%d</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">p</span><span class="o">.</span><span class="n">poll</span><span class="p">())</span>
+            <span class="k">raise</span> <span class="ne">EnvironmentError</span><span class="p">(</span><span class="s">&quot;Script command exit with code: </span><span class="si">%d</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">p</span><span class="o">.</span><span class="n">poll</span><span class="p">())</span>
 
 <span class="c">#===============#</span>
 <span class="c"># Launch Helper #</span>
