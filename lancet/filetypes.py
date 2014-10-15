@@ -80,7 +80,8 @@ class FileType(PrettyPrinted, param.Parameterized):
         and making the filename unique as necessary.
         """
         (basename, ext) = os.path.splitext(filename)
-        ext = ext if ext else self.extensions[0]
+        basename = basename if (ext in self.extensions) else filename
+        ext = ext if (ext in self.extensions) else self.extensions[0]
         savepath = os.path.abspath(os.path.join(self.directory,
                                                  '%s%s' % (basename, ext)))
         return (tempfile.mkstemp(ext, basename + "_", self.directory)[1]
