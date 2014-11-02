@@ -80,7 +80,7 @@ texinfo_documents = [
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {'http://docs.python.org/': None,
                        'http://ioam.github.io/param/': None,
-                       'http://ioam.github.io/dataviews/': None,
+                       'http://ioam.github.io/holoviews/': None,
                        'http://ipython.org/ipython-doc/2/' : None}
 
 

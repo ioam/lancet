@@ -17,7 +17,7 @@ except:
 try:    from pandas import DataFrame
 except: DataFrame = None # pyflakes:ignore (try/except import)
 
-try: from dataviews import NdMapping
+try: from holoviews import NdMapping
 except: NdMapping = None # pyflakes:ignore (try/except import)
 
 from collections import defaultdict, OrderedDict
@@ -836,7 +836,7 @@ class FileInfo(Args):
     FilePattern. Unlike other explicit instances of Args, this object
     extends the values of an existing Args object. Once you have
     loaded the metadata, FileInfo allows you to load the file data
-    into a pandas DataFrame or a DataViews NdMapping.
+    into a pandas DataFrame or a HoloViews NdMapping.
     """
 
     source = param.ClassSelector(class_ = Args, doc='''
@@ -882,7 +882,7 @@ class FileInfo(Args):
     def load(self, val, **kwargs):
         """
         Load the file contents into the supplied pandas dataframe or
-        DataViews Ndmapping. This allows a selection to be made over
+        HoloViews Ndmapping. This allows a selection to be made over
         the metadata before loading the file contents (may be slow).
         """
         if NdMapping and isinstance(val, NdMapping):
