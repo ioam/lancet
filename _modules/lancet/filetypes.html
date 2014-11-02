@@ -361,7 +361,7 @@
 </div>
 <div class="viewcode-block" id="ViewFile"><a class="viewcode-back" href="../../Reference_Manual/lancet.html#lancet.filetypes.ViewFile">[docs]</a><span class="k">class</span> <span class="nc">ViewFile</span><span class="p">(</span><span class="n">FileType</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    An .view file contains a collection of DataViews stored on an</span>
+<span class="sd">    An .view file contains a collection of HoloViews stored on an</span>
 <span class="sd">    AttrTree. The file itself is a NumpyFile containing a pickle of</span>
 <span class="sd">    the AttrTree object as well as any additional metadata.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -397,7 +397,7 @@
 
 
     <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
-        <span class="kn">from</span> <span class="nn">dataviews.collector</span> <span class="kn">import</span> <span class="n">AttrTree</span>
+        <span class="kn">from</span> <span class="nn">holoviews.interface.collector</span> <span class="kn">import</span> <span class="n">AttrTree</span>
         <span class="n">npzfile</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_loadpath</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span>
         <span class="n">keys</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">npzfile</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="o">!=</span> <span class="s">&#39;metadata&#39;</span><span class="p">]</span>
         <span class="n">data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">((</span><span class="n">k</span><span class="p">,</span><span class="n">npzfile</span><span class="p">[</span><span class="n">k</span><span class="p">])</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">)</span>
