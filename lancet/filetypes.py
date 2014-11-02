@@ -295,7 +295,7 @@ class NumpyFile(FileType):
 
 class ViewFile(FileType):
     """
-    An .view file contains a collection of DataViews stored on an
+    An .view file contains a collection of HoloViews stored on an
     AttrTree. The file itself is a NumpyFile containing a pickle of
     the AttrTree object as well as any additional metadata.
     """
@@ -331,7 +331,7 @@ class ViewFile(FileType):
 
 
     def data(self, filename):
-        from dataviews.collector import AttrTree
+        from holoviews.interface.collector import AttrTree
         npzfile = numpy.load(self._loadpath(filename))
         keys = [k for k in npzfile.keys() if k != 'metadata']
         data = dict((k,npzfile[k]) for k in keys)
