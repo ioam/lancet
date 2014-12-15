@@ -38,10 +38,10 @@ class DynamicArgs(Arguments):
        and return a Python object suitable for updating the specifier.""")
 
 
-    def __init__(self, **kwargs):
-        super(DynamicArgs, self).__init__(**kwargs)
+    def __init__(self, **params):
+        super(DynamicArgs, self).__init__(**params)
         # Returned on next iteration and updated by _updated_state method
-        self._next_val = self._initial_state(**kwargs)
+        self._next_val = self._initial_state(**params)
         # Trace of inputs from output_extractor and returned arguments
         self.trace = [(None, self._next_val)]
 
@@ -214,8 +214,8 @@ class SimpleGradientDescent(DynamicArgs):
     max_steps=param.Integer(default=100, constant=True, doc="""
         Once max_steps is reached, the optimization terminates.""")
 
-    def __init__(self, key, **kwargs):
-        super(SimpleGradientDescent, self).__init__(key=key, **kwargs)
+    def __init__(self, key, **params):
+        super(SimpleGradientDescent, self).__init__(key=key, **params)
         self.pprint_args(['key', 'start', 'stepsize'],[])
         self._termination_info = None
 

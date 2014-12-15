@@ -324,10 +324,10 @@ class Args(Arguments):
           returned by the specifier. Float values are rounded
           according to fp_precision.''')
 
-    def __init__(self, specs=None, fp_precision=None, **kwargs):
+    def __init__(self, specs=None, fp_precision=None, **params):
         if fp_precision is None: fp_precision = Arguments.fp_precision
-        raw_specs, kwargs, explicit = self._build_specs(specs, kwargs, fp_precision)
-        super(Args, self).__init__(fp_precision=fp_precision, specs=raw_specs, **kwargs)
+        raw_specs, params, explicit = self._build_specs(specs, params, fp_precision)
+        super(Args, self).__init__(fp_precision=fp_precision, specs=raw_specs, **params)
 
         self._lexorder = None
         if explicit:
@@ -554,14 +554,14 @@ class Range(Args):
          The function to be mapped across the linear range. The
          identity function is used by by default''')
 
-    def __init__(self, key, start_value, end_value, steps=2, mapfn=identityfn, **kwargs):
+    def __init__(self, key, start_value, end_value, steps=2, mapfn=identityfn, **params):
 
         values = self.linspace(start_value, end_value, steps)
         specs = [{key:mapfn(val)} for val in values ]
 
         super(Range, self).__init__(specs, key=key, start_value=start_value,
                                          end_value=end_value, steps=steps,
-                                         mapfn=mapfn, **kwargs)
+                                         mapfn=mapfn, **params)
         self.pprint_args(['key', 'start_value'], ['end_value', 'steps'])
 
     def linspace(self, start, stop, n):
@@ -585,9 +585,9 @@ class List(Args):
     key = param.String(default='default', constant=True, doc='''
          The key assigned to the elements of the supplied list.''')
 
-    def __init__(self, key, values, **kwargs):
+    def __init__(self, key, values, **params):
         specs = [{key:val} for val in values]
-        super(List, self).__init__(specs, key=key, values=values, **kwargs)
+        super(List, self).__init__(specs, key=key, values=values, **params)
         self.pprint_args(['key', 'values'], [])
 
 
@@ -667,7 +667,7 @@ class Log(Args):
         log_file.write("\n"+log_str if append else log_str)
         log_file.close()
 
-    def __init__(self, log_path, tid_key='tid', **kwargs):
+    def __init__(self, log_path, tid_key='tid', **params):
 
         log_items = sorted(Log.extract_log(log_path).items())
 
@@ -680,7 +680,7 @@ class Log(Args):
         super(Log, self).__init__(log_specs,
                                   log_path=log_path,
                                   tid_key=tid_key,
-                                  **kwargs)
+                                  **params)
         self.pprint_args(['log_path'], ['tid_key'])
 
 
@@ -744,11 +744,11 @@ class FilePattern(Args):
             raise Exception('Directory cannot contain format field specifications')
         return cls(key, pattern, root, **kwargs)
 
-    def __init__(self, key, pattern, root=None, **kwargs):
+    def __init__(self, key, pattern, root=None, **params):
         root = os.getcwd() if root is None else root
         specs = self._load_expansion(key, root, pattern)
         super(FilePattern, self).__init__(specs, key=key, pattern=pattern,
-                                          root=root, **kwargs)
+                                          root=root, **params)
         self.pprint_args(['key', 'pattern'], ['root'])
 
     def fields(self):
@@ -851,14 +851,14 @@ class FileInfo(Args):
     ignore = param.List(default=[], constant=True, doc='''
        Metadata keys that are to be explicitly ignored. ''')
 
-    def __init__(self, source, key, filetype, ignore = [], **kwargs):
+    def __init__(self, source, key, filetype, ignore = [], **params):
         specs = self._info(source, key, filetype, ignore)
         super(FileInfo, self).__init__(specs,
                                        source = source,
                                        filetype = filetype,
                                        key = key,
                                        ignore=ignore,
-                                       **kwargs)
+                                       **params)
         self.pprint_args(['source', 'key', 'filetype'], ['ignore'])
 
 

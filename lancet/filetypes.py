@@ -40,8 +40,8 @@ class FileType(PrettyPrinted, param.Parameterized):
        The name (key) given to the file contents if the key cannot be
        determined from the file itself.''')
 
-    def __init__(self, **kwargs):
-        super(FileType, self).__init__(**kwargs)
+    def __init__(self, **params):
+        super(FileType, self).__init__(**params)
         self._pprint_args = ([],[],None,{})
         self.pprint_args(['data_key', 'hash_suffix'], [])
 
@@ -150,12 +150,12 @@ class FileOption(FileType):
     second = param.ClassSelector(class_=FileType, doc='''
        The second potential FileType to handle a given filename.''')
 
-    def __init__(self, first, second, **kwargs):
+    def __init__(self, first, second, **params):
         if set(first.extensions) & set(second.extensions):
             raise Exception("FileTypes must support non-overlapping sets of extensions.")
         extensions = set(first.extensions) | set(second.extensions)
         super(FileOption, self).__init__(first=first, second=second,
-                                         extensions = list(extensions), **kwargs)
+                                         extensions = list(extensions), **params)
         self.pprint_args(['first', 'second'],[], infix_operator='|')
 
     def save(self, filename,  metadata={}, **data):
@@ -200,10 +200,10 @@ class CustomFile(FileType):
         A callable that takes a filename and returns a dictionary of
         metadata values''')
 
-    def __init__(self, data_fn=None, metadata_fn=None, **kwargs):
+    def __init__(self, data_fn=None, metadata_fn=None, **params):
         zipped = zip(['data_fn','metadata_fn'], [data_fn, metadata_fn])
         fn_dict = dict([(k,v) for (k,v) in zipped if (v is not None)])
-        super(CustomFile, self).__init__(**dict(kwargs, **fn_dict))
+        super(CustomFile, self).__init__(**dict(params, **fn_dict))
 
     def save(self, filename, data):
         raise NotImplementedError
@@ -230,8 +230,8 @@ class JSONFile(FileType):
     """
     extensions = param.List(default=['.json'], constant=True)
 
-    def __init__(self, **kwargs):
-        super(JSONFile, self).__init__(**kwargs)
+    def __init__(self, **params):
+        super(JSONFile, self).__init__(**params)
         self.pprint_args(['hash_suffix'], [])
 
     def save(self, filename, metadata={}):
@@ -261,8 +261,8 @@ class NumpyFile(FileType):
     compress = param.Boolean(default=True, doc="""
       Whether or not the compressed npz format should be used.""")
 
-    def __init__(self, **kwargs):
-        super(NumpyFile, self).__init__(**kwargs)
+    def __init__(self, **params):
+        super(NumpyFile, self).__init__(**params)
         self.pprint_args(['hash_suffix'], ['compress']) # CHECK!
 
     def save(self, filename, metadata={}, **data):
@@ -311,8 +311,8 @@ class ViewFile(FileType):
     compress = param.Boolean(default=True, doc="""
       Whether or not the compressed npz format should be used.""")
 
-    def __init__(self, **kwargs):
-        super(ViewFile, self).__init__(**kwargs)
+    def __init__(self, **params):
+        super(ViewFile, self).__init__(**params)
         self.pprint_args(['hash_suffix', 'filters'], ['compress'])
 
     def save(self, filename, path_index, metadata={}):
@@ -376,8 +376,8 @@ class ImageFile(FileType):
     data_key = param.String(default='images', doc='''
        The name (key) given to the loaded image data.''')
 
-    def __init__(self, **kwargs):
-        super(ImageFile, self).__init__(**kwargs)
+    def __init__(self, **params):
+        super(ImageFile, self).__init__(**params)
         self.pprint_args(['hash_suffix'],
                          ['data_key', 'data_mode', 'image_info'])
 
@@ -428,8 +428,8 @@ class MatplotlibFile(FileType):
 
     extensions = param.List(default=['.mpkl'], constant=True)
 
-    def __init__(self, **kwargs):
-        super(MatplotlibFile, self).__init__(**kwargs)
+    def __init__(self, **params):
+        super(MatplotlibFile, self).__init__(**params)
         self.pprint_args(['hash_suffix'], [])
 
     def save(self, filename, fig):

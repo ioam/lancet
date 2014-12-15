@@ -47,11 +47,11 @@ class Command(core.PrettyPrinted, param.Parameterized):
         Set to True to receive input arguments as formatted strings,
         False for the raw unformatted objects.''')
 
-    def __init__(self, executable=None, **kwargs):
+    def __init__(self, executable=None, **params):
         if executable is None:
             executable = sys.executable
         self._pprint_args = ([],[],None,{})
-        super(Command,self).__init__(executable=executable, **kwargs)
+        super(Command,self).__init__(executable=executable, **params)
         self.pprint_args([],[])
 
     def __call__(self, spec, tid=None, info={}):
@@ -150,10 +150,10 @@ class ShellCommand(Command):
        Although the double dash is a GNU coding convention, some
        applications use single dashes for long options.''')
 
-    def __init__(self, executable, **kwargs):
+    def __init__(self, executable, **params):
         super(ShellCommand,self).__init__(executable = executable,
                                          do_format=False,
-                                         **kwargs)
+                                         **params)
         self.pprint_args(['executable','posargs'],['long_prefix'])
 
     def __call__(self, spec, tid=None, info={}):
@@ -308,14 +308,14 @@ class Launcher(core.PrettyPrinted, param.Parameterized):
       name.''')
 
 
-    def __init__(self, batch_name, args, command, **kwargs):
+    def __init__(self, batch_name, args, command, **params):
 
         self._pprint_args = ([],[],None,{})
-        if 'name' not in kwargs: kwargs['name'] = self.__class__.__name__
+        if 'name' not in params: params['name'] = self.__class__.__name__
         super(Launcher,self).__init__(batch_name=batch_name,
                                       args=args,
                                       command = command,
-                                      **kwargs)
+                                      **params)
         self._spec_log = []
         if self.timestamp == (0,)*9:
             self.timestamp = tuple(time.localtime())
@@ -555,9 +555,9 @@ class QLauncher(Launcher):
        keywords in the dict constructor: ie. using
        qsub_flag_options=dict(key1=value1, key2=value2, ....)''')
 
-    def __init__(self, batch_name, args, command, **kwargs):
+    def __init__(self, batch_name, args, command, **params):
         super(QLauncher, self).__init__(batch_name, args,
-                command, **kwargs)
+                command, **params)
 
         self._launchinfo = None
         self.last_tids = []
@@ -753,9 +753,9 @@ class ScriptLauncher(Launcher):
     json_name = param.String(default='processes_%s.json', doc='''
         Name of the JSON file output per process group.''')
 
-    def __init__(self, batch_name, args, command, **kwargs):
+    def __init__(self, batch_name, args, command, **params):
         super(ScriptLauncher, self).__init__(batch_name, args,
-                command, **kwargs)
+                command, **params)
 
     def _launch_process_group(self, process_commands, streams_path):
         """
@@ -811,9 +811,9 @@ class review_and_launch(core.PrettyPrinted, param.Parameterized):
 
     launch_fn = param.Callable(doc='''The function that is to be decorated.''')
 
-    def __init__(self, **kwargs):
+    def __init__(self, **params):
         self._pprint_args = ([],[],None,{})
-        super(review_and_launch, self).__init__(**kwargs)
+        super(review_and_launch, self).__init__(**params)
         self.pprint_args(['output_directory', 'launch_fn'],
                          ['review', 'launch_args'])
 
