@@ -113,11 +113,11 @@
 <span class="s">        Set to True to receive input arguments as formatted strings,</span>
 <span class="s">        False for the raw unformatted objects.&#39;&#39;&#39;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">executable</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">executable</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">executable</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">executable</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">executable</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_pprint_args</span> <span class="o">=</span> <span class="p">([],[],</span><span class="bp">None</span><span class="p">,{})</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">Command</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">executable</span><span class="o">=</span><span class="n">executable</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Command</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">executable</span><span class="o">=</span><span class="n">executable</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pprint_args</span><span class="p">([],[])</span>
 
     <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spec</span><span class="p">,</span> <span class="n">tid</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">info</span><span class="o">=</span><span class="p">{}):</span>
@@ -216,10 +216,10 @@
 <span class="s">       Although the double dash is a GNU coding convention, some</span>
 <span class="s">       applications use single dashes for long options.&#39;&#39;&#39;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">executable</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">executable</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">ShellCommand</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">executable</span> <span class="o">=</span> <span class="n">executable</span><span class="p">,</span>
                                          <span class="n">do_format</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
-                                         <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+                                         <span class="o">**</span><span class="n">params</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pprint_args</span><span class="p">([</span><span class="s">&#39;executable&#39;</span><span class="p">,</span><span class="s">&#39;posargs&#39;</span><span class="p">],[</span><span class="s">&#39;long_prefix&#39;</span><span class="p">])</span>
 
     <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spec</span><span class="p">,</span> <span class="n">tid</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">info</span><span class="o">=</span><span class="p">{}):</span>
@@ -374,14 +374,14 @@
 <span class="s">      name.&#39;&#39;&#39;</span><span class="p">)</span>
 
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch_name</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">command</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch_name</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">command</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">):</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_pprint_args</span> <span class="o">=</span> <span class="p">([],[],</span><span class="bp">None</span><span class="p">,{})</span>
-        <span class="k">if</span> <span class="s">&#39;name&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span> <span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span>
+        <span class="k">if</span> <span class="s">&#39;name&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span> <span class="n">params</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">Launcher</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">batch_name</span><span class="o">=</span><span class="n">batch_name</span><span class="p">,</span>
                                       <span class="n">args</span><span class="o">=</span><span class="n">args</span><span class="p">,</span>
                                       <span class="n">command</span> <span class="o">=</span> <span class="n">command</span><span class="p">,</span>
-                                      <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+                                      <span class="o">**</span><span class="n">params</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_spec_log</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">timestamp</span> <span class="o">==</span> <span class="p">(</span><span class="mi">0</span><span class="p">,)</span><span class="o">*</span><span class="mi">9</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">timestamp</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">localtime</span><span class="p">())</span>
@@ -621,9 +621,9 @@
 <span class="s">       keywords in the dict constructor: ie. using</span>
 <span class="s">       qsub_flag_options=dict(key1=value1, key2=value2, ....)&#39;&#39;&#39;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch_name</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">command</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch_name</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">command</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">QLauncher</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">batch_name</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span>
-                <span class="n">command</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+                <span class="n">command</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_launchinfo</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">last_tids</span> <span class="o">=</span> <span class="p">[]</span>
@@ -819,9 +819,9 @@
     <span class="n">json_name</span> <span class="o">=</span> <span class="n">param</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s">&#39;processes_</span><span class="si">%s</span><span class="s">.json&#39;</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s">&#39;&#39;&#39;</span>
 <span class="s">        Name of the JSON file output per process group.&#39;&#39;&#39;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch_name</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">command</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch_name</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">command</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">ScriptLauncher</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">batch_name</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span>
-                <span class="n">command</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+                <span class="n">command</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_launch_process_group</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">process_commands</span><span class="p">,</span> <span class="n">streams_path</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -877,9 +877,9 @@
 
     <span class="n">launch_fn</span> <span class="o">=</span> <span class="n">param</span><span class="o">.</span><span class="n">Callable</span><span class="p">(</span><span class="n">doc</span><span class="o">=</span><span class="s">&#39;&#39;&#39;The function that is to be decorated.&#39;&#39;&#39;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_pprint_args</span> <span class="o">=</span> <span class="p">([],[],</span><span class="bp">None</span><span class="p">,{})</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">review_and_launch</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">review_and_launch</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pprint_args</span><span class="p">([</span><span class="s">&#39;output_directory&#39;</span><span class="p">,</span> <span class="s">&#39;launch_fn&#39;</span><span class="p">],</span>
                          <span class="p">[</span><span class="s">&#39;review&#39;</span><span class="p">,</span> <span class="s">&#39;launch_args&#39;</span><span class="p">])</span>
 

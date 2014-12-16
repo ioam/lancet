@@ -104,10 +104,10 @@
 <span class="s">       and return a Python object suitable for updating the specifier.&quot;&quot;&quot;</span><span class="p">)</span>
 
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">DynamicArgs</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">DynamicArgs</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span>
         <span class="c"># Returned on next iteration and updated by _updated_state method</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_next_val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_initial_state</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_next_val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_initial_state</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span>
         <span class="c"># Trace of inputs from output_extractor and returned arguments</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">trace</span> <span class="o">=</span> <span class="p">[(</span><span class="bp">None</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_next_val</span><span class="p">)]</span>
 
@@ -280,8 +280,8 @@
     <span class="n">max_steps</span><span class="o">=</span><span class="n">param</span><span class="o">.</span><span class="n">Integer</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">constant</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s">&quot;&quot;&quot;</span>
 <span class="s">        Once max_steps is reached, the optimization terminates.&quot;&quot;&quot;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">SimpleGradientDescent</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="n">key</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">SimpleGradientDescent</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="n">key</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pprint_args</span><span class="p">([</span><span class="s">&#39;key&#39;</span><span class="p">,</span> <span class="s">&#39;start&#39;</span><span class="p">,</span> <span class="s">&#39;stepsize&#39;</span><span class="p">],[])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_termination_info</span> <span class="o">=</span> <span class="bp">None</span>
 
@@ -340,7 +340,7 @@
 <span class="c">#=========================#</span>
 
 </div>
-<span class="k">class</span> <span class="nc">DynamicConcatenate</span><span class="p">(</span><span class="n">DynamicArgs</span><span class="p">):</span>
+<div class="viewcode-block" id="DynamicConcatenate"><a class="viewcode-back" href="../../Reference_Manual/lancet.html#lancet.dynamic.DynamicConcatenate">[docs]</a><span class="k">class</span> <span class="nc">DynamicConcatenate</span><span class="p">(</span><span class="n">DynamicArgs</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">first</span><span class="p">,</span> <span class="n">second</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">first</span> <span class="o">=</span> <span class="n">first</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">second</span> <span class="o">=</span> <span class="n">second</span>
@@ -386,8 +386,8 @@
 
     <span class="nb">next</span> <span class="o">=</span> <span class="n">__next__</span>
 
-
-<span class="k">class</span> <span class="nc">DynamicCartesianProduct</span><span class="p">(</span><span class="n">DynamicArgs</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="DynamicCartesianProduct"><a class="viewcode-back" href="../../Reference_Manual/lancet.html#lancet.dynamic.DynamicCartesianProduct">[docs]</a><span class="k">class</span> <span class="nc">DynamicCartesianProduct</span><span class="p">(</span><span class="n">DynamicArgs</span><span class="p">):</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">first</span><span class="p">,</span> <span class="n">second</span><span class="p">):</span>
 
@@ -428,7 +428,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">second_spec</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">second</span><span class="p">)</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cartesian_product</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_first_cached</span><span class="p">,</span> <span class="n">second_spec</span><span class="p">)</span>
-    <span class="nb">next</span> <span class="o">=</span> <span class="n">__next__</span>
+    <span class="nb">next</span> <span class="o">=</span> <span class="n">__next__</span></div>
 </pre></div>
 
           </div>

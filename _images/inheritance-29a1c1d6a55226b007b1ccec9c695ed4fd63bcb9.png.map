@@ -1,0 +1,15 @@
+<map id="inheritance3af1fc917b" name="inheritance3af1fc917b">
+<area shape="rect" id="node1" href="#lancet.core.PrettyPrinted" title="A mixin class for generating pretty&#45;printed representations." alt="" coords="45,202,225,227"/>
+<area shape="rect" id="node3" href="#lancet.filetypes.FileType" title="params(data_key=String, directory=String, extensions=List, hash_suffix=Boolean, name=String)" alt="" coords="383,202,553,227"/>
+<area shape="rect" id="node2" href="#lancet.filetypes.CustomFile" title="params(data_fn=Callable, metadata_fn=Callable, data_key=String, directory=String, extensions=List, hash_suffix=Boolean, name=String)" alt="" coords="679,5,871,30"/>
+<area shape="rect" id="node4" href="#lancet.filetypes.FileOption" title="params(first=ClassSelector, second=ClassSelector, data_key=String, directory=String, extensions=List, hash_suffix=Boolean, name=String)" alt="" coords="683,54,867,79"/>
+<area shape="rect" id="node6" href="#lancet.filetypes.ImageFile" title="params(data_mode=ObjectSelector, image_info=Dict, data_key=String, directory=String, extensions=List, hash_suffix=Boolean, name=String)" alt="" coords="683,103,866,129"/>
+<area shape="rect" id="node7" href="#lancet.filetypes.JSONFile" title="params(data_key=String, directory=String, extensions=List, hash_suffix=Boolean, name=String)" alt="" coords="687,153,862,178"/>
+<area shape="rect" id="node8" href="#lancet.filetypes.MatplotlibFile" title="params(data_key=String, directory=String, extensions=List, hash_suffix=Boolean, name=String)" alt="" coords="673,202,877,227"/>
+<area shape="rect" id="node9" href="#lancet.filetypes.NumpyFile" title="params(compress=Boolean, data_key=String, directory=String, extensions=List, hash_suffix=Boolean, name=String)" alt="" coords="681,251,869,277"/>
+<area shape="rect" id="node10" href="#lancet.filetypes.SVGFile" title="params(data_key=String, directory=String, extensions=List, hash_suffix=Boolean, name=String)" alt="" coords="689,301,860,326"/>
+<area shape="rect" id="node11" href="#lancet.filetypes.ViewFile" title="params(compress=Boolean, filters=List, data_key=String, directory=String, extensions=List, hash_suffix=Boolean, name=String)" alt="" coords="689,350,860,375"/>
+<area shape="rect" id="node5" title="params(name=String)" alt="" coords="5,325,264,350"/>
+<area shape="rect" id="node13" title="params(name=String)" alt="" coords="312,362,624,387"/>
+<area shape="rect" id="node12" href="#lancet.filetypes.ViewFrame" title="params(display_fns=List, format=ObjectSelector, size=Number, name=String)" alt="" coords="679,399,870,425"/>
+</map>

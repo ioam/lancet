@@ -1,0 +1,10 @@
+<map id="inheritance8744d36cfd" name="inheritance8744d36cfd">
+<area shape="rect" id="node1" href="#lancet.core.PrettyPrinted" title="A mixin class for generating pretty&#45;printed representations." alt="" coords="45,30,225,55"/>
+<area shape="rect" id="node2" href="#lancet.launch.Command" title="params(do_format=Boolean, executable=String, name=String)" alt="" coords="339,5,517,30"/>
+<area shape="rect" id="node4" href="#lancet.launch.Launcher" title="params(args=ClassSelector, batch_name=String, command=ClassSelector, description=String, max_concurrency=Integer, metadata=Dict, output_directory=String, reduction_fn=Callable, subdir=List, tag=String, timestamp=NumericTuple, timestamp_format=String, name=String)" alt="" coords="343,54,513,79"/>
+<area shape="rect" id="node8" href="#lancet.launch.review_and_launch" title="params(launch_args=ClassSelector, launch_fn=Callable, output_directory=String, review=Boolean, name=String)" alt="" coords="313,103,543,129"/>
+<area shape="rect" id="node7" href="#lancet.launch.ShellCommand" title="params(expansions=Dict, long_prefix=String, posargs=List, short_prefix=String, do_format=Boolean, executable=String, name=String)" alt="" coords="593,5,802,30"/>
+<area shape="rect" id="node3" title="params(name=String)" alt="" coords="5,79,264,105"/>
+<area shape="rect" id="node5" href="#lancet.launch.QLauncher" title="params(qsub_flag_options=Dict, qsub_switches=List, args=ClassSelector, batch_name=String, command=ClassSelector, description=String, max_concurrency=Integer, metadata=Dict, output_directory=String, reduction_fn=Callable, subdir=List, tag=String, timestamp=NumericTuple, timestamp_format=String, name=String)" alt="" coords="607,103,787,129"/>
+<area shape="rect" id="node6" href="#lancet.launch.ScriptLauncher" title="params(json_name=String, script_path=String, args=ClassSelector, batch_name=String, command=ClassSelector, description=String, max_concurrency=Integer, metadata=Dict, output_directory=String, reduction_fn=Callable, subdir=List, tag=String, timestamp=NumericTuple, timestamp_format=String, name=String)" alt="" coords="594,54,801,79"/>
+</map>
