@@ -157,7 +157,8 @@ paths                         []                     List  (0, None)  V RW</p>
 <dl class="method">
 <dt id="lancet.__init__.vcs_metadata.debug">
 <tt class="descname">debug</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.__init__.vcs_metadata.debug" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a debugging statement.</p>
+<dd><p>Print msg merged with args as a debugging statement.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 <dl class="method">
@@ -171,7 +172,7 @@ instantiated.</p>
 
 <dl class="attribute">
 <dt id="lancet.__init__.vcs_metadata.force_new_dynamic_value">
-<tt class="descname">force_new_dynamic_value</tt><em class="property"> = &lt;functools.partial object at 0x2b72866f1aa0&gt;</em><a class="headerlink" href="#lancet.__init__.vcs_metadata.force_new_dynamic_value" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">force_new_dynamic_value</tt><em class="property"> = &lt;functools.partial object at 0x2aec6107e520&gt;</em><a class="headerlink" href="#lancet.__init__.vcs_metadata.force_new_dynamic_value" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -185,23 +186,24 @@ equal to the default value.</p>
 
 <dl class="attribute">
 <dt id="lancet.__init__.vcs_metadata.get_value_generator">
-<tt class="descname">get_value_generator</tt><em class="property"> = &lt;functools.partial object at 0x2b72866f1ec0&gt;</em><a class="headerlink" href="#lancet.__init__.vcs_metadata.get_value_generator" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">get_value_generator</tt><em class="property"> = &lt;functools.partial object at 0x2aec6107e578&gt;</em><a class="headerlink" href="#lancet.__init__.vcs_metadata.get_value_generator" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="lancet.__init__.vcs_metadata.inspect_value">
-<tt class="descname">inspect_value</tt><em class="property"> = &lt;functools.partial object at 0x2b72866f1db8&gt;</em><a class="headerlink" href="#lancet.__init__.vcs_metadata.inspect_value" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">inspect_value</tt><em class="property"> = &lt;functools.partial object at 0x2aec6107e470&gt;</em><a class="headerlink" href="#lancet.__init__.vcs_metadata.inspect_value" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="lancet.__init__.vcs_metadata.instance">
-<tt class="descname">instance</tt><em class="property"> = &lt;functools.partial object at 0x2b72866f1e10&gt;</em><a class="headerlink" href="#lancet.__init__.vcs_metadata.instance" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">instance</tt><em class="property"> = &lt;functools.partial object at 0x2aec6107e4c8&gt;</em><a class="headerlink" href="#lancet.__init__.vcs_metadata.instance" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="lancet.__init__.vcs_metadata.message">
 <tt class="descname">message</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.__init__.vcs_metadata.message" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a message.</p>
+<dd><p>Print msg merged with args as a message.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 <dl class="classmethod">
@@ -248,12 +250,12 @@ is replaced with X.classname.instance(Y</p>
 
 <dl class="attribute">
 <dt id="lancet.__init__.vcs_metadata.set_dynamic_time_fn">
-<tt class="descname">set_dynamic_time_fn</tt><em class="property"> = &lt;functools.partial object at 0x2b72866f1f18&gt;</em><a class="headerlink" href="#lancet.__init__.vcs_metadata.set_dynamic_time_fn" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">set_dynamic_time_fn</tt><em class="property"> = &lt;functools.partial object at 0x2aec6107e5d0&gt;</em><a class="headerlink" href="#lancet.__init__.vcs_metadata.set_dynamic_time_fn" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="lancet.__init__.vcs_metadata.set_param">
-<tt class="descname">set_param</tt><em class="property"> = &lt;functools.partial object at 0x2b72866f1fc8&gt;</em><a class="headerlink" href="#lancet.__init__.vcs_metadata.set_param" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">set_param</tt><em class="property"> = &lt;functools.partial object at 0x2aec6107e6d8&gt;</em><a class="headerlink" href="#lancet.__init__.vcs_metadata.set_param" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -279,15 +281,17 @@ something without permanently altering the objects&#8217; state.</p>
 <dl class="method">
 <dt id="lancet.__init__.vcs_metadata.verbose">
 <tt class="descname">verbose</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.__init__.vcs_metadata.verbose" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a verbose message.</p>
+<dd><p>Print msg merged with args as a verbose message.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="lancet.__init__.vcs_metadata.warning">
 <tt class="descname">warning</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.__init__.vcs_metadata.warning" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a warning, unless module variable
+<dd><p>Print msg merged with args as a warning, unless module variable
 warnings_as_exceptions is True, then raise an Exception
 containing the arguments.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 </dd></dl>
@@ -387,7 +391,8 @@ exhausting it.</p>
 <dl class="method">
 <dt id="lancet.core.Args.debug">
 <tt class="descname">debug</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.core.Args.debug" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a debugging statement.</p>
+<dd><p>Print msg merged with args as a debugging statement.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 <dl class="method">
@@ -401,7 +406,7 @@ instantiated.</p>
 
 <dl class="attribute">
 <dt id="lancet.core.Args.force_new_dynamic_value">
-<tt class="descname">force_new_dynamic_value</tt><em class="property"> = &lt;functools.partial object at 0x2b7286ca02b8&gt;</em><a class="headerlink" href="#lancet.core.Args.force_new_dynamic_value" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">force_new_dynamic_value</tt><em class="property"> = &lt;functools.partial object at 0x2aec6146d6d8&gt;</em><a class="headerlink" href="#lancet.core.Args.force_new_dynamic_value" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -415,12 +420,12 @@ equal to the default value.</p>
 
 <dl class="attribute">
 <dt id="lancet.core.Args.get_value_generator">
-<tt class="descname">get_value_generator</tt><em class="property"> = &lt;functools.partial object at 0x2b7286ca0368&gt;</em><a class="headerlink" href="#lancet.core.Args.get_value_generator" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">get_value_generator</tt><em class="property"> = &lt;functools.partial object at 0x2aec6146d9f0&gt;</em><a class="headerlink" href="#lancet.core.Args.get_value_generator" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="lancet.core.Args.inspect_value">
-<tt class="descname">inspect_value</tt><em class="property"> = &lt;functools.partial object at 0x2b7286ca03c0&gt;</em><a class="headerlink" href="#lancet.core.Args.inspect_value" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">inspect_value</tt><em class="property"> = &lt;functools.partial object at 0x2aec6146da48&gt;</em><a class="headerlink" href="#lancet.core.Args.inspect_value" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -435,7 +440,8 @@ not found in the operand&#8217;s set of varying keys, it is ignored.</p>
 <dl class="method">
 <dt id="lancet.core.Args.message">
 <tt class="descname">message</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.core.Args.message" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a message.</p>
+<dd><p>Print msg merged with args as a message.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 <dl class="classmethod">
@@ -488,12 +494,12 @@ for pretty printing.</p>
 
 <dl class="attribute">
 <dt id="lancet.core.Args.set_dynamic_time_fn">
-<tt class="descname">set_dynamic_time_fn</tt><em class="property"> = &lt;functools.partial object at 0x2b7286ca0470&gt;</em><a class="headerlink" href="#lancet.core.Args.set_dynamic_time_fn" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">set_dynamic_time_fn</tt><em class="property"> = &lt;functools.partial object at 0x2aec6146daf8&gt;</em><a class="headerlink" href="#lancet.core.Args.set_dynamic_time_fn" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="lancet.core.Args.set_param">
-<tt class="descname">set_param</tt><em class="property"> = &lt;functools.partial object at 0x2b7286ca0520&gt;</em><a class="headerlink" href="#lancet.core.Args.set_param" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">set_param</tt><em class="property"> = &lt;functools.partial object at 0x2aec6146dba8&gt;</em><a class="headerlink" href="#lancet.core.Args.set_param" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -543,15 +549,17 @@ most relevant information about the object to the user.</p>
 <dl class="method">
 <dt id="lancet.core.Args.verbose">
 <tt class="descname">verbose</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.core.Args.verbose" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a verbose message.</p>
+<dd><p>Print msg merged with args as a verbose message.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="lancet.core.Args.warning">
 <tt class="descname">warning</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.core.Args.warning" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a warning, unless module variable
+<dd><p>Print msg merged with args as a warning, unless module variable
 warnings_as_exceptions is True, then raise an Exception
 containing the arguments.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 </dd></dl>
@@ -623,7 +631,8 @@ exhausting it.</p>
 <dl class="method">
 <dt id="lancet.core.Arguments.debug">
 <tt class="descname">debug</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.core.Arguments.debug" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a debugging statement.</p>
+<dd><p>Print msg merged with args as a debugging statement.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 <dl class="method">
@@ -637,7 +646,7 @@ instantiated.</p>
 
 <dl class="attribute">
 <dt id="lancet.core.Arguments.force_new_dynamic_value">
-<tt class="descname">force_new_dynamic_value</tt><em class="property"> = &lt;functools.partial object at 0x2b7286ca0368&gt;</em><a class="headerlink" href="#lancet.core.Arguments.force_new_dynamic_value" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">force_new_dynamic_value</tt><em class="property"> = &lt;functools.partial object at 0x2aec6146dba8&gt;</em><a class="headerlink" href="#lancet.core.Arguments.force_new_dynamic_value" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -651,18 +660,19 @@ equal to the default value.</p>
 
 <dl class="attribute">
 <dt id="lancet.core.Arguments.get_value_generator">
-<tt class="descname">get_value_generator</tt><em class="property"> = &lt;functools.partial object at 0x2b7286ca0208&gt;</em><a class="headerlink" href="#lancet.core.Arguments.get_value_generator" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">get_value_generator</tt><em class="property"> = &lt;functools.partial object at 0x2aec6146d890&gt;</em><a class="headerlink" href="#lancet.core.Arguments.get_value_generator" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="lancet.core.Arguments.inspect_value">
-<tt class="descname">inspect_value</tt><em class="property"> = &lt;functools.partial object at 0x2b7286ca0100&gt;</em><a class="headerlink" href="#lancet.core.Arguments.inspect_value" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">inspect_value</tt><em class="property"> = &lt;functools.partial object at 0x2aec6146d788&gt;</em><a class="headerlink" href="#lancet.core.Arguments.inspect_value" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="lancet.core.Arguments.message">
 <tt class="descname">message</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.core.Arguments.message" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a message.</p>
+<dd><p>Print msg merged with args as a message.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 <dl class="method">
@@ -722,12 +732,12 @@ for pretty printing.</p>
 
 <dl class="attribute">
 <dt id="lancet.core.Arguments.set_dynamic_time_fn">
-<tt class="descname">set_dynamic_time_fn</tt><em class="property"> = &lt;functools.partial object at 0x2b7286ca01b0&gt;</em><a class="headerlink" href="#lancet.core.Arguments.set_dynamic_time_fn" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">set_dynamic_time_fn</tt><em class="property"> = &lt;functools.partial object at 0x2aec6146d838&gt;</em><a class="headerlink" href="#lancet.core.Arguments.set_dynamic_time_fn" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="lancet.core.Arguments.set_param">
-<tt class="descname">set_param</tt><em class="property"> = &lt;functools.partial object at 0x2b7286ca04c8&gt;</em><a class="headerlink" href="#lancet.core.Arguments.set_param" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">set_param</tt><em class="property"> = &lt;functools.partial object at 0x2aec6146dc00&gt;</em><a class="headerlink" href="#lancet.core.Arguments.set_param" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="classmethod">
@@ -777,15 +787,17 @@ rate.</p>
 <dl class="method">
 <dt id="lancet.core.Arguments.verbose">
 <tt class="descname">verbose</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.core.Arguments.verbose" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a verbose message.</p>
+<dd><p>Print msg merged with args as a verbose message.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="lancet.core.Arguments.warning">
 <tt class="descname">warning</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.core.Arguments.warning" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a warning, unless module variable
+<dd><p>Print msg merged with args as a warning, unless module variable
 warnings_as_exceptions is True, then raise an Exception
 containing the arguments.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 </dd></dl>
@@ -848,7 +860,8 @@ exhausting it.</p>
 <dl class="method">
 <dt id="lancet.core.CartesianProduct.debug">
 <tt class="descname">debug</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.core.CartesianProduct.debug" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a debugging statement.</p>
+<dd><p>Print msg merged with args as a debugging statement.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 <dl class="method">
@@ -862,7 +875,7 @@ instantiated.</p>
 
 <dl class="attribute">
 <dt id="lancet.core.CartesianProduct.force_new_dynamic_value">
-<tt class="descname">force_new_dynamic_value</tt><em class="property"> = &lt;functools.partial object at 0x2b7286ca02b8&gt;</em><a class="headerlink" href="#lancet.core.CartesianProduct.force_new_dynamic_value" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">force_new_dynamic_value</tt><em class="property"> = &lt;functools.partial object at 0x2aec6146dc00&gt;</em><a class="headerlink" href="#lancet.core.CartesianProduct.force_new_dynamic_value" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -876,12 +889,12 @@ equal to the default value.</p>
 
 <dl class="attribute">
 <dt id="lancet.core.CartesianProduct.get_value_generator">
-<tt class="descname">get_value_generator</tt><em class="property"> = &lt;functools.partial object at 0x2b7286ca0310&gt;</em><a class="headerlink" href="#lancet.core.CartesianProduct.get_value_generator" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">get_value_generator</tt><em class="property"> = &lt;functools.partial object at 0x2aec6146d998&gt;</em><a class="headerlink" href="#lancet.core.CartesianProduct.get_value_generator" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="lancet.core.CartesianProduct.inspect_value">
-<tt class="descname">inspect_value</tt><em class="property"> = &lt;functools.partial object at 0x2b7286ca0418&gt;</em><a class="headerlink" href="#lancet.core.CartesianProduct.inspect_value" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">inspect_value</tt><em class="property"> = &lt;functools.partial object at 0x2aec6146daa0&gt;</em><a class="headerlink" href="#lancet.core.CartesianProduct.inspect_value" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -896,7 +909,8 @@ not found in the operand&#8217;s set of varying keys, it is ignored.</p>
 <dl class="method">
 <dt id="lancet.core.CartesianProduct.message">
 <tt class="descname">message</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.core.CartesianProduct.message" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a message.</p>
+<dd><p>Print msg merged with args as a message.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 <dl class="classmethod">
@@ -949,12 +963,12 @@ for pretty printing.</p>
 
 <dl class="attribute">
 <dt id="lancet.core.CartesianProduct.set_dynamic_time_fn">
-<tt class="descname">set_dynamic_time_fn</tt><em class="property"> = &lt;functools.partial object at 0x2b7286ca0470&gt;</em><a class="headerlink" href="#lancet.core.CartesianProduct.set_dynamic_time_fn" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">set_dynamic_time_fn</tt><em class="property"> = &lt;functools.partial object at 0x2aec6146daf8&gt;</em><a class="headerlink" href="#lancet.core.CartesianProduct.set_dynamic_time_fn" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="lancet.core.CartesianProduct.set_param">
-<tt class="descname">set_param</tt><em class="property"> = &lt;functools.partial object at 0x2b7286ca05d0&gt;</em><a class="headerlink" href="#lancet.core.CartesianProduct.set_param" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">set_param</tt><em class="property"> = &lt;functools.partial object at 0x2aec6146dc58&gt;</em><a class="headerlink" href="#lancet.core.CartesianProduct.set_param" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -1004,15 +1018,17 @@ most relevant information about the object to the user.</p>
 <dl class="method">
 <dt id="lancet.core.CartesianProduct.verbose">
 <tt class="descname">verbose</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.core.CartesianProduct.verbose" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a verbose message.</p>
+<dd><p>Print msg merged with args as a verbose message.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="lancet.core.CartesianProduct.warning">
 <tt class="descname">warning</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.core.CartesianProduct.warning" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a warning, unless module variable
+<dd><p>Print msg merged with args as a warning, unless module variable
 warnings_as_exceptions is True, then raise an Exception
 containing the arguments.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 </dd></dl>
@@ -1073,7 +1089,8 @@ exhausting it.</p>
 <dl class="method">
 <dt id="lancet.core.Concatenate.debug">
 <tt class="descname">debug</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.core.Concatenate.debug" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a debugging statement.</p>
+<dd><p>Print msg merged with args as a debugging statement.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 <dl class="method">
@@ -1087,7 +1104,7 @@ instantiated.</p>
 
 <dl class="attribute">
 <dt id="lancet.core.Concatenate.force_new_dynamic_value">
-<tt class="descname">force_new_dynamic_value</tt><em class="property"> = &lt;functools.partial object at 0x2b7286ca0368&gt;</em><a class="headerlink" href="#lancet.core.Concatenate.force_new_dynamic_value" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">force_new_dynamic_value</tt><em class="property"> = &lt;functools.partial object at 0x2aec6146daa0&gt;</em><a class="headerlink" href="#lancet.core.Concatenate.force_new_dynamic_value" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -1101,12 +1118,12 @@ equal to the default value.</p>
 
 <dl class="attribute">
 <dt id="lancet.core.Concatenate.get_value_generator">
-<tt class="descname">get_value_generator</tt><em class="property"> = &lt;functools.partial object at 0x2b7286ca0158&gt;</em><a class="headerlink" href="#lancet.core.Concatenate.get_value_generator" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">get_value_generator</tt><em class="property"> = &lt;functools.partial object at 0x2aec6146d7e0&gt;</em><a class="headerlink" href="#lancet.core.Concatenate.get_value_generator" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="lancet.core.Concatenate.inspect_value">
-<tt class="descname">inspect_value</tt><em class="property"> = &lt;functools.partial object at 0x2b7286ca00a8&gt;</em><a class="headerlink" href="#lancet.core.Concatenate.inspect_value" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">inspect_value</tt><em class="property"> = &lt;functools.partial object at 0x2aec6146d680&gt;</em><a class="headerlink" href="#lancet.core.Concatenate.inspect_value" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -1121,7 +1138,8 @@ not found in the operand&#8217;s set of varying keys, it is ignored.</p>
 <dl class="method">
 <dt id="lancet.core.Concatenate.message">
 <tt class="descname">message</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.core.Concatenate.message" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a message.</p>
+<dd><p>Print msg merged with args as a message.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 <dl class="classmethod">
@@ -1174,12 +1192,12 @@ for pretty printing.</p>
 
 <dl class="attribute">
 <dt id="lancet.core.Concatenate.set_dynamic_time_fn">
-<tt class="descname">set_dynamic_time_fn</tt><em class="property"> = &lt;functools.partial object at 0x2b7286ca0628&gt;</em><a class="headerlink" href="#lancet.core.Concatenate.set_dynamic_time_fn" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">set_dynamic_time_fn</tt><em class="property"> = &lt;functools.partial object at 0x2aec6146d6d8&gt;</em><a class="headerlink" href="#lancet.core.Concatenate.set_dynamic_time_fn" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="lancet.core.Concatenate.set_param">
-<tt class="descname">set_param</tt><em class="property"> = &lt;functools.partial object at 0x2b7286ca04c8&gt;</em><a class="headerlink" href="#lancet.core.Concatenate.set_param" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">set_param</tt><em class="property"> = &lt;functools.partial object at 0x2aec6146dcb0&gt;</em><a class="headerlink" href="#lancet.core.Concatenate.set_param" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -1229,15 +1247,17 @@ most relevant information about the object to the user.</p>
 <dl class="method">
 <dt id="lancet.core.Concatenate.verbose">
 <tt class="descname">verbose</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.core.Concatenate.verbose" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a verbose message.</p>
+<dd><p>Print msg merged with args as a verbose message.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="lancet.core.Concatenate.warning">
 <tt class="descname">warning</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.core.Concatenate.warning" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a warning, unless module variable
+<dd><p>Print msg merged with args as a warning, unless module variable
 warnings_as_exceptions is True, then raise an Exception
 containing the arguments.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 </dd></dl>
@@ -1309,7 +1329,8 @@ exhausting it.</p>
 <dl class="method">
 <dt id="lancet.core.FileInfo.debug">
 <tt class="descname">debug</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.core.FileInfo.debug" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a debugging statement.</p>
+<dd><p>Print msg merged with args as a debugging statement.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 <dl class="method">
@@ -1323,7 +1344,7 @@ instantiated.</p>
 
 <dl class="attribute">
 <dt id="lancet.core.FileInfo.force_new_dynamic_value">
-<tt class="descname">force_new_dynamic_value</tt><em class="property"> = &lt;functools.partial object at 0x2b7286ca01b0&gt;</em><a class="headerlink" href="#lancet.core.FileInfo.force_new_dynamic_value" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">force_new_dynamic_value</tt><em class="property"> = &lt;functools.partial object at 0x2aec6146d788&gt;</em><a class="headerlink" href="#lancet.core.FileInfo.force_new_dynamic_value" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -1337,12 +1358,12 @@ equal to the default value.</p>
 
 <dl class="attribute">
 <dt id="lancet.core.FileInfo.get_value_generator">
-<tt class="descname">get_value_generator</tt><em class="property"> = &lt;functools.partial object at 0x2b7286ca0310&gt;</em><a class="headerlink" href="#lancet.core.FileInfo.get_value_generator" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">get_value_generator</tt><em class="property"> = &lt;functools.partial object at 0x2aec6146d998&gt;</em><a class="headerlink" href="#lancet.core.FileInfo.get_value_generator" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="lancet.core.FileInfo.inspect_value">
-<tt class="descname">inspect_value</tt><em class="property"> = &lt;functools.partial object at 0x2b7286ca0578&gt;</em><a class="headerlink" href="#lancet.core.FileInfo.inspect_value" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">inspect_value</tt><em class="property"> = &lt;functools.partial object at 0x2aec6146dba8&gt;</em><a class="headerlink" href="#lancet.core.FileInfo.inspect_value" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -1382,7 +1403,8 @@ the loaded data to retrive the specified item.</p>
 <dl class="method">
 <dt id="lancet.core.FileInfo.message">
 <tt class="descname">message</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.core.FileInfo.message" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a message.</p>
+<dd><p>Print msg merged with args as a message.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -1442,12 +1464,12 @@ for pretty printing.</p>
 
 <dl class="attribute">
 <dt id="lancet.core.FileInfo.set_dynamic_time_fn">
-<tt class="descname">set_dynamic_time_fn</tt><em class="property"> = &lt;functools.partial object at 0x2b7286ca06d8&gt;</em><a class="headerlink" href="#lancet.core.FileInfo.set_dynamic_time_fn" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">set_dynamic_time_fn</tt><em class="property"> = &lt;functools.partial object at 0x2aec6146dd60&gt;</em><a class="headerlink" href="#lancet.core.FileInfo.set_dynamic_time_fn" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="lancet.core.FileInfo.set_param">
-<tt class="descname">set_param</tt><em class="property"> = &lt;functools.partial object at 0x2b7286ca0788&gt;</em><a class="headerlink" href="#lancet.core.FileInfo.set_param" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">set_param</tt><em class="property"> = &lt;functools.partial object at 0x2aec6146de68&gt;</em><a class="headerlink" href="#lancet.core.FileInfo.set_param" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -1497,15 +1519,17 @@ most relevant information about the object to the user.</p>
 <dl class="method">
 <dt id="lancet.core.FileInfo.verbose">
 <tt class="descname">verbose</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.core.FileInfo.verbose" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a verbose message.</p>
+<dd><p>Print msg merged with args as a verbose message.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="lancet.core.FileInfo.warning">
 <tt class="descname">warning</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.core.FileInfo.warning" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a warning, unless module variable
+<dd><p>Print msg merged with args as a warning, unless module variable
 warnings_as_exceptions is True, then raise an Exception
 containing the arguments.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 </dd></dl>
@@ -1595,7 +1619,8 @@ exhausting it.</p>
 <dl class="method">
 <dt id="lancet.core.FilePattern.debug">
 <tt class="descname">debug</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.core.FilePattern.debug" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a debugging statement.</p>
+<dd><p>Print msg merged with args as a debugging statement.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 <dl class="method">
@@ -1624,7 +1649,7 @@ formatting mini-language.</p>
 
 <dl class="attribute">
 <dt id="lancet.core.FilePattern.force_new_dynamic_value">
-<tt class="descname">force_new_dynamic_value</tt><em class="property"> = &lt;functools.partial object at 0x2b7286ca0788&gt;</em><a class="headerlink" href="#lancet.core.FilePattern.force_new_dynamic_value" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">force_new_dynamic_value</tt><em class="property"> = &lt;functools.partial object at 0x2aec6146d998&gt;</em><a class="headerlink" href="#lancet.core.FilePattern.force_new_dynamic_value" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -1638,12 +1663,12 @@ equal to the default value.</p>
 
 <dl class="attribute">
 <dt id="lancet.core.FilePattern.get_value_generator">
-<tt class="descname">get_value_generator</tt><em class="property"> = &lt;functools.partial object at 0x2b7286ca0208&gt;</em><a class="headerlink" href="#lancet.core.FilePattern.get_value_generator" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">get_value_generator</tt><em class="property"> = &lt;functools.partial object at 0x2aec6146d890&gt;</em><a class="headerlink" href="#lancet.core.FilePattern.get_value_generator" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="lancet.core.FilePattern.inspect_value">
-<tt class="descname">inspect_value</tt><em class="property"> = &lt;functools.partial object at 0x2b7286ca04c8&gt;</em><a class="headerlink" href="#lancet.core.FilePattern.inspect_value" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">inspect_value</tt><em class="property"> = &lt;functools.partial object at 0x2aec6146dcb0&gt;</em><a class="headerlink" href="#lancet.core.FilePattern.inspect_value" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -1658,7 +1683,8 @@ not found in the operand&#8217;s set of varying keys, it is ignored.</p>
 <dl class="method">
 <dt id="lancet.core.FilePattern.message">
 <tt class="descname">message</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.core.FilePattern.message" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a message.</p>
+<dd><p>Print msg merged with args as a message.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 <dl class="classmethod">
@@ -1711,12 +1737,12 @@ for pretty printing.</p>
 
 <dl class="attribute">
 <dt id="lancet.core.FilePattern.set_dynamic_time_fn">
-<tt class="descname">set_dynamic_time_fn</tt><em class="property"> = &lt;functools.partial object at 0x2b7286ca02b8&gt;</em><a class="headerlink" href="#lancet.core.FilePattern.set_dynamic_time_fn" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">set_dynamic_time_fn</tt><em class="property"> = &lt;functools.partial object at 0x2aec6146dc00&gt;</em><a class="headerlink" href="#lancet.core.FilePattern.set_dynamic_time_fn" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="lancet.core.FilePattern.set_param">
-<tt class="descname">set_param</tt><em class="property"> = &lt;functools.partial object at 0x2b7286ca07e0&gt;</em><a class="headerlink" href="#lancet.core.FilePattern.set_param" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">set_param</tt><em class="property"> = &lt;functools.partial object at 0x2aec6146dd08&gt;</em><a class="headerlink" href="#lancet.core.FilePattern.set_param" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -1766,15 +1792,17 @@ most relevant information about the object to the user.</p>
 <dl class="method">
 <dt id="lancet.core.FilePattern.verbose">
 <tt class="descname">verbose</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.core.FilePattern.verbose" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a verbose message.</p>
+<dd><p>Print msg merged with args as a verbose message.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="lancet.core.FilePattern.warning">
 <tt class="descname">warning</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.core.FilePattern.warning" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a warning, unless module variable
+<dd><p>Print msg merged with args as a warning, unless module variable
 warnings_as_exceptions is True, then raise an Exception
 containing the arguments.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 </dd></dl>
@@ -1838,7 +1866,8 @@ exhausting it.</p>
 <dl class="method">
 <dt id="lancet.core.Identity.debug">
 <tt class="descname">debug</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.core.Identity.debug" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a debugging statement.</p>
+<dd><p>Print msg merged with args as a debugging statement.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 <dl class="method">
@@ -1852,7 +1881,7 @@ instantiated.</p>
 
 <dl class="attribute">
 <dt id="lancet.core.Identity.force_new_dynamic_value">
-<tt class="descname">force_new_dynamic_value</tt><em class="property"> = &lt;functools.partial object at 0x2b7286ca01b0&gt;</em><a class="headerlink" href="#lancet.core.Identity.force_new_dynamic_value" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">force_new_dynamic_value</tt><em class="property"> = &lt;functools.partial object at 0x2aec6146dba8&gt;</em><a class="headerlink" href="#lancet.core.Identity.force_new_dynamic_value" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -1866,18 +1895,19 @@ equal to the default value.</p>
 
 <dl class="attribute">
 <dt id="lancet.core.Identity.get_value_generator">
-<tt class="descname">get_value_generator</tt><em class="property"> = &lt;functools.partial object at 0x2b7286ca02b8&gt;</em><a class="headerlink" href="#lancet.core.Identity.get_value_generator" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">get_value_generator</tt><em class="property"> = &lt;functools.partial object at 0x2aec6146dc00&gt;</em><a class="headerlink" href="#lancet.core.Identity.get_value_generator" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="lancet.core.Identity.inspect_value">
-<tt class="descname">inspect_value</tt><em class="property"> = &lt;functools.partial object at 0x2b7286ca0418&gt;</em><a class="headerlink" href="#lancet.core.Identity.inspect_value" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">inspect_value</tt><em class="property"> = &lt;functools.partial object at 0x2aec6146d9f0&gt;</em><a class="headerlink" href="#lancet.core.Identity.inspect_value" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="lancet.core.Identity.message">
 <tt class="descname">message</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.core.Identity.message" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a message.</p>
+<dd><p>Print msg merged with args as a message.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 <dl class="method">
@@ -1937,12 +1967,12 @@ for pretty printing.</p>
 
 <dl class="attribute">
 <dt id="lancet.core.Identity.set_dynamic_time_fn">
-<tt class="descname">set_dynamic_time_fn</tt><em class="property"> = &lt;functools.partial object at 0x2b7286ca0730&gt;</em><a class="headerlink" href="#lancet.core.Identity.set_dynamic_time_fn" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">set_dynamic_time_fn</tt><em class="property"> = &lt;functools.partial object at 0x2aec6146ddb8&gt;</em><a class="headerlink" href="#lancet.core.Identity.set_dynamic_time_fn" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="lancet.core.Identity.set_param">
-<tt class="descname">set_param</tt><em class="property"> = &lt;functools.partial object at 0x2b7286ca0890&gt;</em><a class="headerlink" href="#lancet.core.Identity.set_param" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">set_param</tt><em class="property"> = &lt;functools.partial object at 0x2aec6146df18&gt;</em><a class="headerlink" href="#lancet.core.Identity.set_param" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="classmethod">
@@ -1992,15 +2022,17 @@ rate.</p>
 <dl class="method">
 <dt id="lancet.core.Identity.verbose">
 <tt class="descname">verbose</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.core.Identity.verbose" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a verbose message.</p>
+<dd><p>Print msg merged with args as a verbose message.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="lancet.core.Identity.warning">
 <tt class="descname">warning</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.core.Identity.warning" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a warning, unless module variable
+<dd><p>Print msg merged with args as a warning, unless module variable
 warnings_as_exceptions is True, then raise an Exception
 containing the arguments.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 </dd></dl>
@@ -2059,7 +2091,8 @@ exhausting it.</p>
 <dl class="method">
 <dt id="lancet.core.List.debug">
 <tt class="descname">debug</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.core.List.debug" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a debugging statement.</p>
+<dd><p>Print msg merged with args as a debugging statement.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 <dl class="method">
@@ -2073,7 +2106,7 @@ instantiated.</p>
 
 <dl class="attribute">
 <dt id="lancet.core.List.force_new_dynamic_value">
-<tt class="descname">force_new_dynamic_value</tt><em class="property"> = &lt;functools.partial object at 0x2b7286ca0520&gt;</em><a class="headerlink" href="#lancet.core.List.force_new_dynamic_value" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">force_new_dynamic_value</tt><em class="property"> = &lt;functools.partial object at 0x2aec6146dc00&gt;</em><a class="headerlink" href="#lancet.core.List.force_new_dynamic_value" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -2087,12 +2120,12 @@ equal to the default value.</p>
 
 <dl class="attribute">
 <dt id="lancet.core.List.get_value_generator">
-<tt class="descname">get_value_generator</tt><em class="property"> = &lt;functools.partial object at 0x2b7286ca07e0&gt;</em><a class="headerlink" href="#lancet.core.List.get_value_generator" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">get_value_generator</tt><em class="property"> = &lt;functools.partial object at 0x2aec6146dd08&gt;</em><a class="headerlink" href="#lancet.core.List.get_value_generator" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="lancet.core.List.inspect_value">
-<tt class="descname">inspect_value</tt><em class="property"> = &lt;functools.partial object at 0x2b7286ca00a8&gt;</em><a class="headerlink" href="#lancet.core.List.inspect_value" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">inspect_value</tt><em class="property"> = &lt;functools.partial object at 0x2aec6146d680&gt;</em><a class="headerlink" href="#lancet.core.List.inspect_value" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -2107,7 +2140,8 @@ not found in the operand&#8217;s set of varying keys, it is ignored.</p>
 <dl class="method">
 <dt id="lancet.core.List.message">
 <tt class="descname">message</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.core.List.message" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a message.</p>
+<dd><p>Print msg merged with args as a message.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 <dl class="classmethod">
@@ -2160,12 +2194,12 @@ for pretty printing.</p>
 
 <dl class="attribute">
 <dt id="lancet.core.List.set_dynamic_time_fn">
-<tt class="descname">set_dynamic_time_fn</tt><em class="property"> = &lt;functools.partial object at 0x2b7286ca0578&gt;</em><a class="headerlink" href="#lancet.core.List.set_dynamic_time_fn" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">set_dynamic_time_fn</tt><em class="property"> = &lt;functools.partial object at 0x2aec6146df70&gt;</em><a class="headerlink" href="#lancet.core.List.set_dynamic_time_fn" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="lancet.core.List.set_param">
-<tt class="descname">set_param</tt><em class="property"> = &lt;functools.partial object at 0x2b7286ca0940&gt;</em><a class="headerlink" href="#lancet.core.List.set_param" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">set_param</tt><em class="property"> = &lt;functools.partial object at 0x2aec6146dfc8&gt;</em><a class="headerlink" href="#lancet.core.List.set_param" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -2215,15 +2249,17 @@ most relevant information about the object to the user.</p>
 <dl class="method">
 <dt id="lancet.core.List.verbose">
 <tt class="descname">verbose</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.core.List.verbose" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a verbose message.</p>
+<dd><p>Print msg merged with args as a verbose message.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="lancet.core.List.warning">
 <tt class="descname">warning</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.core.List.warning" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a warning, unless module variable
+<dd><p>Print msg merged with args as a warning, unless module variable
 warnings_as_exceptions is True, then raise an Exception
 containing the arguments.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 </dd></dl>
@@ -2297,7 +2333,8 @@ exhausting it.</p>
 <dl class="method">
 <dt id="lancet.core.Log.debug">
 <tt class="descname">debug</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.core.Log.debug" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a debugging statement.</p>
+<dd><p>Print msg merged with args as a debugging statement.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 <dl class="method">
@@ -2321,7 +2358,7 @@ from unicode to strings for kwarg use.</p>
 
 <dl class="attribute">
 <dt id="lancet.core.Log.force_new_dynamic_value">
-<tt class="descname">force_new_dynamic_value</tt><em class="property"> = &lt;functools.partial object at 0x2b7286ca01b0&gt;</em><a class="headerlink" href="#lancet.core.Log.force_new_dynamic_value" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">force_new_dynamic_value</tt><em class="property"> = &lt;functools.partial object at 0x2aec6146de10&gt;</em><a class="headerlink" href="#lancet.core.Log.force_new_dynamic_value" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -2335,12 +2372,12 @@ equal to the default value.</p>
 
 <dl class="attribute">
 <dt id="lancet.core.Log.get_value_generator">
-<tt class="descname">get_value_generator</tt><em class="property"> = &lt;functools.partial object at 0x2b7286ca0310&gt;</em><a class="headerlink" href="#lancet.core.Log.get_value_generator" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">get_value_generator</tt><em class="property"> = &lt;functools.partial object at 0x2aec6146dba8&gt;</em><a class="headerlink" href="#lancet.core.Log.get_value_generator" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="lancet.core.Log.inspect_value">
-<tt class="descname">inspect_value</tt><em class="property"> = &lt;functools.partial object at 0x2b7286ca0838&gt;</em><a class="headerlink" href="#lancet.core.Log.inspect_value" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">inspect_value</tt><em class="property"> = &lt;functools.partial object at 0x2aec6146dec0&gt;</em><a class="headerlink" href="#lancet.core.Log.inspect_value" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -2355,7 +2392,8 @@ not found in the operand&#8217;s set of varying keys, it is ignored.</p>
 <dl class="method">
 <dt id="lancet.core.Log.message">
 <tt class="descname">message</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.core.Log.message" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a message.</p>
+<dd><p>Print msg merged with args as a message.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 <dl class="classmethod">
@@ -2408,12 +2446,12 @@ for pretty printing.</p>
 
 <dl class="attribute">
 <dt id="lancet.core.Log.set_dynamic_time_fn">
-<tt class="descname">set_dynamic_time_fn</tt><em class="property"> = &lt;functools.partial object at 0x2b7286ca09f0&gt;</em><a class="headerlink" href="#lancet.core.Log.set_dynamic_time_fn" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">set_dynamic_time_fn</tt><em class="property"> = &lt;functools.partial object at 0x2aec616e40a8&gt;</em><a class="headerlink" href="#lancet.core.Log.set_dynamic_time_fn" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="lancet.core.Log.set_param">
-<tt class="descname">set_param</tt><em class="property"> = &lt;functools.partial object at 0x2b7286ca0aa0&gt;</em><a class="headerlink" href="#lancet.core.Log.set_param" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">set_param</tt><em class="property"> = &lt;functools.partial object at 0x2aec616e4158&gt;</em><a class="headerlink" href="#lancet.core.Log.set_param" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -2463,15 +2501,17 @@ most relevant information about the object to the user.</p>
 <dl class="method">
 <dt id="lancet.core.Log.verbose">
 <tt class="descname">verbose</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.core.Log.verbose" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a verbose message.</p>
+<dd><p>Print msg merged with args as a verbose message.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="lancet.core.Log.warning">
 <tt class="descname">warning</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.core.Log.warning" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a warning, unless module variable
+<dd><p>Print msg merged with args as a warning, unless module variable
 warnings_as_exceptions is True, then raise an Exception
 containing the arguments.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 <dl class="staticmethod">
@@ -2503,7 +2543,7 @@ for pretty printing.</p>
 
 <dl class="class">
 <dt id="lancet.core.Range">
-<em class="property">class </em><tt class="descclassname">lancet.core.</tt><tt class="descname">Range</tt><big>(</big><em>key</em>, <em>start_value</em>, <em>end_value</em>, <em>steps=2</em>, <em>mapfn=&lt;function identityfn at 0x2b72808d8848&gt;</em>, <em>**params</em><big>)</big><a class="reference internal" href="../_modules/lancet/core.html#Range"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lancet.core.Range" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">lancet.core.</tt><tt class="descname">Range</tt><big>(</big><em>key</em>, <em>start_value</em>, <em>end_value</em>, <em>steps=2</em>, <em>mapfn=&lt;function identityfn at 0x2aec5b27d848&gt;</em>, <em>**params</em><big>)</big><a class="reference internal" href="../_modules/lancet/core.html#Range"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#lancet.core.Range" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#lancet.core.Args" title="lancet.core.Args"><tt class="xref py py-class docutils literal"><span class="pre">lancet.core.Args</span></tt></a></p>
 <p>params(end_value=Number, key=String, mapfn=Callable, start_value=Number, steps=Integer, specs=List, fp_precision=Integer, name=String)</p>
 <blockquote>
@@ -2518,7 +2558,7 @@ C/V= Constant/Variable, RO/RW = ReadOnly/ReadWrite, AN=Allow None</p>
 <p>end_value                        None                     Number              C RW AN 
 fp_precision                      4                      Integer                C RW  
 key                               &#8216;&#8217;                      String                C RW  
-mapfn          &lt;function identityfn at 0x2b72808d884...  Callable               C RW  
+mapfn          &lt;function identityfn at 0x2aec5b27d84...  Callable               C RW  
 specs                             []                       List    (0, None)    C RW  
 start_value                      None                     Number              C RW AN 
 steps                             2                      Integer   (1, None)    C RW</p>
@@ -2573,7 +2613,8 @@ exhausting it.</p>
 <dl class="method">
 <dt id="lancet.core.Range.debug">
 <tt class="descname">debug</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.core.Range.debug" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a debugging statement.</p>
+<dd><p>Print msg merged with args as a debugging statement.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 <dl class="method">
@@ -2587,7 +2628,7 @@ instantiated.</p>
 
 <dl class="attribute">
 <dt id="lancet.core.Range.force_new_dynamic_value">
-<tt class="descname">force_new_dynamic_value</tt><em class="property"> = &lt;functools.partial object at 0x2b7286ca0730&gt;</em><a class="headerlink" href="#lancet.core.Range.force_new_dynamic_value" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">force_new_dynamic_value</tt><em class="property"> = &lt;functools.partial object at 0x2aec6146dfc8&gt;</em><a class="headerlink" href="#lancet.core.Range.force_new_dynamic_value" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -2601,12 +2642,12 @@ equal to the default value.</p>
 
 <dl class="attribute">
 <dt id="lancet.core.Range.get_value_generator">
-<tt class="descname">get_value_generator</tt><em class="property"> = &lt;functools.partial object at 0x2b7286ca0680&gt;</em><a class="headerlink" href="#lancet.core.Range.get_value_generator" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">get_value_generator</tt><em class="property"> = &lt;functools.partial object at 0x2aec6146de68&gt;</em><a class="headerlink" href="#lancet.core.Range.get_value_generator" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="lancet.core.Range.inspect_value">
-<tt class="descname">inspect_value</tt><em class="property"> = &lt;functools.partial object at 0x2b7286ca0aa0&gt;</em><a class="headerlink" href="#lancet.core.Range.inspect_value" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">inspect_value</tt><em class="property"> = &lt;functools.partial object at 0x2aec6146dc00&gt;</em><a class="headerlink" href="#lancet.core.Range.inspect_value" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -2627,7 +2668,8 @@ not found in the operand&#8217;s set of varying keys, it is ignored.</p>
 <dl class="method">
 <dt id="lancet.core.Range.message">
 <tt class="descname">message</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.core.Range.message" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a message.</p>
+<dd><p>Print msg merged with args as a message.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 <dl class="classmethod">
@@ -2680,12 +2722,12 @@ for pretty printing.</p>
 
 <dl class="attribute">
 <dt id="lancet.core.Range.set_dynamic_time_fn">
-<tt class="descname">set_dynamic_time_fn</tt><em class="property"> = &lt;functools.partial object at 0x2b7286ca0520&gt;</em><a class="headerlink" href="#lancet.core.Range.set_dynamic_time_fn" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">set_dynamic_time_fn</tt><em class="property"> = &lt;functools.partial object at 0x2aec6146dcb0&gt;</em><a class="headerlink" href="#lancet.core.Range.set_dynamic_time_fn" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="lancet.core.Range.set_param">
-<tt class="descname">set_param</tt><em class="property"> = &lt;functools.partial object at 0x2b7286ca00a8&gt;</em><a class="headerlink" href="#lancet.core.Range.set_param" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">set_param</tt><em class="property"> = &lt;functools.partial object at 0x2aec6146d788&gt;</em><a class="headerlink" href="#lancet.core.Range.set_param" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -2735,15 +2777,17 @@ most relevant information about the object to the user.</p>
 <dl class="method">
 <dt id="lancet.core.Range.verbose">
 <tt class="descname">verbose</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.core.Range.verbose" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a verbose message.</p>
+<dd><p>Print msg merged with args as a verbose message.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="lancet.core.Range.warning">
 <tt class="descname">warning</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.core.Range.warning" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a warning, unless module variable
+<dd><p>Print msg merged with args as a warning, unless module variable
 warnings_as_exceptions is True, then raise an Exception
 containing the arguments.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 </dd></dl>
@@ -2800,7 +2844,7 @@ return format of the output_extractor function.</p>
 C/V= Constant/Variable, RO/RW = ReadOnly/ReadWrite, AN=Allow None</p>
 <p>[1;34mName                             Value                   Type    Mode [0m</p>
 <p>fp_precision                       4                   Integer   C RW 
-output_extractor   &lt;function loads at 0x2b72808d87d0&gt;  Callable  V RW</p>
+output_extractor   &lt;function loads at 0x2aec5b27d7d0&gt;  Callable  V RW</p>
 <p>[1;32mParameter docstrings:
 =====================[0m</p>
 <p>[1;34mfp_precision:     The floating point precision to use for floating point[0m
@@ -2857,7 +2901,8 @@ exhausting it.</p>
 <dl class="method">
 <dt id="lancet.dynamic.DynamicArgs.debug">
 <tt class="descname">debug</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.dynamic.DynamicArgs.debug" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a debugging statement.</p>
+<dd><p>Print msg merged with args as a debugging statement.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 <dl class="method">
@@ -2871,7 +2916,7 @@ instantiated.</p>
 
 <dl class="attribute">
 <dt id="lancet.dynamic.DynamicArgs.force_new_dynamic_value">
-<tt class="descname">force_new_dynamic_value</tt><em class="property"> = &lt;functools.partial object at 0x2b7286b904c8&gt;</em><a class="headerlink" href="#lancet.dynamic.DynamicArgs.force_new_dynamic_value" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">force_new_dynamic_value</tt><em class="property"> = &lt;functools.partial object at 0x2aec61364940&gt;</em><a class="headerlink" href="#lancet.dynamic.DynamicArgs.force_new_dynamic_value" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -2885,18 +2930,19 @@ equal to the default value.</p>
 
 <dl class="attribute">
 <dt id="lancet.dynamic.DynamicArgs.get_value_generator">
-<tt class="descname">get_value_generator</tt><em class="property"> = &lt;functools.partial object at 0x2b7286b905d0&gt;</em><a class="headerlink" href="#lancet.dynamic.DynamicArgs.get_value_generator" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">get_value_generator</tt><em class="property"> = &lt;functools.partial object at 0x2aec61364c58&gt;</em><a class="headerlink" href="#lancet.dynamic.DynamicArgs.get_value_generator" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="lancet.dynamic.DynamicArgs.inspect_value">
-<tt class="descname">inspect_value</tt><em class="property"> = &lt;functools.partial object at 0x2b7286b90520&gt;</em><a class="headerlink" href="#lancet.dynamic.DynamicArgs.inspect_value" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">inspect_value</tt><em class="property"> = &lt;functools.partial object at 0x2aec61364ba8&gt;</em><a class="headerlink" href="#lancet.dynamic.DynamicArgs.inspect_value" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="lancet.dynamic.DynamicArgs.message">
 <tt class="descname">message</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.dynamic.DynamicArgs.message" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a message.</p>
+<dd><p>Print msg merged with args as a message.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 <dl class="staticmethod">
@@ -2985,12 +3031,12 @@ for pretty printing.</p>
 
 <dl class="attribute">
 <dt id="lancet.dynamic.DynamicArgs.set_dynamic_time_fn">
-<tt class="descname">set_dynamic_time_fn</tt><em class="property"> = &lt;functools.partial object at 0x2b7286b90680&gt;</em><a class="headerlink" href="#lancet.dynamic.DynamicArgs.set_dynamic_time_fn" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">set_dynamic_time_fn</tt><em class="property"> = &lt;functools.partial object at 0x2aec61364d08&gt;</em><a class="headerlink" href="#lancet.dynamic.DynamicArgs.set_dynamic_time_fn" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="lancet.dynamic.DynamicArgs.set_param">
-<tt class="descname">set_param</tt><em class="property"> = &lt;functools.partial object at 0x2b7286b90730&gt;</em><a class="headerlink" href="#lancet.dynamic.DynamicArgs.set_param" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">set_param</tt><em class="property"> = &lt;functools.partial object at 0x2aec61364db8&gt;</em><a class="headerlink" href="#lancet.dynamic.DynamicArgs.set_param" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -3057,15 +3103,17 @@ rate.</p>
 <dl class="method">
 <dt id="lancet.dynamic.DynamicArgs.verbose">
 <tt class="descname">verbose</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.dynamic.DynamicArgs.verbose" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a verbose message.</p>
+<dd><p>Print msg merged with args as a verbose message.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="lancet.dynamic.DynamicArgs.warning">
 <tt class="descname">warning</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.dynamic.DynamicArgs.warning" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a warning, unless module variable
+<dd><p>Print msg merged with args as a warning, unless module variable
 warnings_as_exceptions is True, then raise an Exception
 containing the arguments.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 </dd></dl>
@@ -3083,7 +3131,7 @@ containing the arguments.</p>
 C/V= Constant/Variable, RO/RW = ReadOnly/ReadWrite, AN=Allow None</p>
 <p>[1;34mName                             Value                   Type    Mode [0m</p>
 <p>fp_precision                       4                   Integer   C RW 
-output_extractor   &lt;function loads at 0x2b72808d87d0&gt;  Callable  V RW</p>
+output_extractor   &lt;function loads at 0x2aec5b27d7d0&gt;  Callable  V RW</p>
 <p>[1;32mParameter docstrings:
 =====================[0m</p>
 <p>[1;34mfp_precision:     The floating point precision to use for floating point[0m
@@ -3131,7 +3179,8 @@ exhausting it.</p>
 <dl class="method">
 <dt id="lancet.dynamic.DynamicCartesianProduct.debug">
 <tt class="descname">debug</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.dynamic.DynamicCartesianProduct.debug" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a debugging statement.</p>
+<dd><p>Print msg merged with args as a debugging statement.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 <dl class="method">
@@ -3145,7 +3194,7 @@ instantiated.</p>
 
 <dl class="attribute">
 <dt id="lancet.dynamic.DynamicCartesianProduct.force_new_dynamic_value">
-<tt class="descname">force_new_dynamic_value</tt><em class="property"> = &lt;functools.partial object at 0x2b7286b90310&gt;</em><a class="headerlink" href="#lancet.dynamic.DynamicCartesianProduct.force_new_dynamic_value" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">force_new_dynamic_value</tt><em class="property"> = &lt;functools.partial object at 0x2aec61364998&gt;</em><a class="headerlink" href="#lancet.dynamic.DynamicCartesianProduct.force_new_dynamic_value" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -3159,18 +3208,19 @@ equal to the default value.</p>
 
 <dl class="attribute">
 <dt id="lancet.dynamic.DynamicCartesianProduct.get_value_generator">
-<tt class="descname">get_value_generator</tt><em class="property"> = &lt;functools.partial object at 0x2b7286b90730&gt;</em><a class="headerlink" href="#lancet.dynamic.DynamicCartesianProduct.get_value_generator" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">get_value_generator</tt><em class="property"> = &lt;functools.partial object at 0x2aec613649f0&gt;</em><a class="headerlink" href="#lancet.dynamic.DynamicCartesianProduct.get_value_generator" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="lancet.dynamic.DynamicCartesianProduct.inspect_value">
-<tt class="descname">inspect_value</tt><em class="property"> = &lt;functools.partial object at 0x2b7286b90418&gt;</em><a class="headerlink" href="#lancet.dynamic.DynamicCartesianProduct.inspect_value" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">inspect_value</tt><em class="property"> = &lt;functools.partial object at 0x2aec61364aa0&gt;</em><a class="headerlink" href="#lancet.dynamic.DynamicCartesianProduct.inspect_value" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="lancet.dynamic.DynamicCartesianProduct.message">
 <tt class="descname">message</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.dynamic.DynamicCartesianProduct.message" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a message.</p>
+<dd><p>Print msg merged with args as a message.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 <dl class="staticmethod">
@@ -3259,12 +3309,12 @@ for pretty printing.</p>
 
 <dl class="attribute">
 <dt id="lancet.dynamic.DynamicCartesianProduct.set_dynamic_time_fn">
-<tt class="descname">set_dynamic_time_fn</tt><em class="property"> = &lt;functools.partial object at 0x2b7286b90470&gt;</em><a class="headerlink" href="#lancet.dynamic.DynamicCartesianProduct.set_dynamic_time_fn" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">set_dynamic_time_fn</tt><em class="property"> = &lt;functools.partial object at 0x2aec61364af8&gt;</em><a class="headerlink" href="#lancet.dynamic.DynamicCartesianProduct.set_dynamic_time_fn" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="lancet.dynamic.DynamicCartesianProduct.set_param">
-<tt class="descname">set_param</tt><em class="property"> = &lt;functools.partial object at 0x2b7286b907e0&gt;</em><a class="headerlink" href="#lancet.dynamic.DynamicCartesianProduct.set_param" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">set_param</tt><em class="property"> = &lt;functools.partial object at 0x2aec61364e68&gt;</em><a class="headerlink" href="#lancet.dynamic.DynamicCartesianProduct.set_param" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -3310,15 +3360,17 @@ most relevant information about the object to the user.</p>
 <dl class="method">
 <dt id="lancet.dynamic.DynamicCartesianProduct.verbose">
 <tt class="descname">verbose</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.dynamic.DynamicCartesianProduct.verbose" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a verbose message.</p>
+<dd><p>Print msg merged with args as a verbose message.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="lancet.dynamic.DynamicCartesianProduct.warning">
 <tt class="descname">warning</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.dynamic.DynamicCartesianProduct.warning" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a warning, unless module variable
+<dd><p>Print msg merged with args as a warning, unless module variable
 warnings_as_exceptions is True, then raise an Exception
 containing the arguments.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 </dd></dl>
@@ -3336,7 +3388,7 @@ containing the arguments.</p>
 C/V= Constant/Variable, RO/RW = ReadOnly/ReadWrite, AN=Allow None</p>
 <p>[1;34mName                             Value                   Type    Mode [0m</p>
 <p>fp_precision                       4                   Integer   C RW 
-output_extractor   &lt;function loads at 0x2b72808d87d0&gt;  Callable  V RW</p>
+output_extractor   &lt;function loads at 0x2aec5b27d7d0&gt;  Callable  V RW</p>
 <p>[1;32mParameter docstrings:
 =====================[0m</p>
 <p>[1;34mfp_precision:     The floating point precision to use for floating point[0m
@@ -3384,7 +3436,8 @@ exhausting it.</p>
 <dl class="method">
 <dt id="lancet.dynamic.DynamicConcatenate.debug">
 <tt class="descname">debug</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.dynamic.DynamicConcatenate.debug" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a debugging statement.</p>
+<dd><p>Print msg merged with args as a debugging statement.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 <dl class="method">
@@ -3398,7 +3451,7 @@ instantiated.</p>
 
 <dl class="attribute">
 <dt id="lancet.dynamic.DynamicConcatenate.force_new_dynamic_value">
-<tt class="descname">force_new_dynamic_value</tt><em class="property"> = &lt;functools.partial object at 0x2b7286b90310&gt;</em><a class="headerlink" href="#lancet.dynamic.DynamicConcatenate.force_new_dynamic_value" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">force_new_dynamic_value</tt><em class="property"> = &lt;functools.partial object at 0x2aec61364c58&gt;</em><a class="headerlink" href="#lancet.dynamic.DynamicConcatenate.force_new_dynamic_value" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -3412,18 +3465,19 @@ equal to the default value.</p>
 
 <dl class="attribute">
 <dt id="lancet.dynamic.DynamicConcatenate.get_value_generator">
-<tt class="descname">get_value_generator</tt><em class="property"> = &lt;functools.partial object at 0x2b7286b90520&gt;</em><a class="headerlink" href="#lancet.dynamic.DynamicConcatenate.get_value_generator" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">get_value_generator</tt><em class="property"> = &lt;functools.partial object at 0x2aec61364ba8&gt;</em><a class="headerlink" href="#lancet.dynamic.DynamicConcatenate.get_value_generator" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="lancet.dynamic.DynamicConcatenate.inspect_value">
-<tt class="descname">inspect_value</tt><em class="property"> = &lt;functools.partial object at 0x2b7286b90628&gt;</em><a class="headerlink" href="#lancet.dynamic.DynamicConcatenate.inspect_value" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">inspect_value</tt><em class="property"> = &lt;functools.partial object at 0x2aec61364cb0&gt;</em><a class="headerlink" href="#lancet.dynamic.DynamicConcatenate.inspect_value" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="lancet.dynamic.DynamicConcatenate.message">
 <tt class="descname">message</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.dynamic.DynamicConcatenate.message" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a message.</p>
+<dd><p>Print msg merged with args as a message.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 <dl class="staticmethod">
@@ -3512,12 +3566,12 @@ for pretty printing.</p>
 
 <dl class="attribute">
 <dt id="lancet.dynamic.DynamicConcatenate.set_dynamic_time_fn">
-<tt class="descname">set_dynamic_time_fn</tt><em class="property"> = &lt;functools.partial object at 0x2b7286b90680&gt;</em><a class="headerlink" href="#lancet.dynamic.DynamicConcatenate.set_dynamic_time_fn" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">set_dynamic_time_fn</tt><em class="property"> = &lt;functools.partial object at 0x2aec61364d08&gt;</em><a class="headerlink" href="#lancet.dynamic.DynamicConcatenate.set_dynamic_time_fn" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="lancet.dynamic.DynamicConcatenate.set_param">
-<tt class="descname">set_param</tt><em class="property"> = &lt;functools.partial object at 0x2b7286b90890&gt;</em><a class="headerlink" href="#lancet.dynamic.DynamicConcatenate.set_param" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">set_param</tt><em class="property"> = &lt;functools.partial object at 0x2aec61364e10&gt;</em><a class="headerlink" href="#lancet.dynamic.DynamicConcatenate.set_param" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -3563,15 +3617,17 @@ most relevant information about the object to the user.</p>
 <dl class="method">
 <dt id="lancet.dynamic.DynamicConcatenate.verbose">
 <tt class="descname">verbose</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.dynamic.DynamicConcatenate.verbose" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a verbose message.</p>
+<dd><p>Print msg merged with args as a verbose message.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="lancet.dynamic.DynamicConcatenate.warning">
 <tt class="descname">warning</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.dynamic.DynamicConcatenate.warning" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a warning, unless module variable
+<dd><p>Print msg merged with args as a warning, unless module variable
 warnings_as_exceptions is True, then raise an Exception
 containing the arguments.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 </dd></dl>
@@ -3607,7 +3663,7 @@ C/V= Constant/Variable, RO/RW = ReadOnly/ReadWrite, AN=Allow None</p>
 <p>fp_precision                       4                   Integer   C RW 
 key                                &#8216;&#8217;                   String   C RW 
 max_steps                         100                  Integer   C RW 
-output_extractor   &lt;function loads at 0x2b72808d87d0&gt;  Callable  V RW 
+output_extractor   &lt;function loads at 0x2aec5b27d7d0&gt;  Callable  V RW 
 start                             0.0                   Number   C RW 
 stepsize                          1.0                   Number   C RW</p>
 <p>[1;32mParameter docstrings:
@@ -3660,7 +3716,8 @@ exhausting it.</p>
 <dl class="method">
 <dt id="lancet.dynamic.SimpleGradientDescent.debug">
 <tt class="descname">debug</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.dynamic.SimpleGradientDescent.debug" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a debugging statement.</p>
+<dd><p>Print msg merged with args as a debugging statement.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 <dl class="method">
@@ -3674,7 +3731,7 @@ instantiated.</p>
 
 <dl class="attribute">
 <dt id="lancet.dynamic.SimpleGradientDescent.force_new_dynamic_value">
-<tt class="descname">force_new_dynamic_value</tt><em class="property"> = &lt;functools.partial object at 0x2b7286b90788&gt;</em><a class="headerlink" href="#lancet.dynamic.SimpleGradientDescent.force_new_dynamic_value" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">force_new_dynamic_value</tt><em class="property"> = &lt;functools.partial object at 0x2aec61364998&gt;</em><a class="headerlink" href="#lancet.dynamic.SimpleGradientDescent.force_new_dynamic_value" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -3688,18 +3745,19 @@ equal to the default value.</p>
 
 <dl class="attribute">
 <dt id="lancet.dynamic.SimpleGradientDescent.get_value_generator">
-<tt class="descname">get_value_generator</tt><em class="property"> = &lt;functools.partial object at 0x2b7286b902b8&gt;</em><a class="headerlink" href="#lancet.dynamic.SimpleGradientDescent.get_value_generator" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">get_value_generator</tt><em class="property"> = &lt;functools.partial object at 0x2aec61364f18&gt;</em><a class="headerlink" href="#lancet.dynamic.SimpleGradientDescent.get_value_generator" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="lancet.dynamic.SimpleGradientDescent.inspect_value">
-<tt class="descname">inspect_value</tt><em class="property"> = &lt;functools.partial object at 0x2b7286b90940&gt;</em><a class="headerlink" href="#lancet.dynamic.SimpleGradientDescent.inspect_value" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">inspect_value</tt><em class="property"> = &lt;functools.partial object at 0x2aec615cf050&gt;</em><a class="headerlink" href="#lancet.dynamic.SimpleGradientDescent.inspect_value" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="lancet.dynamic.SimpleGradientDescent.message">
 <tt class="descname">message</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.dynamic.SimpleGradientDescent.message" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a message.</p>
+<dd><p>Print msg merged with args as a message.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 <dl class="staticmethod">
@@ -3788,12 +3846,12 @@ for pretty printing.</p>
 
 <dl class="attribute">
 <dt id="lancet.dynamic.SimpleGradientDescent.set_dynamic_time_fn">
-<tt class="descname">set_dynamic_time_fn</tt><em class="property"> = &lt;functools.partial object at 0x2b7286b90e10&gt;</em><a class="headerlink" href="#lancet.dynamic.SimpleGradientDescent.set_dynamic_time_fn" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">set_dynamic_time_fn</tt><em class="property"> = &lt;functools.partial object at 0x2aec615cf4c8&gt;</em><a class="headerlink" href="#lancet.dynamic.SimpleGradientDescent.set_dynamic_time_fn" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="lancet.dynamic.SimpleGradientDescent.set_param">
-<tt class="descname">set_param</tt><em class="property"> = &lt;functools.partial object at 0x2b7286b90e68&gt;</em><a class="headerlink" href="#lancet.dynamic.SimpleGradientDescent.set_param" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">set_param</tt><em class="property"> = &lt;functools.partial object at 0x2aec615cf520&gt;</em><a class="headerlink" href="#lancet.dynamic.SimpleGradientDescent.set_param" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -3842,15 +3900,17 @@ space by calling the _update_state method.</p>
 <dl class="method">
 <dt id="lancet.dynamic.SimpleGradientDescent.verbose">
 <tt class="descname">verbose</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.dynamic.SimpleGradientDescent.verbose" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a verbose message.</p>
+<dd><p>Print msg merged with args as a verbose message.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="lancet.dynamic.SimpleGradientDescent.warning">
 <tt class="descname">warning</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.dynamic.SimpleGradientDescent.warning" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a warning, unless module variable
+<dd><p>Print msg merged with args as a warning, unless module variable
 warnings_as_exceptions is True, then raise an Exception
 containing the arguments.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 </dd></dl>
@@ -3932,7 +3992,8 @@ metadata_fn    None   Callable             V RW AN</p>
 <dl class="method">
 <dt id="lancet.filetypes.CustomFile.debug">
 <tt class="descname">debug</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.filetypes.CustomFile.debug" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a debugging statement.</p>
+<dd><p>Print msg merged with args as a debugging statement.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 <dl class="method">
@@ -3964,7 +4025,7 @@ appropriate extension for this class.</p>
 
 <dl class="attribute">
 <dt id="lancet.filetypes.CustomFile.force_new_dynamic_value">
-<tt class="descname">force_new_dynamic_value</tt><em class="property"> = &lt;functools.partial object at 0x2b7287470a48&gt;</em><a class="headerlink" href="#lancet.filetypes.CustomFile.force_new_dynamic_value" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">force_new_dynamic_value</tt><em class="property"> = &lt;functools.partial object at 0x2aec61ff9310&gt;</em><a class="headerlink" href="#lancet.filetypes.CustomFile.force_new_dynamic_value" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -3978,18 +4039,19 @@ equal to the default value.</p>
 
 <dl class="attribute">
 <dt id="lancet.filetypes.CustomFile.get_value_generator">
-<tt class="descname">get_value_generator</tt><em class="property"> = &lt;functools.partial object at 0x2b7287470ba8&gt;</em><a class="headerlink" href="#lancet.filetypes.CustomFile.get_value_generator" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">get_value_generator</tt><em class="property"> = &lt;functools.partial object at 0x2aec61ff9260&gt;</em><a class="headerlink" href="#lancet.filetypes.CustomFile.get_value_generator" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="lancet.filetypes.CustomFile.inspect_value">
-<tt class="descname">inspect_value</tt><em class="property"> = &lt;functools.partial object at 0x2b7287470c00&gt;</em><a class="headerlink" href="#lancet.filetypes.CustomFile.inspect_value" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">inspect_value</tt><em class="property"> = &lt;functools.partial object at 0x2aec61ff92b8&gt;</em><a class="headerlink" href="#lancet.filetypes.CustomFile.inspect_value" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="lancet.filetypes.CustomFile.message">
 <tt class="descname">message</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.filetypes.CustomFile.message" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a message.</p>
+<dd><p>Print msg merged with args as a message.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 <dl class="classmethod">
@@ -4042,12 +4104,12 @@ for pretty printing.</p>
 
 <dl class="attribute">
 <dt id="lancet.filetypes.CustomFile.set_dynamic_time_fn">
-<tt class="descname">set_dynamic_time_fn</tt><em class="property"> = &lt;functools.partial object at 0x2b7287470cb0&gt;</em><a class="headerlink" href="#lancet.filetypes.CustomFile.set_dynamic_time_fn" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">set_dynamic_time_fn</tt><em class="property"> = &lt;functools.partial object at 0x2aec61ff9368&gt;</em><a class="headerlink" href="#lancet.filetypes.CustomFile.set_dynamic_time_fn" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="lancet.filetypes.CustomFile.set_param">
-<tt class="descname">set_param</tt><em class="property"> = &lt;functools.partial object at 0x2b7287470c58&gt;</em><a class="headerlink" href="#lancet.filetypes.CustomFile.set_param" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">set_param</tt><em class="property"> = &lt;functools.partial object at 0x2aec61ff9050&gt;</em><a class="headerlink" href="#lancet.filetypes.CustomFile.set_param" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -4073,15 +4135,17 @@ something without permanently altering the objects&#8217; state.</p>
 <dl class="method">
 <dt id="lancet.filetypes.CustomFile.verbose">
 <tt class="descname">verbose</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.filetypes.CustomFile.verbose" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a verbose message.</p>
+<dd><p>Print msg merged with args as a verbose message.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="lancet.filetypes.CustomFile.warning">
 <tt class="descname">warning</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.filetypes.CustomFile.warning" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a warning, unless module variable
+<dd><p>Print msg merged with args as a warning, unless module variable
 warnings_as_exceptions is True, then raise an Exception
 containing the arguments.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 </dd></dl>
@@ -4140,7 +4204,8 @@ second         None   ClassSelector             V RW AN</p>
 <dl class="method">
 <dt id="lancet.filetypes.FileOption.debug">
 <tt class="descname">debug</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.filetypes.FileOption.debug" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a debugging statement.</p>
+<dd><p>Print msg merged with args as a debugging statement.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 <dl class="method">
@@ -4172,7 +4237,7 @@ appropriate extension for this class.</p>
 
 <dl class="attribute">
 <dt id="lancet.filetypes.FileOption.force_new_dynamic_value">
-<tt class="descname">force_new_dynamic_value</tt><em class="property"> = &lt;functools.partial object at 0x2b7287470c58&gt;</em><a class="headerlink" href="#lancet.filetypes.FileOption.force_new_dynamic_value" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">force_new_dynamic_value</tt><em class="property"> = &lt;functools.partial object at 0x2aec61ff90a8&gt;</em><a class="headerlink" href="#lancet.filetypes.FileOption.force_new_dynamic_value" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -4186,18 +4251,19 @@ equal to the default value.</p>
 
 <dl class="attribute">
 <dt id="lancet.filetypes.FileOption.get_value_generator">
-<tt class="descname">get_value_generator</tt><em class="property"> = &lt;functools.partial object at 0x2b7287470998&gt;</em><a class="headerlink" href="#lancet.filetypes.FileOption.get_value_generator" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">get_value_generator</tt><em class="property"> = &lt;functools.partial object at 0x2aec61ff92b8&gt;</em><a class="headerlink" href="#lancet.filetypes.FileOption.get_value_generator" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="lancet.filetypes.FileOption.inspect_value">
-<tt class="descname">inspect_value</tt><em class="property"> = &lt;functools.partial object at 0x2b7287470aa0&gt;</em><a class="headerlink" href="#lancet.filetypes.FileOption.inspect_value" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">inspect_value</tt><em class="property"> = &lt;functools.partial object at 0x2aec61ff9368&gt;</em><a class="headerlink" href="#lancet.filetypes.FileOption.inspect_value" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="lancet.filetypes.FileOption.message">
 <tt class="descname">message</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.filetypes.FileOption.message" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a message.</p>
+<dd><p>Print msg merged with args as a message.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 <dl class="classmethod">
@@ -4250,12 +4316,12 @@ for pretty printing.</p>
 
 <dl class="attribute">
 <dt id="lancet.filetypes.FileOption.set_dynamic_time_fn">
-<tt class="descname">set_dynamic_time_fn</tt><em class="property"> = &lt;functools.partial object at 0x2b72874709f0&gt;</em><a class="headerlink" href="#lancet.filetypes.FileOption.set_dynamic_time_fn" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">set_dynamic_time_fn</tt><em class="property"> = &lt;functools.partial object at 0x2aec61ff9310&gt;</em><a class="headerlink" href="#lancet.filetypes.FileOption.set_dynamic_time_fn" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="lancet.filetypes.FileOption.set_param">
-<tt class="descname">set_param</tt><em class="property"> = &lt;functools.partial object at 0x2b7287470a48&gt;</em><a class="headerlink" href="#lancet.filetypes.FileOption.set_param" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">set_param</tt><em class="property"> = &lt;functools.partial object at 0x2aec61ff9260&gt;</em><a class="headerlink" href="#lancet.filetypes.FileOption.set_param" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -4281,15 +4347,17 @@ something without permanently altering the objects&#8217; state.</p>
 <dl class="method">
 <dt id="lancet.filetypes.FileOption.verbose">
 <tt class="descname">verbose</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.filetypes.FileOption.verbose" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a verbose message.</p>
+<dd><p>Print msg merged with args as a verbose message.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="lancet.filetypes.FileOption.warning">
 <tt class="descname">warning</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.filetypes.FileOption.warning" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a warning, unless module variable
+<dd><p>Print msg merged with args as a warning, unless module variable
 warnings_as_exceptions is True, then raise an Exception
 containing the arguments.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 </dd></dl>
@@ -4349,7 +4417,8 @@ hash_suffix    True   Boolean    (0, 1)     V RW</p>
 <dl class="method">
 <dt id="lancet.filetypes.FileType.debug">
 <tt class="descname">debug</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.filetypes.FileType.debug" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a debugging statement.</p>
+<dd><p>Print msg merged with args as a debugging statement.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 <dl class="method">
@@ -4381,7 +4450,7 @@ appropriate extension for this class.</p>
 
 <dl class="attribute">
 <dt id="lancet.filetypes.FileType.force_new_dynamic_value">
-<tt class="descname">force_new_dynamic_value</tt><em class="property"> = &lt;functools.partial object at 0x2b7287470c00&gt;</em><a class="headerlink" href="#lancet.filetypes.FileType.force_new_dynamic_value" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">force_new_dynamic_value</tt><em class="property"> = &lt;functools.partial object at 0x2aec61ff9050&gt;</em><a class="headerlink" href="#lancet.filetypes.FileType.force_new_dynamic_value" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -4395,18 +4464,19 @@ equal to the default value.</p>
 
 <dl class="attribute">
 <dt id="lancet.filetypes.FileType.get_value_generator">
-<tt class="descname">get_value_generator</tt><em class="property"> = &lt;functools.partial object at 0x2b7287470ba8&gt;</em><a class="headerlink" href="#lancet.filetypes.FileType.get_value_generator" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">get_value_generator</tt><em class="property"> = &lt;functools.partial object at 0x2aec61ff92b8&gt;</em><a class="headerlink" href="#lancet.filetypes.FileType.get_value_generator" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="lancet.filetypes.FileType.inspect_value">
-<tt class="descname">inspect_value</tt><em class="property"> = &lt;functools.partial object at 0x2b7287470a48&gt;</em><a class="headerlink" href="#lancet.filetypes.FileType.inspect_value" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">inspect_value</tt><em class="property"> = &lt;functools.partial object at 0x2aec61ff9260&gt;</em><a class="headerlink" href="#lancet.filetypes.FileType.inspect_value" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="lancet.filetypes.FileType.message">
 <tt class="descname">message</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.filetypes.FileType.message" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a message.</p>
+<dd><p>Print msg merged with args as a message.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 <dl class="method">
@@ -4472,12 +4542,12 @@ clash between the metadata and data keys.</p>
 
 <dl class="attribute">
 <dt id="lancet.filetypes.FileType.set_dynamic_time_fn">
-<tt class="descname">set_dynamic_time_fn</tt><em class="property"> = &lt;functools.partial object at 0x2b7287470cb0&gt;</em><a class="headerlink" href="#lancet.filetypes.FileType.set_dynamic_time_fn" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">set_dynamic_time_fn</tt><em class="property"> = &lt;functools.partial object at 0x2aec61ff9418&gt;</em><a class="headerlink" href="#lancet.filetypes.FileType.set_dynamic_time_fn" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="lancet.filetypes.FileType.set_param">
-<tt class="descname">set_param</tt><em class="property"> = &lt;functools.partial object at 0x2b7287470db8&gt;</em><a class="headerlink" href="#lancet.filetypes.FileType.set_param" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">set_param</tt><em class="property"> = &lt;functools.partial object at 0x2aec61ff9470&gt;</em><a class="headerlink" href="#lancet.filetypes.FileType.set_param" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -4503,15 +4573,17 @@ something without permanently altering the objects&#8217; state.</p>
 <dl class="method">
 <dt id="lancet.filetypes.FileType.verbose">
 <tt class="descname">verbose</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.filetypes.FileType.verbose" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a verbose message.</p>
+<dd><p>Print msg merged with args as a verbose message.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="lancet.filetypes.FileType.warning">
 <tt class="descname">warning</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.filetypes.FileType.warning" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a warning, unless module variable
+<dd><p>Print msg merged with args as a warning, unless module variable
 warnings_as_exceptions is True, then raise an Exception
 containing the arguments.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 </dd></dl>
@@ -4571,7 +4643,8 @@ image_info    {&#8216;format&#8217;: &#8216;format&#8217;, &#8216;mode&#8217;: &
 <dl class="method">
 <dt id="lancet.filetypes.ImageFile.debug">
 <tt class="descname">debug</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.filetypes.ImageFile.debug" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a debugging statement.</p>
+<dd><p>Print msg merged with args as a debugging statement.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 <dl class="method">
@@ -4592,7 +4665,7 @@ appropriate extension for this class.</p>
 
 <dl class="attribute">
 <dt id="lancet.filetypes.ImageFile.force_new_dynamic_value">
-<tt class="descname">force_new_dynamic_value</tt><em class="property"> = &lt;functools.partial object at 0x2b7287470db8&gt;</em><a class="headerlink" href="#lancet.filetypes.ImageFile.force_new_dynamic_value" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">force_new_dynamic_value</tt><em class="property"> = &lt;functools.partial object at 0x2aec62029050&gt;</em><a class="headerlink" href="#lancet.filetypes.ImageFile.force_new_dynamic_value" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -4606,18 +4679,19 @@ equal to the default value.</p>
 
 <dl class="attribute">
 <dt id="lancet.filetypes.ImageFile.get_value_generator">
-<tt class="descname">get_value_generator</tt><em class="property"> = &lt;functools.partial object at 0x2b7287470998&gt;</em><a class="headerlink" href="#lancet.filetypes.ImageFile.get_value_generator" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">get_value_generator</tt><em class="property"> = &lt;functools.partial object at 0x2aec620292b8&gt;</em><a class="headerlink" href="#lancet.filetypes.ImageFile.get_value_generator" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="lancet.filetypes.ImageFile.inspect_value">
-<tt class="descname">inspect_value</tt><em class="property"> = &lt;functools.partial object at 0x2b7287470aa0&gt;</em><a class="headerlink" href="#lancet.filetypes.ImageFile.inspect_value" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">inspect_value</tt><em class="property"> = &lt;functools.partial object at 0x2aec62029310&gt;</em><a class="headerlink" href="#lancet.filetypes.ImageFile.inspect_value" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="lancet.filetypes.ImageFile.message">
 <tt class="descname">message</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.filetypes.ImageFile.message" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a message.</p>
+<dd><p>Print msg merged with args as a message.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 <dl class="classmethod">
@@ -4676,12 +4750,12 @@ for pretty printing.</p>
 
 <dl class="attribute">
 <dt id="lancet.filetypes.ImageFile.set_dynamic_time_fn">
-<tt class="descname">set_dynamic_time_fn</tt><em class="property"> = &lt;functools.partial object at 0x2b72874709f0&gt;</em><a class="headerlink" href="#lancet.filetypes.ImageFile.set_dynamic_time_fn" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">set_dynamic_time_fn</tt><em class="property"> = &lt;functools.partial object at 0x2aec62029418&gt;</em><a class="headerlink" href="#lancet.filetypes.ImageFile.set_dynamic_time_fn" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="lancet.filetypes.ImageFile.set_param">
-<tt class="descname">set_param</tt><em class="property"> = &lt;functools.partial object at 0x2b7287470e10&gt;</em><a class="headerlink" href="#lancet.filetypes.ImageFile.set_param" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">set_param</tt><em class="property"> = &lt;functools.partial object at 0x2aec62029470&gt;</em><a class="headerlink" href="#lancet.filetypes.ImageFile.set_param" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -4707,15 +4781,17 @@ something without permanently altering the objects&#8217; state.</p>
 <dl class="method">
 <dt id="lancet.filetypes.ImageFile.verbose">
 <tt class="descname">verbose</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.filetypes.ImageFile.verbose" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a verbose message.</p>
+<dd><p>Print msg merged with args as a verbose message.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="lancet.filetypes.ImageFile.warning">
 <tt class="descname">warning</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.filetypes.ImageFile.warning" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a warning, unless module variable
+<dd><p>Print msg merged with args as a warning, unless module variable
 warnings_as_exceptions is True, then raise an Exception
 containing the arguments.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 </dd></dl>
@@ -4765,7 +4841,8 @@ hash_suffix      True    Boolean    (0, 1)     V RW</p>
 <dl class="method">
 <dt id="lancet.filetypes.JSONFile.debug">
 <tt class="descname">debug</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.filetypes.JSONFile.debug" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a debugging statement.</p>
+<dd><p>Print msg merged with args as a debugging statement.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 <dl class="method">
@@ -4797,7 +4874,7 @@ appropriate extension for this class.</p>
 
 <dl class="attribute">
 <dt id="lancet.filetypes.JSONFile.force_new_dynamic_value">
-<tt class="descname">force_new_dynamic_value</tt><em class="property"> = &lt;functools.partial object at 0x2b7287470e10&gt;</em><a class="headerlink" href="#lancet.filetypes.JSONFile.force_new_dynamic_value" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">force_new_dynamic_value</tt><em class="property"> = &lt;functools.partial object at 0x2aec62038310&gt;</em><a class="headerlink" href="#lancet.filetypes.JSONFile.force_new_dynamic_value" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -4811,18 +4888,19 @@ equal to the default value.</p>
 
 <dl class="attribute">
 <dt id="lancet.filetypes.JSONFile.get_value_generator">
-<tt class="descname">get_value_generator</tt><em class="property"> = &lt;functools.partial object at 0x2b7287470ba8&gt;</em><a class="headerlink" href="#lancet.filetypes.JSONFile.get_value_generator" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">get_value_generator</tt><em class="property"> = &lt;functools.partial object at 0x2aec620382b8&gt;</em><a class="headerlink" href="#lancet.filetypes.JSONFile.get_value_generator" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="lancet.filetypes.JSONFile.inspect_value">
-<tt class="descname">inspect_value</tt><em class="property"> = &lt;functools.partial object at 0x2b7287470db8&gt;</em><a class="headerlink" href="#lancet.filetypes.JSONFile.inspect_value" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">inspect_value</tt><em class="property"> = &lt;functools.partial object at 0x2aec62038050&gt;</em><a class="headerlink" href="#lancet.filetypes.JSONFile.inspect_value" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="lancet.filetypes.JSONFile.message">
 <tt class="descname">message</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.filetypes.JSONFile.message" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a message.</p>
+<dd><p>Print msg merged with args as a message.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 <dl class="classmethod">
@@ -4875,12 +4953,12 @@ for pretty printing.</p>
 
 <dl class="attribute">
 <dt id="lancet.filetypes.JSONFile.set_dynamic_time_fn">
-<tt class="descname">set_dynamic_time_fn</tt><em class="property"> = &lt;functools.partial object at 0x2b7287470cb0&gt;</em><a class="headerlink" href="#lancet.filetypes.JSONFile.set_dynamic_time_fn" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">set_dynamic_time_fn</tt><em class="property"> = &lt;functools.partial object at 0x2aec62038418&gt;</em><a class="headerlink" href="#lancet.filetypes.JSONFile.set_dynamic_time_fn" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="lancet.filetypes.JSONFile.set_param">
-<tt class="descname">set_param</tt><em class="property"> = &lt;functools.partial object at 0x2b7287470c00&gt;</em><a class="headerlink" href="#lancet.filetypes.JSONFile.set_param" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">set_param</tt><em class="property"> = &lt;functools.partial object at 0x2aec62038470&gt;</em><a class="headerlink" href="#lancet.filetypes.JSONFile.set_param" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -4906,15 +4984,17 @@ something without permanently altering the objects&#8217; state.</p>
 <dl class="method">
 <dt id="lancet.filetypes.JSONFile.verbose">
 <tt class="descname">verbose</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.filetypes.JSONFile.verbose" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a verbose message.</p>
+<dd><p>Print msg merged with args as a verbose message.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="lancet.filetypes.JSONFile.warning">
 <tt class="descname">warning</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.filetypes.JSONFile.warning" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a warning, unless module variable
+<dd><p>Print msg merged with args as a warning, unless module variable
 warnings_as_exceptions is True, then raise an Exception
 containing the arguments.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 </dd></dl>
@@ -4963,7 +5043,8 @@ hash_suffix      True    Boolean    (0, 1)     V RW</p>
 <dl class="method">
 <dt id="lancet.filetypes.MatplotlibFile.debug">
 <tt class="descname">debug</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.filetypes.MatplotlibFile.debug" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a debugging statement.</p>
+<dd><p>Print msg merged with args as a debugging statement.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 <dl class="method">
@@ -4984,7 +5065,7 @@ appropriate extension for this class.</p>
 
 <dl class="attribute">
 <dt id="lancet.filetypes.MatplotlibFile.force_new_dynamic_value">
-<tt class="descname">force_new_dynamic_value</tt><em class="property"> = &lt;functools.partial object at 0x2b7287470e10&gt;</em><a class="headerlink" href="#lancet.filetypes.MatplotlibFile.force_new_dynamic_value" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">force_new_dynamic_value</tt><em class="property"> = &lt;functools.partial object at 0x2aec62038368&gt;</em><a class="headerlink" href="#lancet.filetypes.MatplotlibFile.force_new_dynamic_value" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -4998,18 +5079,19 @@ equal to the default value.</p>
 
 <dl class="attribute">
 <dt id="lancet.filetypes.MatplotlibFile.get_value_generator">
-<tt class="descname">get_value_generator</tt><em class="property"> = &lt;functools.partial object at 0x2b7287470c00&gt;</em><a class="headerlink" href="#lancet.filetypes.MatplotlibFile.get_value_generator" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">get_value_generator</tt><em class="property"> = &lt;functools.partial object at 0x2aec62038260&gt;</em><a class="headerlink" href="#lancet.filetypes.MatplotlibFile.get_value_generator" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="lancet.filetypes.MatplotlibFile.inspect_value">
-<tt class="descname">inspect_value</tt><em class="property"> = &lt;functools.partial object at 0x2b7287470aa0&gt;</em><a class="headerlink" href="#lancet.filetypes.MatplotlibFile.inspect_value" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">inspect_value</tt><em class="property"> = &lt;functools.partial object at 0x2aec62038310&gt;</em><a class="headerlink" href="#lancet.filetypes.MatplotlibFile.inspect_value" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="lancet.filetypes.MatplotlibFile.message">
 <tt class="descname">message</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.filetypes.MatplotlibFile.message" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a message.</p>
+<dd><p>Print msg merged with args as a message.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 <dl class="classmethod">
@@ -5062,12 +5144,12 @@ for pretty printing.</p>
 
 <dl class="attribute">
 <dt id="lancet.filetypes.MatplotlibFile.set_dynamic_time_fn">
-<tt class="descname">set_dynamic_time_fn</tt><em class="property"> = &lt;functools.partial object at 0x2b7287470af8&gt;</em><a class="headerlink" href="#lancet.filetypes.MatplotlibFile.set_dynamic_time_fn" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">set_dynamic_time_fn</tt><em class="property"> = &lt;functools.partial object at 0x2aec620383c0&gt;</em><a class="headerlink" href="#lancet.filetypes.MatplotlibFile.set_dynamic_time_fn" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="lancet.filetypes.MatplotlibFile.set_param">
-<tt class="descname">set_param</tt><em class="property"> = &lt;functools.partial object at 0x2b7287470a48&gt;</em><a class="headerlink" href="#lancet.filetypes.MatplotlibFile.set_param" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">set_param</tt><em class="property"> = &lt;functools.partial object at 0x2aec620384c8&gt;</em><a class="headerlink" href="#lancet.filetypes.MatplotlibFile.set_param" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -5093,15 +5175,17 @@ something without permanently altering the objects&#8217; state.</p>
 <dl class="method">
 <dt id="lancet.filetypes.MatplotlibFile.verbose">
 <tt class="descname">verbose</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.filetypes.MatplotlibFile.verbose" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a verbose message.</p>
+<dd><p>Print msg merged with args as a verbose message.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="lancet.filetypes.MatplotlibFile.warning">
 <tt class="descname">warning</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.filetypes.MatplotlibFile.warning" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a warning, unless module variable
+<dd><p>Print msg merged with args as a warning, unless module variable
 warnings_as_exceptions is True, then raise an Exception
 containing the arguments.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 </dd></dl>
@@ -5155,7 +5239,8 @@ hash_suffix     True    Boolean    (0, 1)     V RW</p>
 <dl class="method">
 <dt id="lancet.filetypes.NumpyFile.debug">
 <tt class="descname">debug</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.filetypes.NumpyFile.debug" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a debugging statement.</p>
+<dd><p>Print msg merged with args as a debugging statement.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 <dl class="method">
@@ -5187,7 +5272,7 @@ appropriate extension for this class.</p>
 
 <dl class="attribute">
 <dt id="lancet.filetypes.NumpyFile.force_new_dynamic_value">
-<tt class="descname">force_new_dynamic_value</tt><em class="property"> = &lt;functools.partial object at 0x2b7287470a48&gt;</em><a class="headerlink" href="#lancet.filetypes.NumpyFile.force_new_dynamic_value" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">force_new_dynamic_value</tt><em class="property"> = &lt;functools.partial object at 0x2aec620590a8&gt;</em><a class="headerlink" href="#lancet.filetypes.NumpyFile.force_new_dynamic_value" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -5201,18 +5286,19 @@ equal to the default value.</p>
 
 <dl class="attribute">
 <dt id="lancet.filetypes.NumpyFile.get_value_generator">
-<tt class="descname">get_value_generator</tt><em class="property"> = &lt;functools.partial object at 0x2b7287470ba8&gt;</em><a class="headerlink" href="#lancet.filetypes.NumpyFile.get_value_generator" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">get_value_generator</tt><em class="property"> = &lt;functools.partial object at 0x2aec620592b8&gt;</em><a class="headerlink" href="#lancet.filetypes.NumpyFile.get_value_generator" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="lancet.filetypes.NumpyFile.inspect_value">
-<tt class="descname">inspect_value</tt><em class="property"> = &lt;functools.partial object at 0x2b7287470db8&gt;</em><a class="headerlink" href="#lancet.filetypes.NumpyFile.inspect_value" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">inspect_value</tt><em class="property"> = &lt;functools.partial object at 0x2aec62059310&gt;</em><a class="headerlink" href="#lancet.filetypes.NumpyFile.inspect_value" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="lancet.filetypes.NumpyFile.message">
 <tt class="descname">message</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.filetypes.NumpyFile.message" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a message.</p>
+<dd><p>Print msg merged with args as a message.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 <dl class="classmethod">
@@ -5265,12 +5351,12 @@ for pretty printing.</p>
 
 <dl class="attribute">
 <dt id="lancet.filetypes.NumpyFile.set_dynamic_time_fn">
-<tt class="descname">set_dynamic_time_fn</tt><em class="property"> = &lt;functools.partial object at 0x2b7287470cb0&gt;</em><a class="headerlink" href="#lancet.filetypes.NumpyFile.set_dynamic_time_fn" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">set_dynamic_time_fn</tt><em class="property"> = &lt;functools.partial object at 0x2aec62059418&gt;</em><a class="headerlink" href="#lancet.filetypes.NumpyFile.set_dynamic_time_fn" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="lancet.filetypes.NumpyFile.set_param">
-<tt class="descname">set_param</tt><em class="property"> = &lt;functools.partial object at 0x2b7287470d60&gt;</em><a class="headerlink" href="#lancet.filetypes.NumpyFile.set_param" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">set_param</tt><em class="property"> = &lt;functools.partial object at 0x2aec62059470&gt;</em><a class="headerlink" href="#lancet.filetypes.NumpyFile.set_param" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -5296,15 +5382,17 @@ something without permanently altering the objects&#8217; state.</p>
 <dl class="method">
 <dt id="lancet.filetypes.NumpyFile.verbose">
 <tt class="descname">verbose</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.filetypes.NumpyFile.verbose" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a verbose message.</p>
+<dd><p>Print msg merged with args as a verbose message.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="lancet.filetypes.NumpyFile.warning">
 <tt class="descname">warning</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.filetypes.NumpyFile.warning" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a warning, unless module variable
+<dd><p>Print msg merged with args as a warning, unless module variable
 warnings_as_exceptions is True, then raise an Exception
 containing the arguments.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 </dd></dl>
@@ -5354,7 +5442,8 @@ hash_suffix    True   Boolean    (0, 1)     V RW</p>
 <dl class="method">
 <dt id="lancet.filetypes.SVGFile.debug">
 <tt class="descname">debug</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.filetypes.SVGFile.debug" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a debugging statement.</p>
+<dd><p>Print msg merged with args as a debugging statement.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 <dl class="method">
@@ -5382,7 +5471,7 @@ appropriate extension for this class.</p>
 
 <dl class="attribute">
 <dt id="lancet.filetypes.SVGFile.force_new_dynamic_value">
-<tt class="descname">force_new_dynamic_value</tt><em class="property"> = &lt;functools.partial object at 0x2b7287470d60&gt;</em><a class="headerlink" href="#lancet.filetypes.SVGFile.force_new_dynamic_value" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">force_new_dynamic_value</tt><em class="property"> = &lt;functools.partial object at 0x2aec62059310&gt;</em><a class="headerlink" href="#lancet.filetypes.SVGFile.force_new_dynamic_value" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -5396,18 +5485,19 @@ equal to the default value.</p>
 
 <dl class="attribute">
 <dt id="lancet.filetypes.SVGFile.get_value_generator">
-<tt class="descname">get_value_generator</tt><em class="property"> = &lt;functools.partial object at 0x2b7287470a48&gt;</em><a class="headerlink" href="#lancet.filetypes.SVGFile.get_value_generator" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">get_value_generator</tt><em class="property"> = &lt;functools.partial object at 0x2aec62059050&gt;</em><a class="headerlink" href="#lancet.filetypes.SVGFile.get_value_generator" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="lancet.filetypes.SVGFile.inspect_value">
-<tt class="descname">inspect_value</tt><em class="property"> = &lt;functools.partial object at 0x2b7287470c00&gt;</em><a class="headerlink" href="#lancet.filetypes.SVGFile.inspect_value" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">inspect_value</tt><em class="property"> = &lt;functools.partial object at 0x2aec620592b8&gt;</em><a class="headerlink" href="#lancet.filetypes.SVGFile.inspect_value" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="lancet.filetypes.SVGFile.message">
 <tt class="descname">message</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.filetypes.SVGFile.message" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a message.</p>
+<dd><p>Print msg merged with args as a message.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 <dl class="classmethod">
@@ -5460,12 +5550,12 @@ for pretty printing.</p>
 
 <dl class="attribute">
 <dt id="lancet.filetypes.SVGFile.set_dynamic_time_fn">
-<tt class="descname">set_dynamic_time_fn</tt><em class="property"> = &lt;functools.partial object at 0x2b7287470af8&gt;</em><a class="headerlink" href="#lancet.filetypes.SVGFile.set_dynamic_time_fn" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">set_dynamic_time_fn</tt><em class="property"> = &lt;functools.partial object at 0x2aec62059418&gt;</em><a class="headerlink" href="#lancet.filetypes.SVGFile.set_dynamic_time_fn" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="lancet.filetypes.SVGFile.set_param">
-<tt class="descname">set_param</tt><em class="property"> = &lt;functools.partial object at 0x2b7287470e10&gt;</em><a class="headerlink" href="#lancet.filetypes.SVGFile.set_param" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">set_param</tt><em class="property"> = &lt;functools.partial object at 0x2aec62059470&gt;</em><a class="headerlink" href="#lancet.filetypes.SVGFile.set_param" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -5491,15 +5581,17 @@ something without permanently altering the objects&#8217; state.</p>
 <dl class="method">
 <dt id="lancet.filetypes.SVGFile.verbose">
 <tt class="descname">verbose</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.filetypes.SVGFile.verbose" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a verbose message.</p>
+<dd><p>Print msg merged with args as a verbose message.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="lancet.filetypes.SVGFile.warning">
 <tt class="descname">warning</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.filetypes.SVGFile.warning" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a warning, unless module variable
+<dd><p>Print msg merged with args as a warning, unless module variable
 warnings_as_exceptions is True, then raise an Exception
 containing the arguments.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 </dd></dl>
@@ -5563,7 +5655,8 @@ hash_suffix      True    Boolean    (0, 1)     V RW</p>
 <dl class="method">
 <dt id="lancet.filetypes.ViewFile.debug">
 <tt class="descname">debug</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.filetypes.ViewFile.debug" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a debugging statement.</p>
+<dd><p>Print msg merged with args as a debugging statement.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 <dl class="method">
@@ -5595,7 +5688,7 @@ appropriate extension for this class.</p>
 
 <dl class="attribute">
 <dt id="lancet.filetypes.ViewFile.force_new_dynamic_value">
-<tt class="descname">force_new_dynamic_value</tt><em class="property"> = &lt;functools.partial object at 0x2b7287470d08&gt;</em><a class="headerlink" href="#lancet.filetypes.ViewFile.force_new_dynamic_value" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">force_new_dynamic_value</tt><em class="property"> = &lt;functools.partial object at 0x2aec62076260&gt;</em><a class="headerlink" href="#lancet.filetypes.ViewFile.force_new_dynamic_value" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -5609,18 +5702,19 @@ equal to the default value.</p>
 
 <dl class="attribute">
 <dt id="lancet.filetypes.ViewFile.get_value_generator">
-<tt class="descname">get_value_generator</tt><em class="property"> = &lt;functools.partial object at 0x2b7287470ba8&gt;</em><a class="headerlink" href="#lancet.filetypes.ViewFile.get_value_generator" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">get_value_generator</tt><em class="property"> = &lt;functools.partial object at 0x2aec620762b8&gt;</em><a class="headerlink" href="#lancet.filetypes.ViewFile.get_value_generator" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="lancet.filetypes.ViewFile.inspect_value">
-<tt class="descname">inspect_value</tt><em class="property"> = &lt;functools.partial object at 0x2b7287470d60&gt;</em><a class="headerlink" href="#lancet.filetypes.ViewFile.inspect_value" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">inspect_value</tt><em class="property"> = &lt;functools.partial object at 0x2aec62076050&gt;</em><a class="headerlink" href="#lancet.filetypes.ViewFile.inspect_value" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="lancet.filetypes.ViewFile.message">
 <tt class="descname">message</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.filetypes.ViewFile.message" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a message.</p>
+<dd><p>Print msg merged with args as a message.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 <dl class="classmethod">
@@ -5673,12 +5767,12 @@ for pretty printing.</p>
 
 <dl class="attribute">
 <dt id="lancet.filetypes.ViewFile.set_dynamic_time_fn">
-<tt class="descname">set_dynamic_time_fn</tt><em class="property"> = &lt;functools.partial object at 0x2b7287470cb0&gt;</em><a class="headerlink" href="#lancet.filetypes.ViewFile.set_dynamic_time_fn" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">set_dynamic_time_fn</tt><em class="property"> = &lt;functools.partial object at 0x2aec62076418&gt;</em><a class="headerlink" href="#lancet.filetypes.ViewFile.set_dynamic_time_fn" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="lancet.filetypes.ViewFile.set_param">
-<tt class="descname">set_param</tt><em class="property"> = &lt;functools.partial object at 0x2b7287470b50&gt;</em><a class="headerlink" href="#lancet.filetypes.ViewFile.set_param" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">set_param</tt><em class="property"> = &lt;functools.partial object at 0x2aec62076470&gt;</em><a class="headerlink" href="#lancet.filetypes.ViewFile.set_param" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -5704,15 +5798,17 @@ something without permanently altering the objects&#8217; state.</p>
 <dl class="method">
 <dt id="lancet.filetypes.ViewFile.verbose">
 <tt class="descname">verbose</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.filetypes.ViewFile.verbose" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a verbose message.</p>
+<dd><p>Print msg merged with args as a verbose message.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="lancet.filetypes.ViewFile.warning">
 <tt class="descname">warning</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.filetypes.ViewFile.warning" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a warning, unless module variable
+<dd><p>Print msg merged with args as a warning, unless module variable
 warnings_as_exceptions is True, then raise an Exception
 containing the arguments.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 </dd></dl>
@@ -5757,7 +5853,8 @@ size                            256                         Number              
 <dl class="method">
 <dt id="lancet.filetypes.ViewFrame.debug">
 <tt class="descname">debug</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.filetypes.ViewFrame.debug" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a debugging statement.</p>
+<dd><p>Print msg merged with args as a debugging statement.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 <dl class="method">
@@ -5771,7 +5868,7 @@ instantiated.</p>
 
 <dl class="attribute">
 <dt id="lancet.filetypes.ViewFrame.force_new_dynamic_value">
-<tt class="descname">force_new_dynamic_value</tt><em class="property"> = &lt;functools.partial object at 0x2b7287470c00&gt;</em><a class="headerlink" href="#lancet.filetypes.ViewFrame.force_new_dynamic_value" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">force_new_dynamic_value</tt><em class="property"> = &lt;functools.partial object at 0x2aec62076368&gt;</em><a class="headerlink" href="#lancet.filetypes.ViewFrame.force_new_dynamic_value" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -5792,23 +5889,24 @@ equal to the default value.</p>
 
 <dl class="attribute">
 <dt id="lancet.filetypes.ViewFrame.get_value_generator">
-<tt class="descname">get_value_generator</tt><em class="property"> = &lt;functools.partial object at 0x2b7287470a48&gt;</em><a class="headerlink" href="#lancet.filetypes.ViewFrame.get_value_generator" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">get_value_generator</tt><em class="property"> = &lt;functools.partial object at 0x2aec620762b8&gt;</em><a class="headerlink" href="#lancet.filetypes.ViewFrame.get_value_generator" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="lancet.filetypes.ViewFrame.inspect_value">
-<tt class="descname">inspect_value</tt><em class="property"> = &lt;functools.partial object at 0x2b7287470d08&gt;</em><a class="headerlink" href="#lancet.filetypes.ViewFrame.inspect_value" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">inspect_value</tt><em class="property"> = &lt;functools.partial object at 0x2aec62076050&gt;</em><a class="headerlink" href="#lancet.filetypes.ViewFrame.inspect_value" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="lancet.filetypes.ViewFrame.instance">
-<tt class="descname">instance</tt><em class="property"> = &lt;functools.partial object at 0x2b72874709f0&gt;</em><a class="headerlink" href="#lancet.filetypes.ViewFrame.instance" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">instance</tt><em class="property"> = &lt;functools.partial object at 0x2aec620763c0&gt;</em><a class="headerlink" href="#lancet.filetypes.ViewFrame.instance" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="lancet.filetypes.ViewFrame.message">
 <tt class="descname">message</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.filetypes.ViewFrame.message" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a message.</p>
+<dd><p>Print msg merged with args as a message.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 <dl class="classmethod">
@@ -5855,12 +5953,12 @@ is replaced with X.classname.instance(Y</p>
 
 <dl class="attribute">
 <dt id="lancet.filetypes.ViewFrame.set_dynamic_time_fn">
-<tt class="descname">set_dynamic_time_fn</tt><em class="property"> = &lt;functools.partial object at 0x2b7287470998&gt;</em><a class="headerlink" href="#lancet.filetypes.ViewFrame.set_dynamic_time_fn" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">set_dynamic_time_fn</tt><em class="property"> = &lt;functools.partial object at 0x2aec62076310&gt;</em><a class="headerlink" href="#lancet.filetypes.ViewFrame.set_dynamic_time_fn" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="lancet.filetypes.ViewFrame.set_param">
-<tt class="descname">set_param</tt><em class="property"> = &lt;functools.partial object at 0x2b7287470e10&gt;</em><a class="headerlink" href="#lancet.filetypes.ViewFrame.set_param" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">set_param</tt><em class="property"> = &lt;functools.partial object at 0x2aec620764c8&gt;</em><a class="headerlink" href="#lancet.filetypes.ViewFrame.set_param" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -5886,15 +5984,17 @@ something without permanently altering the objects&#8217; state.</p>
 <dl class="method">
 <dt id="lancet.filetypes.ViewFrame.verbose">
 <tt class="descname">verbose</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.filetypes.ViewFrame.verbose" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a verbose message.</p>
+<dd><p>Print msg merged with args as a verbose message.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="lancet.filetypes.ViewFrame.warning">
 <tt class="descname">warning</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.filetypes.ViewFrame.warning" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a warning, unless module variable
+<dd><p>Print msg merged with args as a warning, unless module variable
 warnings_as_exceptions is True, then raise an Exception
 containing the arguments.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 </dd></dl>
@@ -5961,7 +6061,8 @@ executable   &#8216;python&#8217;   String          C RW</p>
 <dl class="method">
 <dt id="lancet.launch.Command.debug">
 <tt class="descname">debug</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.launch.Command.debug" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a debugging statement.</p>
+<dd><p>Print msg merged with args as a debugging statement.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 <dl class="method">
@@ -5982,7 +6083,7 @@ launch. The info argument is supplied by the Launcher.</p>
 
 <dl class="attribute">
 <dt id="lancet.launch.Command.force_new_dynamic_value">
-<tt class="descname">force_new_dynamic_value</tt><em class="property"> = &lt;functools.partial object at 0x2b7287b25838&gt;</em><a class="headerlink" href="#lancet.launch.Command.force_new_dynamic_value" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">force_new_dynamic_value</tt><em class="property"> = &lt;functools.partial object at 0x2aec61b8ef18&gt;</em><a class="headerlink" href="#lancet.launch.Command.force_new_dynamic_value" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -5996,18 +6097,19 @@ equal to the default value.</p>
 
 <dl class="attribute">
 <dt id="lancet.launch.Command.get_value_generator">
-<tt class="descname">get_value_generator</tt><em class="property"> = &lt;functools.partial object at 0x2b7287b25520&gt;</em><a class="headerlink" href="#lancet.launch.Command.get_value_generator" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">get_value_generator</tt><em class="property"> = &lt;functools.partial object at 0x2aec61b8eba8&gt;</em><a class="headerlink" href="#lancet.launch.Command.get_value_generator" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="lancet.launch.Command.inspect_value">
-<tt class="descname">inspect_value</tt><em class="property"> = &lt;functools.partial object at 0x2b7287b258e8&gt;</em><a class="headerlink" href="#lancet.launch.Command.inspect_value" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">inspect_value</tt><em class="property"> = &lt;functools.partial object at 0x2aec61b8ef70&gt;</em><a class="headerlink" href="#lancet.launch.Command.inspect_value" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="lancet.launch.Command.message">
 <tt class="descname">message</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.launch.Command.message" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a message.</p>
+<dd><p>Print msg merged with args as a message.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 <dl class="classmethod">
@@ -6060,12 +6162,12 @@ for pretty printing.</p>
 
 <dl class="attribute">
 <dt id="lancet.launch.Command.set_dynamic_time_fn">
-<tt class="descname">set_dynamic_time_fn</tt><em class="property"> = &lt;functools.partial object at 0x2b7287b25998&gt;</em><a class="headerlink" href="#lancet.launch.Command.set_dynamic_time_fn" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">set_dynamic_time_fn</tt><em class="property"> = &lt;functools.partial object at 0x2aec62518050&gt;</em><a class="headerlink" href="#lancet.launch.Command.set_dynamic_time_fn" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="lancet.launch.Command.set_param">
-<tt class="descname">set_param</tt><em class="property"> = &lt;functools.partial object at 0x2b7287b259f0&gt;</em><a class="headerlink" href="#lancet.launch.Command.set_param" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">set_param</tt><em class="property"> = &lt;functools.partial object at 0x2aec625180a8&gt;</em><a class="headerlink" href="#lancet.launch.Command.set_param" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -6106,7 +6208,8 @@ the executable.</p>
 <dl class="method">
 <dt id="lancet.launch.Command.verbose">
 <tt class="descname">verbose</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.launch.Command.verbose" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a verbose message.</p>
+<dd><p>Print msg merged with args as a verbose message.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 <dl class="method">
@@ -6122,9 +6225,10 @@ appropriate error message, otherwise return None.</p>
 <dl class="method">
 <dt id="lancet.launch.Command.warning">
 <tt class="descname">warning</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.launch.Command.warning" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a warning, unless module variable
+<dd><p>Print msg merged with args as a warning, unless module variable
 warnings_as_exceptions is True, then raise an Exception
 containing the arguments.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 </dd></dl>
@@ -6235,7 +6339,8 @@ timestamp_format         &#8216;%Y-%m-%d_%H%M&#8217;            String          
 <dl class="method">
 <dt id="lancet.launch.Launcher.debug">
 <tt class="descname">debug</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.launch.Launcher.debug" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a debugging statement.</p>
+<dd><p>Print msg merged with args as a debugging statement.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 <dl class="method">
@@ -6249,7 +6354,7 @@ instantiated.</p>
 
 <dl class="attribute">
 <dt id="lancet.launch.Launcher.force_new_dynamic_value">
-<tt class="descname">force_new_dynamic_value</tt><em class="property"> = &lt;functools.partial object at 0x2b7287b25628&gt;</em><a class="headerlink" href="#lancet.launch.Launcher.force_new_dynamic_value" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">force_new_dynamic_value</tt><em class="property"> = &lt;functools.partial object at 0x2aec61b8edb8&gt;</em><a class="headerlink" href="#lancet.launch.Launcher.force_new_dynamic_value" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -6270,18 +6375,19 @@ timestamp.</p>
 
 <dl class="attribute">
 <dt id="lancet.launch.Launcher.get_value_generator">
-<tt class="descname">get_value_generator</tt><em class="property"> = &lt;functools.partial object at 0x2b7287b258e8&gt;</em><a class="headerlink" href="#lancet.launch.Launcher.get_value_generator" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">get_value_generator</tt><em class="property"> = &lt;functools.partial object at 0x2aec61b8ef70&gt;</em><a class="headerlink" href="#lancet.launch.Launcher.get_value_generator" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="lancet.launch.Launcher.inspect_value">
-<tt class="descname">inspect_value</tt><em class="property"> = &lt;functools.partial object at 0x2b7287b25730&gt;</em><a class="headerlink" href="#lancet.launch.Launcher.inspect_value" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">inspect_value</tt><em class="property"> = &lt;functools.partial object at 0x2aec61b8ee10&gt;</em><a class="headerlink" href="#lancet.launch.Launcher.inspect_value" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="lancet.launch.Launcher.message">
 <tt class="descname">message</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.launch.Launcher.message" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a message.</p>
+<dd><p>Print msg merged with args as a message.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 <dl class="classmethod">
@@ -6334,12 +6440,12 @@ for pretty printing.</p>
 
 <dl class="attribute">
 <dt id="lancet.launch.Launcher.set_dynamic_time_fn">
-<tt class="descname">set_dynamic_time_fn</tt><em class="property"> = &lt;functools.partial object at 0x2b7287b25788&gt;</em><a class="headerlink" href="#lancet.launch.Launcher.set_dynamic_time_fn" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">set_dynamic_time_fn</tt><em class="property"> = &lt;functools.partial object at 0x2aec6252d0a8&gt;</em><a class="headerlink" href="#lancet.launch.Launcher.set_dynamic_time_fn" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="lancet.launch.Launcher.set_param">
-<tt class="descname">set_param</tt><em class="property"> = &lt;functools.partial object at 0x2b7287b25aa0&gt;</em><a class="headerlink" href="#lancet.launch.Launcher.set_param" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">set_param</tt><em class="property"> = &lt;functools.partial object at 0x2aec6252d100&gt;</em><a class="headerlink" href="#lancet.launch.Launcher.set_param" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -6373,15 +6479,17 @@ key information relevant to the user.</p>
 <dl class="method">
 <dt id="lancet.launch.Launcher.verbose">
 <tt class="descname">verbose</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.launch.Launcher.verbose" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a verbose message.</p>
+<dd><p>Print msg merged with args as a verbose message.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="lancet.launch.Launcher.warning">
 <tt class="descname">warning</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.launch.Launcher.warning" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a warning, unless module variable
+<dd><p>Print msg merged with args as a warning, unless module variable
 warnings_as_exceptions is True, then raise an Exception
 containing the arguments.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 </dd></dl>
@@ -6538,7 +6646,8 @@ previously run jobs and launch the next block of jobs.</p>
 <dl class="method">
 <dt id="lancet.launch.QLauncher.debug">
 <tt class="descname">debug</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.launch.QLauncher.debug" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a debugging statement.</p>
+<dd><p>Print msg merged with args as a debugging statement.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 <dl class="method">
@@ -6552,7 +6661,7 @@ instantiated.</p>
 
 <dl class="attribute">
 <dt id="lancet.launch.QLauncher.force_new_dynamic_value">
-<tt class="descname">force_new_dynamic_value</tt><em class="property"> = &lt;functools.partial object at 0x2b7287b25520&gt;</em><a class="headerlink" href="#lancet.launch.QLauncher.force_new_dynamic_value" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">force_new_dynamic_value</tt><em class="property"> = &lt;functools.partial object at 0x2aec61b8ef70&gt;</em><a class="headerlink" href="#lancet.launch.QLauncher.force_new_dynamic_value" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -6573,18 +6682,19 @@ timestamp.</p>
 
 <dl class="attribute">
 <dt id="lancet.launch.QLauncher.get_value_generator">
-<tt class="descname">get_value_generator</tt><em class="property"> = &lt;functools.partial object at 0x2b7287b25aa0&gt;</em><a class="headerlink" href="#lancet.launch.QLauncher.get_value_generator" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">get_value_generator</tt><em class="property"> = &lt;functools.partial object at 0x2aec61b8eba8&gt;</em><a class="headerlink" href="#lancet.launch.QLauncher.get_value_generator" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="lancet.launch.QLauncher.inspect_value">
-<tt class="descname">inspect_value</tt><em class="property"> = &lt;functools.partial object at 0x2b7287b25940&gt;</em><a class="headerlink" href="#lancet.launch.QLauncher.inspect_value" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">inspect_value</tt><em class="property"> = &lt;functools.partial object at 0x2aec61b8ecb0&gt;</em><a class="headerlink" href="#lancet.launch.QLauncher.inspect_value" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="lancet.launch.QLauncher.message">
 <tt class="descname">message</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.launch.QLauncher.message" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a message.</p>
+<dd><p>Print msg merged with args as a message.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 <dl class="classmethod">
@@ -6646,12 +6756,12 @@ Returns exit-code of qdel.</p>
 
 <dl class="attribute">
 <dt id="lancet.launch.QLauncher.set_dynamic_time_fn">
-<tt class="descname">set_dynamic_time_fn</tt><em class="property"> = &lt;functools.partial object at 0x2b7287b258e8&gt;</em><a class="headerlink" href="#lancet.launch.QLauncher.set_dynamic_time_fn" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">set_dynamic_time_fn</tt><em class="property"> = &lt;functools.partial object at 0x2aec62541050&gt;</em><a class="headerlink" href="#lancet.launch.QLauncher.set_dynamic_time_fn" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="lancet.launch.QLauncher.set_param">
-<tt class="descname">set_param</tt><em class="property"> = &lt;functools.partial object at 0x2b7287b25a48&gt;</em><a class="headerlink" href="#lancet.launch.QLauncher.set_param" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">set_param</tt><em class="property"> = &lt;functools.partial object at 0x2aec62541100&gt;</em><a class="headerlink" href="#lancet.launch.QLauncher.set_param" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -6685,15 +6795,17 @@ key information relevant to the user.</p>
 <dl class="method">
 <dt id="lancet.launch.QLauncher.verbose">
 <tt class="descname">verbose</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.launch.QLauncher.verbose" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a verbose message.</p>
+<dd><p>Print msg merged with args as a verbose message.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="lancet.launch.QLauncher.warning">
 <tt class="descname">warning</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.launch.QLauncher.warning" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a warning, unless module variable
+<dd><p>Print msg merged with args as a warning, unless module variable
 warnings_as_exceptions is True, then raise an Exception
 containing the arguments.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 </dd></dl>
@@ -6809,7 +6921,8 @@ timestamp_format               &#8216;%Y-%m-%d_%H%M&#8217;                   Str
 <dl class="method">
 <dt id="lancet.launch.ScriptLauncher.debug">
 <tt class="descname">debug</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.launch.ScriptLauncher.debug" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a debugging statement.</p>
+<dd><p>Print msg merged with args as a debugging statement.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 <dl class="method">
@@ -6823,7 +6936,7 @@ instantiated.</p>
 
 <dl class="attribute">
 <dt id="lancet.launch.ScriptLauncher.force_new_dynamic_value">
-<tt class="descname">force_new_dynamic_value</tt><em class="property"> = &lt;functools.partial object at 0x2b7287b25940&gt;</em><a class="headerlink" href="#lancet.launch.ScriptLauncher.force_new_dynamic_value" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">force_new_dynamic_value</tt><em class="property"> = &lt;functools.partial object at 0x2aec61b8edb8&gt;</em><a class="headerlink" href="#lancet.launch.ScriptLauncher.force_new_dynamic_value" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -6844,18 +6957,19 @@ timestamp.</p>
 
 <dl class="attribute">
 <dt id="lancet.launch.ScriptLauncher.get_value_generator">
-<tt class="descname">get_value_generator</tt><em class="property"> = &lt;functools.partial object at 0x2b7287b25a48&gt;</em><a class="headerlink" href="#lancet.launch.ScriptLauncher.get_value_generator" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">get_value_generator</tt><em class="property"> = &lt;functools.partial object at 0x2aec61b8ee10&gt;</em><a class="headerlink" href="#lancet.launch.ScriptLauncher.get_value_generator" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="lancet.launch.ScriptLauncher.inspect_value">
-<tt class="descname">inspect_value</tt><em class="property"> = &lt;functools.partial object at 0x2b7287b25628&gt;</em><a class="headerlink" href="#lancet.launch.ScriptLauncher.inspect_value" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">inspect_value</tt><em class="property"> = &lt;functools.partial object at 0x2aec61b8ef18&gt;</em><a class="headerlink" href="#lancet.launch.ScriptLauncher.inspect_value" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="lancet.launch.ScriptLauncher.message">
 <tt class="descname">message</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.launch.ScriptLauncher.message" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a message.</p>
+<dd><p>Print msg merged with args as a message.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 <dl class="classmethod">
@@ -6908,12 +7022,12 @@ for pretty printing.</p>
 
 <dl class="attribute">
 <dt id="lancet.launch.ScriptLauncher.set_dynamic_time_fn">
-<tt class="descname">set_dynamic_time_fn</tt><em class="property"> = &lt;functools.partial object at 0x2b7287b256d8&gt;</em><a class="headerlink" href="#lancet.launch.ScriptLauncher.set_dynamic_time_fn" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">set_dynamic_time_fn</tt><em class="property"> = &lt;functools.partial object at 0x2aec62557050&gt;</em><a class="headerlink" href="#lancet.launch.ScriptLauncher.set_dynamic_time_fn" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="lancet.launch.ScriptLauncher.set_param">
-<tt class="descname">set_param</tt><em class="property"> = &lt;functools.partial object at 0x2b7287b25680&gt;</em><a class="headerlink" href="#lancet.launch.ScriptLauncher.set_param" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">set_param</tt><em class="property"> = &lt;functools.partial object at 0x2aec62557158&gt;</em><a class="headerlink" href="#lancet.launch.ScriptLauncher.set_param" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -6947,15 +7061,17 @@ key information relevant to the user.</p>
 <dl class="method">
 <dt id="lancet.launch.ScriptLauncher.verbose">
 <tt class="descname">verbose</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.launch.ScriptLauncher.verbose" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a verbose message.</p>
+<dd><p>Print msg merged with args as a verbose message.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="lancet.launch.ScriptLauncher.warning">
 <tt class="descname">warning</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.launch.ScriptLauncher.warning" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a warning, unless module variable
+<dd><p>Print msg merged with args as a warning, unless module variable
 warnings_as_exceptions is True, then raise an Exception
 containing the arguments.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 </dd></dl>
@@ -7059,7 +7175,8 @@ items.</p>
 <dl class="method">
 <dt id="lancet.launch.ShellCommand.debug">
 <tt class="descclassname">ShellCommand.</tt><tt class="descname">debug</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.launch.ShellCommand.debug" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a debugging statement.</p>
+<dd><p>Print msg merged with args as a debugging statement.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 <dl class="method">
@@ -7080,7 +7197,7 @@ launch. The info argument is supplied by the Launcher.</p>
 
 <dl class="attribute">
 <dt id="lancet.launch.ShellCommand.force_new_dynamic_value">
-<tt class="descclassname">ShellCommand.</tt><tt class="descname">force_new_dynamic_value</tt><em class="property"> = &lt;functools.partial object at 0x2b7287b25520&gt;</em><a class="headerlink" href="#lancet.launch.ShellCommand.force_new_dynamic_value" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">ShellCommand.</tt><tt class="descname">force_new_dynamic_value</tt><em class="property"> = &lt;functools.partial object at 0x2aec61b8ee68&gt;</em><a class="headerlink" href="#lancet.launch.ShellCommand.force_new_dynamic_value" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -7094,18 +7211,19 @@ equal to the default value.</p>
 
 <dl class="attribute">
 <dt id="lancet.launch.ShellCommand.get_value_generator">
-<tt class="descclassname">ShellCommand.</tt><tt class="descname">get_value_generator</tt><em class="property"> = &lt;functools.partial object at 0x2b7287b25940&gt;</em><a class="headerlink" href="#lancet.launch.ShellCommand.get_value_generator" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">ShellCommand.</tt><tt class="descname">get_value_generator</tt><em class="property"> = &lt;functools.partial object at 0x2aec61b8edb8&gt;</em><a class="headerlink" href="#lancet.launch.ShellCommand.get_value_generator" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="lancet.launch.ShellCommand.inspect_value">
-<tt class="descclassname">ShellCommand.</tt><tt class="descname">inspect_value</tt><em class="property"> = &lt;functools.partial object at 0x2b7287b25680&gt;</em><a class="headerlink" href="#lancet.launch.ShellCommand.inspect_value" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">ShellCommand.</tt><tt class="descname">inspect_value</tt><em class="property"> = &lt;functools.partial object at 0x2aec61b8eba8&gt;</em><a class="headerlink" href="#lancet.launch.ShellCommand.inspect_value" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="lancet.launch.ShellCommand.message">
 <tt class="descclassname">ShellCommand.</tt><tt class="descname">message</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.launch.ShellCommand.message" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a message.</p>
+<dd><p>Print msg merged with args as a message.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 <dl class="classmethod">
@@ -7158,12 +7276,12 @@ for pretty printing.</p>
 
 <dl class="attribute">
 <dt id="lancet.launch.ShellCommand.set_dynamic_time_fn">
-<tt class="descclassname">ShellCommand.</tt><tt class="descname">set_dynamic_time_fn</tt><em class="property"> = &lt;functools.partial object at 0x2b7287b258e8&gt;</em><a class="headerlink" href="#lancet.launch.ShellCommand.set_dynamic_time_fn" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">ShellCommand.</tt><tt class="descname">set_dynamic_time_fn</tt><em class="property"> = &lt;functools.partial object at 0x2aec6256a050&gt;</em><a class="headerlink" href="#lancet.launch.ShellCommand.set_dynamic_time_fn" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="lancet.launch.ShellCommand.set_param">
-<tt class="descclassname">ShellCommand.</tt><tt class="descname">set_param</tt><em class="property"> = &lt;functools.partial object at 0x2b7287b25af8&gt;</em><a class="headerlink" href="#lancet.launch.ShellCommand.set_param" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">ShellCommand.</tt><tt class="descname">set_param</tt><em class="property"> = &lt;functools.partial object at 0x2aec6256a100&gt;</em><a class="headerlink" href="#lancet.launch.ShellCommand.set_param" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -7195,7 +7313,8 @@ something without permanently altering the objects&#8217; state.</p>
 <dl class="method">
 <dt id="lancet.launch.ShellCommand.verbose">
 <tt class="descclassname">ShellCommand.</tt><tt class="descname">verbose</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.launch.ShellCommand.verbose" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a verbose message.</p>
+<dd><p>Print msg merged with args as a verbose message.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 <dl class="method">
@@ -7211,9 +7330,10 @@ appropriate error message, otherwise return None.</p>
 <dl class="method">
 <dt id="lancet.launch.ShellCommand.warning">
 <tt class="descclassname">ShellCommand.</tt><tt class="descname">warning</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.launch.ShellCommand.warning" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a warning, unless module variable
+<dd><p>Print msg merged with args as a warning, unless module variable
 warnings_as_exceptions is True, then raise an Exception
 containing the arguments.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 </dd></dl>
@@ -7270,7 +7390,8 @@ review             True     Boolean     (0, 1)    V RW</p>
 <dl class="method">
 <dt id="lancet.launch.review_and_launch.debug">
 <tt class="descname">debug</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.launch.review_and_launch.debug" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a debugging statement.</p>
+<dd><p>Print msg merged with args as a debugging statement.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 <dl class="method">
@@ -7284,7 +7405,7 @@ instantiated.</p>
 
 <dl class="attribute">
 <dt id="lancet.launch.review_and_launch.force_new_dynamic_value">
-<tt class="descname">force_new_dynamic_value</tt><em class="property"> = &lt;functools.partial object at 0x2b7287b25a48&gt;</em><a class="headerlink" href="#lancet.launch.review_and_launch.force_new_dynamic_value" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">force_new_dynamic_value</tt><em class="property"> = &lt;functools.partial object at 0x2aec61b8ef18&gt;</em><a class="headerlink" href="#lancet.launch.review_and_launch.force_new_dynamic_value" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -7298,7 +7419,7 @@ equal to the default value.</p>
 
 <dl class="attribute">
 <dt id="lancet.launch.review_and_launch.get_value_generator">
-<tt class="descname">get_value_generator</tt><em class="property"> = &lt;functools.partial object at 0x2b7287b25788&gt;</em><a class="headerlink" href="#lancet.launch.review_and_launch.get_value_generator" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">get_value_generator</tt><em class="property"> = &lt;functools.partial object at 0x2aec61b8ef70&gt;</em><a class="headerlink" href="#lancet.launch.review_and_launch.get_value_generator" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -7309,13 +7430,14 @@ equal to the default value.</p>
 
 <dl class="attribute">
 <dt id="lancet.launch.review_and_launch.inspect_value">
-<tt class="descname">inspect_value</tt><em class="property"> = &lt;functools.partial object at 0x2b7287b25af8&gt;</em><a class="headerlink" href="#lancet.launch.review_and_launch.inspect_value" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">inspect_value</tt><em class="property"> = &lt;functools.partial object at 0x2aec61b8ed08&gt;</em><a class="headerlink" href="#lancet.launch.review_and_launch.inspect_value" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="lancet.launch.review_and_launch.message">
 <tt class="descname">message</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.launch.review_and_launch.message" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a message.</p>
+<dd><p>Print msg merged with args as a message.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 <dl class="classmethod">
@@ -7375,12 +7497,12 @@ meta-arguments (launch_args) or the arguments themselves.</p>
 
 <dl class="attribute">
 <dt id="lancet.launch.review_and_launch.set_dynamic_time_fn">
-<tt class="descname">set_dynamic_time_fn</tt><em class="property"> = &lt;functools.partial object at 0x2b7287b256d8&gt;</em><a class="headerlink" href="#lancet.launch.review_and_launch.set_dynamic_time_fn" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">set_dynamic_time_fn</tt><em class="property"> = &lt;functools.partial object at 0x2aec62578158&gt;</em><a class="headerlink" href="#lancet.launch.review_and_launch.set_dynamic_time_fn" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="lancet.launch.review_and_launch.set_param">
-<tt class="descname">set_param</tt><em class="property"> = &lt;functools.partial object at 0x2b7287b25998&gt;</em><a class="headerlink" href="#lancet.launch.review_and_launch.set_param" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">set_param</tt><em class="property"> = &lt;functools.partial object at 0x2aec625781b0&gt;</em><a class="headerlink" href="#lancet.launch.review_and_launch.set_param" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -7406,15 +7528,17 @@ something without permanently altering the objects&#8217; state.</p>
 <dl class="method">
 <dt id="lancet.launch.review_and_launch.verbose">
 <tt class="descname">verbose</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.launch.review_and_launch.verbose" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a verbose message.</p>
+<dd><p>Print msg merged with args as a verbose message.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="lancet.launch.review_and_launch.warning">
 <tt class="descname">warning</tt><big>(</big><em>msg</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#lancet.launch.review_and_launch.warning" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print the arguments as a warning, unless module variable
+<dd><p>Print msg merged with args as a warning, unless module variable
 warnings_as_exceptions is True, then raise an Exception
 containing the arguments.</p>
+<p>See Python&#8217;s logging module for details of message formatting.</p>
 </dd></dl>
 
 </dd></dl>
