@@ -123,27 +123,24 @@ be made available here soon. The following tutorials and examples
 demonstrate how Lancet components are used and should help illustrate
 how Lancet can be integrated in a real research workflow.
 
-Tutorials
-~~~~~~~~~
-
-The following tutorials offer step-by-step examples of how Lancet is
-in the IPython Notebook environment. Lancet may be used in pure Python
-scripts or as a library for other Python packages but the benefits of
-an interactive workflow are only [Coming soon]:
-
-1. Extended quickstart
-2. Transforming images with ImageMagick
-3. Processing images (follows on from part 2)
-4. Dissecting the results (follows on from part 3)
-
 Papers published using Lancet
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The following paper uses Lancet exclusively to launch and analyse
-simulations results. All the code, notebooks and other assets used in
-this research along with more information on how to reproduce this
-paper may be found `here
-<https://github.com/ioam/topographica/tree/master/models/stevens.jn13>`_. ::
+Paper describing reproducible workflows using Lancet and IPython Notebook: ::
+
+   @article{Stevens2013,
+     author    = {Jean-Luc Stevens and Marco Elver and James A. Bednar},
+     title     = {{An automated and reproducible workflow for running and analysing neural simulations using
+                   Lancet and IPython Notebook}},
+     journal   = {{Frontiers in Neuroinformatics}},
+     year      = {2013},
+     volume    = {7},
+     pages     = {44}
+   }
+
+All the code, notebooks and other assets used in the following paper along with
+information on how to reproduce this paper may be found  `here <https://github.com/ioam/topographica/tree/master/models/stevens.jn13>`_.
+Lancet was exclusively used to launch and analyse simulations results: ::
 
    @article{Stevens2013,
       author = {Stevens, Jean-Luc R. and Law, Judith S. and
@@ -159,18 +156,24 @@ paper may be found `here
       url = {http://www.jneurosci.org/content/33/40/15747.full}
    }
 
-The paper itself is available on the `Journal of Neuroscience website
-<http://www.jneurosci.org/content/33/40/15747.full>`_.
+The following paper used Lancet to collect the results of thousands of microprocessor simulations::
+
+   @inproceedings{ElverN2014,
+     author    = {Marco Elver and Vijay Nagarajan},
+     title     = {{TSO-CC: Consistency directed cache coherence for TSO}},
+     booktitle = {HPCA},
+     year      = {2014},
+     pages     = {165-176},
+     website = {http://homepages.inf.ed.ac.uk/s0787712/research/tsocc}
+   }
+
 
 Reference Documentation
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Work on the reference manual is ongoing and complete, official
-reference documentation will be made available shortly. Meanwhile, an
-automatically generated reference can be found in the Topographica
-project's `Reference Manual
-<http://topographica.org/Reference_Manual/lancet-module.html>`_. The
-Python code may also be inspected and read directly as the majority of
+Detailed documentation made be found in the
+`reference manual <https://ioam.github.io/lancet/Reference_Manual/lancet.html>`_.
+The Python code may also be inspected and read directly as the majority of
 modules, classes and methods contain extensive docstrings.
 
 
