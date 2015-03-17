@@ -118,10 +118,12 @@ package. It may be installed using::
 Documentation
 _____________
 
-Lancet's code is well documented and a complete reference manual will
-be made available here soon. The following tutorials and examples
-demonstrate how Lancet components are used and should help illustrate
-how Lancet can be integrated in a real research workflow.
+
+Lancet's code is well documented and the Python code may also be
+inspected and read directly as the majority of modules, classes and
+methods contain extensive docstrings. The following tutorials and
+examples demonstrate how Lancet components are used and should help
+illustrate how Lancet can be integrated in a real research workflow.
 
 Papers published using Lancet
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -130,8 +132,8 @@ Paper describing reproducible workflows using Lancet and IPython Notebook: ::
 
    @article{Stevens2013,
      author    = {Jean-Luc Stevens and Marco Elver and James A. Bednar},
-     title     = {{An automated and reproducible workflow for running and analysing neural simulations using
-                   Lancet and IPython Notebook}},
+     title     = {{An automated and reproducible workflow for running and analysing
+                    neural simulations using Lancet and IPython Notebook}},
      journal   = {{Frontiers in Neuroinformatics}},
      year      = {2013},
      volume    = {7},
@@ -166,15 +168,6 @@ The following paper used Lancet to collect the results of thousands of microproc
      pages     = {165-176},
      website = {http://homepages.inf.ed.ac.uk/s0787712/research/tsocc}
    }
-
-
-Reference Documentation
-~~~~~~~~~~~~~~~~~~~~~~~
-
-Detailed documentation made be found in the
-`reference manual <https://ioam.github.io/lancet/Reference_Manual/lancet.html>`_.
-The Python code may also be inspected and read directly as the majority of
-modules, classes and methods contain extensive docstrings.
 
 
 Contributors
