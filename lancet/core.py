@@ -17,8 +17,8 @@ except:
 try:    from pandas import DataFrame
 except: DataFrame = None # pyflakes:ignore (try/except import)
 
-try: from holoviews import NdMapping
-except: NdMapping = None # pyflakes:ignore (try/except import)
+try: from holoviews import Table, Dimension
+except: Table = None     # pyflakes:ignore (try/except import)
 
 from collections import defaultdict, OrderedDict
 
@@ -472,6 +472,15 @@ class Args(Arguments):
     @property
     def dframe(self):
         return DataFrame(self.specs) if DataFrame else "Pandas not available"
+
+    @property
+    def table(self):
+        if not Table:
+            return "HoloViews Table not available"
+        keys =  self.varying_keys + self.constant_keys
+        items = [(tuple([spec[k] for k  in keys]),()) for spec in self.specs]
+        return Table(items, key_dimensions=keys, value_dimensions=[])
+
 
     def __len__(self): return len(self.specs)
 
