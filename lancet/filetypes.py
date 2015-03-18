@@ -19,9 +19,6 @@ class FileType(PrettyPrinted, param.Parameterized):
     is designed to be simple and easily extensible to support new
     files and has only three essential methods: 'save', 'data' and
     'metadata').
-
-    Optionally, a 'display' classmethod may be implemented to
-    allow the file contents to be quickly visualized.
     """
 
     hash_suffix = param.Boolean(default=True, doc='''
@@ -100,31 +97,6 @@ class FileType(PrettyPrinted, param.Parameterized):
             return False
         else:
             return True
-
-    @classmethod
-    def _img_tag(cls, data, size, format='png'):
-        """
-        Helper to conviently build a base64 encoded img tag. Accepts
-        both png and svg image types.  Useful for implementing the
-        display method when available.
-        """
-        assert format in ['png', 'svg'], "Only png or svg display supported"
-        prefix = ('data:image/png;base64,' if format=='png'
-                  else 'data:image/svg+xml;base64,')
-        b64 = prefix + data.encode("base64")
-        return ("<img height='%d' width='%d' src='%s' />" % (size, size, b64))
-
-    @classmethod
-    def display(cls, value, size=64, format='png'):
-        """
-        A function that generates a display image as a base64 encoded
-        HTMl image (png format). The input should either by a filename
-        with an appropriate extension or the appropriate object
-        type. Should be implemented if there is an obvious
-        visualization suitable for the file type/object. If the value
-        cannot be visualized with this class, return None.
-        """
-        return None
 
     def __repr__(self):
         return self._pprint(flat=True, annotate=False)
@@ -400,25 +372,6 @@ class ImageFile(FileType):
         data = image.convert(self.data_mode)
         return {self.data_key:data}
 
-    @classmethod
-    def display(cls, value, size=256, format='png'):
-        import Image
-        # Return the base54 image if possible, else return None
-        if isinstance(value, Image.Image):
-            im = value
-        elif cls.file_supported(value):
-            im = Image.open(value)
-        else:
-            return None
-
-        im.thumbnail((size,size))
-        buff = StringIO()
-        assert format=='png', "Only png display enabled"
-        im.save(buff, format='png')
-        buff.seek(0)
-        return cls._img_tag(buff.read(), size=size)
-
-
 
 class MatplotlibFile(FileType):
     """
@@ -447,54 +400,3 @@ class MatplotlibFile(FileType):
         fig = pickle.load(pklfile)
         pklfile.close()
         return {self.data_key:fig}
-
-    @classmethod
-    def display(cls, value, size=256, format='png'):
-        from matplotlib import pyplot
-        if isinstance(value, pyplot.Figure):
-            fig = value
-        elif cls.file_supported(value):
-            pklfile = open(value,'r')
-            fig = pickle.load(pklfile)
-        else:
-            return None
-
-        inches = size / float(fig.dpi)
-        fig.set_size_inches(inches, inches)
-        buff = StringIO()
-        fig.savefig(buff, format=format)
-        buff.seek(0)
-        pyplot.close(fig)
-        return cls._img_tag(buff.read(),
-                            size=size,
-                            format=format)
-
-
-
-class SVGFile(FileType):
-    """
-    There is no standard way to handle SVG files in Python, therefore
-    this class implements display only. For custom SVG handling, this
-    can be subclassed by the user for a more complete implementation.
-    """
-
-    def save(self, filename, data):
-        raise NotImplementedError
-
-    def data(self, filename):
-        raise NotImplementedError
-
-    def metadata(self, filename):
-        raise NotImplementedError
-
-    @classmethod
-    def display(cls,value, size=256, format='svg'):
-        """
-        SVG is a tricky format to support for saving and loading but
-        it is easy to display.
-        """
-        if not isinstance(value, str): return None
-        (_, ext) = os.path.splitext(value)
-        if ext != '.svg':              return None
-        data = open(value, 'r').read()
-        return FileType._img_tag(data, size=size, format='svg')
