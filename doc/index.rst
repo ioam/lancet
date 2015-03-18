@@ -118,12 +118,11 @@ package. It may be installed using::
 Documentation
 _____________
 
-
 Lancet's code is well documented and the Python code may also be
 inspected and read directly as the majority of modules, classes and
-methods contain extensive docstrings. The following tutorials and
-examples demonstrate how Lancet components are used and should help
-illustrate how Lancet can be integrated in a real research workflow.
+methods contain extensive docstrings. You can start with the above 
+example, and then study the first paper below to see Lancet can be 
+integrated in a real research workflow.
 
 Papers published using Lancet
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
