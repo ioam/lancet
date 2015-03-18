@@ -845,7 +845,7 @@ class FileInfo(Args):
     FilePattern. Unlike other explicit instances of Args, this object
     extends the values of an existing Args object. Once you have
     loaded the metadata, FileInfo allows you to load the file data
-    into a pandas DataFrame or a HoloViews NdMapping.
+    into a pandas DataFrame or a HoloViews Table.
     """
 
     source = param.ClassSelector(class_ = Args, doc='''
@@ -872,51 +872,58 @@ class FileInfo(Args):
 
 
     @property
-    def ndmapping(self):
+    def table(self):
         """
         Return an ndmapping of the loaded data using the filenames as
-        values and other data as keys.
+        values and the remaining data as the keys.
         """
         all_dimension_labels = self.constant_keys + self.varying_keys
         dimension_labels = [d for d in all_dimension_labels if d != self.key]
 
-        mapping = NdMapping(dimensions=dimension_labels)
+        table = Table(key_dimensions=dimension_labels,
+                        value_dimensions=[self.key])
         for spec in self.specs:
             value = spec[self.key]
             key = [spec[k] for k in dimension_labels]
-            mapping[tuple(key)] = value
-        return mapping
+            table[tuple(key)] = value
+        return table
 
 
     def load(self, val, **kwargs):
         """
         Load the file contents into the supplied pandas dataframe or
-        HoloViews Ndmapping. This allows a selection to be made over
-        the metadata before loading the file contents (may be slow).
+        HoloViews Table. This allows a selection to be made over the
+        metadata before loading the file contents (may be slow).
         """
-        if NdMapping and isinstance(val, NdMapping):
-            return self.load_ndmapping(val, **kwargs)
+        if Table and isinstance(val, Table):
+            return self.load_table(val, **kwargs)
         elif DataFrame and isinstance(val, DataFrame):
             return self.load_dframe(val, **kwargs)
         else:
-            raise Exception("Type %s not a DataFrame or NdMapping." % type(val))
+            raise Exception("Type %s not a DataFrame or Table." % type(val))
 
 
-    def load_ndmapping(self, ndmapping, data_key=None):
+    def load_table(self, table):
         """
-        Load the file contents into the supplied NdMapping using the
-        specified key and filetype. The input ndmapping should have
-        the filenames as values which will be replaced by the loaded
+        Load the file contents into the supplied Table using the
+        specified key and filetype. The input table should have the
+        filenames as values which will be replaced by the loaded
         data. If data_key is specified, this key will be used to index
         the loaded data to retrive the specified item.
         """
-        for key, filename in ndmapping.items():
-            data_dict = self.filetype.data(filename)
-            if data_key is None:
-                ndmapping[key] = data_dict
-            else:
-                ndmapping[key] = data_dict[data_key]
-        return ndmapping
+        items,  data_keys = [], None
+        for key, filename in table.items():
+            data_dict = self.filetype.data(filename[0])
+            current_keys = tuple(sorted(data_dict.keys()))
+            values = [data_dict[k] for k in current_keys]
+            if data_keys is None:
+                data_keys = current_keys
+            elif data_keys != current_keys:
+                raise Exception("Data keys are inconsistent")
+            items.append((key, values))
+
+        return Table(items, key_dimensions=table.key_dimensions,
+                     value_dimensions=data_keys)
 
 
     def load_dframe(self, dframe):
