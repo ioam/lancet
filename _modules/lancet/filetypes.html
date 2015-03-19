@@ -85,9 +85,6 @@
 <span class="sd">    is designed to be simple and easily extensible to support new</span>
 <span class="sd">    files and has only three essential methods: &#39;save&#39;, &#39;data&#39; and</span>
 <span class="sd">    &#39;metadata&#39;).</span>
-
-<span class="sd">    Optionally, a &#39;display&#39; classmethod may be implemented to</span>
-<span class="sd">    allow the file contents to be quickly visualized.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">hash_suffix</span> <span class="o">=</span> <span class="n">param</span><span class="o">.</span><span class="n">Boolean</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s">&#39;&#39;&#39;</span>
@@ -166,31 +163,6 @@
             <span class="k">return</span> <span class="bp">False</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">True</span>
-</div>
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">_img_tag</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">format</span><span class="o">=</span><span class="s">&#39;png&#39;</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Helper to conviently build a base64 encoded img tag. Accepts</span>
-<span class="sd">        both png and svg image types.  Useful for implementing the</span>
-<span class="sd">        display method when available.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">assert</span> <span class="n">format</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&#39;png&#39;</span><span class="p">,</span> <span class="s">&#39;svg&#39;</span><span class="p">],</span> <span class="s">&quot;Only png or svg display supported&quot;</span>
-        <span class="n">prefix</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;data:image/png;base64,&#39;</span> <span class="k">if</span> <span class="n">format</span><span class="o">==</span><span class="s">&#39;png&#39;</span>
-                  <span class="k">else</span> <span class="s">&#39;data:image/svg+xml;base64,&#39;</span><span class="p">)</span>
-        <span class="n">b64</span> <span class="o">=</span> <span class="n">prefix</span> <span class="o">+</span> <span class="n">data</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s">&quot;base64&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="p">(</span><span class="s">&quot;&lt;img height=&#39;</span><span class="si">%d</span><span class="s">&#39; width=&#39;</span><span class="si">%d</span><span class="s">&#39; src=&#39;</span><span class="si">%s</span><span class="s">&#39; /&gt;&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">b64</span><span class="p">))</span>
-
-    <span class="nd">@classmethod</span>
-<div class="viewcode-block" id="FileType.display"><a class="viewcode-back" href="../../Reference_Manual/lancet.html#lancet.filetypes.FileType.display">[docs]</a>    <span class="k">def</span> <span class="nf">display</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span> <span class="n">format</span><span class="o">=</span><span class="s">&#39;png&#39;</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        A function that generates a display image as a base64 encoded</span>
-<span class="sd">        HTMl image (png format). The input should either by a filename</span>
-<span class="sd">        with an appropriate extension or the appropriate object</span>
-<span class="sd">        type. Should be implemented if there is an obvious</span>
-<span class="sd">        visualization suitable for the file type/object. If the value</span>
-<span class="sd">        cannot be visualized with this class, return None.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">None</span>
 </div>
     <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pprint</span><span class="p">(</span><span class="n">flat</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">annotate</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
@@ -466,25 +438,6 @@
         <span class="n">data</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_mode</span><span class="p">)</span>
         <span class="k">return</span> <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">data_key</span><span class="p">:</span><span class="n">data</span><span class="p">}</span>
 
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">display</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span> <span class="n">format</span><span class="o">=</span><span class="s">&#39;png&#39;</span><span class="p">):</span>
-        <span class="kn">import</span> <span class="nn">Image</span>
-        <span class="c"># Return the base54 image if possible, else return None</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">Image</span><span class="o">.</span><span class="n">Image</span><span class="p">):</span>
-            <span class="n">im</span> <span class="o">=</span> <span class="n">value</span>
-        <span class="k">elif</span> <span class="n">cls</span><span class="o">.</span><span class="n">file_supported</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
-            <span class="n">im</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">None</span>
-
-        <span class="n">im</span><span class="o">.</span><span class="n">thumbnail</span><span class="p">((</span><span class="n">size</span><span class="p">,</span><span class="n">size</span><span class="p">))</span>
-        <span class="n">buff</span> <span class="o">=</span> <span class="n">StringIO</span><span class="p">()</span>
-        <span class="k">assert</span> <span class="n">format</span><span class="o">==</span><span class="s">&#39;png&#39;</span><span class="p">,</span> <span class="s">&quot;Only png display enabled&quot;</span>
-        <span class="n">im</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">buff</span><span class="p">,</span> <span class="n">format</span><span class="o">=</span><span class="s">&#39;png&#39;</span><span class="p">)</span>
-        <span class="n">buff</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">cls</span><span class="o">.</span><span class="n">_img_tag</span><span class="p">(</span><span class="n">buff</span><span class="o">.</span><span class="n">read</span><span class="p">(),</span> <span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">)</span>
-
-
 </div>
 <div class="viewcode-block" id="MatplotlibFile"><a class="viewcode-back" href="../../Reference_Manual/lancet.html#lancet.filetypes.MatplotlibFile">[docs]</a><span class="k">class</span> <span class="nc">MatplotlibFile</span><span class="p">(</span><span class="n">FileType</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -512,125 +465,7 @@
         <span class="n">pklfile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_loadpath</span><span class="p">(</span><span class="n">filename</span><span class="p">),</span><span class="s">&#39;r&#39;</span><span class="p">)</span>
         <span class="n">fig</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">pklfile</span><span class="p">)</span>
         <span class="n">pklfile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-        <span class="k">return</span> <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">data_key</span><span class="p">:</span><span class="n">fig</span><span class="p">}</span>
-
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">display</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span> <span class="n">format</span><span class="o">=</span><span class="s">&#39;png&#39;</span><span class="p">):</span>
-        <span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">pyplot</span><span class="o">.</span><span class="n">Figure</span><span class="p">):</span>
-            <span class="n">fig</span> <span class="o">=</span> <span class="n">value</span>
-        <span class="k">elif</span> <span class="n">cls</span><span class="o">.</span><span class="n">file_supported</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
-            <span class="n">pklfile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="s">&#39;r&#39;</span><span class="p">)</span>
-            <span class="n">fig</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">pklfile</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">None</span>
-
-        <span class="n">inches</span> <span class="o">=</span> <span class="n">size</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">fig</span><span class="o">.</span><span class="n">dpi</span><span class="p">)</span>
-        <span class="n">fig</span><span class="o">.</span><span class="n">set_size_inches</span><span class="p">(</span><span class="n">inches</span><span class="p">,</span> <span class="n">inches</span><span class="p">)</span>
-        <span class="n">buff</span> <span class="o">=</span> <span class="n">StringIO</span><span class="p">()</span>
-        <span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">buff</span><span class="p">,</span> <span class="n">format</span><span class="o">=</span><span class="n">format</span><span class="p">)</span>
-        <span class="n">buff</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-        <span class="n">pyplot</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="n">fig</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">cls</span><span class="o">.</span><span class="n">_img_tag</span><span class="p">(</span><span class="n">buff</span><span class="o">.</span><span class="n">read</span><span class="p">(),</span>
-                            <span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">,</span>
-                            <span class="n">format</span><span class="o">=</span><span class="n">format</span><span class="p">)</span>
-
-
-</div>
-<div class="viewcode-block" id="SVGFile"><a class="viewcode-back" href="../../Reference_Manual/lancet.html#lancet.filetypes.SVGFile">[docs]</a><span class="k">class</span> <span class="nc">SVGFile</span><span class="p">(</span><span class="n">FileType</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    There is no standard way to handle SVG files in Python, therefore</span>
-<span class="sd">    this class implements display only. For custom SVG handling, this</span>
-<span class="sd">    can be subclassed by the user for a more complete implementation.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-
-    <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-
-    <span class="k">def</span> <span class="nf">metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-
-    <span class="nd">@classmethod</span>
-<div class="viewcode-block" id="SVGFile.display"><a class="viewcode-back" href="../../Reference_Manual/lancet.html#lancet.filetypes.SVGFile.display">[docs]</a>    <span class="k">def</span> <span class="nf">display</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span><span class="n">value</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span> <span class="n">format</span><span class="o">=</span><span class="s">&#39;svg&#39;</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        SVG is a tricky format to support for saving and loading but</span>
-<span class="sd">        it is easy to display.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span> <span class="k">return</span> <span class="bp">None</span>
-        <span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">ext</span><span class="p">)</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">ext</span> <span class="o">!=</span> <span class="s">&#39;.svg&#39;</span><span class="p">:</span>              <span class="k">return</span> <span class="bp">None</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="s">&#39;r&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-        <span class="k">return</span> <span class="n">FileType</span><span class="o">.</span><span class="n">_img_tag</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">,</span> <span class="n">format</span><span class="o">=</span><span class="s">&#39;svg&#39;</span><span class="p">)</span>
-
-
-</div></div>
-<div class="viewcode-block" id="ViewFrame"><a class="viewcode-back" href="../../Reference_Manual/lancet.html#lancet.filetypes.ViewFrame">[docs]</a><span class="k">class</span> <span class="nc">ViewFrame</span><span class="p">(</span><span class="n">param</span><span class="o">.</span><span class="n">ParameterizedFunction</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    A FileViewer allows a DataFrame to be viewed as a HTML table</span>
-<span class="sd">    containing image thumbnails in IPython Notebook.  Any filenames in</span>
-<span class="sd">    the rows or columns of the DataFrame will be viewed as thumbnails</span>
-<span class="sd">    according to the display functions in display_fns.</span>
-
-<span class="sd">    Requires both Pandas and IPython Notebook.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="n">size</span> <span class="o">=</span> <span class="n">param</span><span class="o">.</span><span class="n">Number</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s">&#39;&#39;&#39;</span>
-<span class="s">       The size of the display image to generate.&#39;&#39;&#39;</span><span class="p">)</span>
-
-    <span class="n">format</span> <span class="o">=</span> <span class="n">param</span><span class="o">.</span><span class="n">ObjectSelector</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s">&#39;png&#39;</span><span class="p">,</span> <span class="n">objects</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;png&#39;</span><span class="p">,</span><span class="s">&#39;svg&#39;</span><span class="p">],</span>
-       <span class="n">doc</span><span class="o">=</span><span class="s">&#39;&#39;&#39; The image format of the display. Either &#39;png&#39; or &#39;svg&#39;.&#39;&#39;&#39;</span><span class="p">)</span>
-
-    <span class="n">display_fns</span> <span class="o">=</span> <span class="n">param</span><span class="o">.</span><span class="n">List</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="p">[</span><span class="n">ImageFile</span><span class="o">.</span><span class="n">display</span><span class="p">,</span>
-                                      <span class="n">MatplotlibFile</span><span class="o">.</span><span class="n">display</span><span class="p">,</span>
-                                      <span class="n">SVGFile</span><span class="o">.</span><span class="n">display</span><span class="p">],</span>
-       <span class="n">doc</span><span class="o">=</span><span class="s">&#39;&#39;&#39;A list of display functions that return raster images</span>
-<span class="s">       (base64 encoded png images) based on filename or Python objects</span>
-<span class="s">       as input.&#39;&#39;&#39;</span><span class="p">)</span>
-
-
-<div class="viewcode-block" id="ViewFrame.formatter"><a class="viewcode-back" href="../../Reference_Manual/lancet.html#lancet.filetypes.ViewFrame.formatter">[docs]</a>    <span class="k">def</span> <span class="nf">formatter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">x</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        A simple Pandas formatter that approximates the usual</span>
-<span class="sd">        behaviour but also allows display of HTML images.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="k">for</span> <span class="n">dfn</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">display_fns</span><span class="p">:</span>
-            <span class="n">string</span> <span class="o">=</span> <span class="n">dfn</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">overrides</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">overrides</span><span class="o">.</span><span class="n">format</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">string</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-                <span class="k">return</span> <span class="n">string</span>
-
-        <span class="n">string</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">string</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_colwidth</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">string</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">string</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">max_colwidth</span><span class="o">-</span><span class="mi">3</span><span class="p">]</span> <span class="o">+</span> <span class="s">&#39;...&#39;</span>
-
-</div>
-    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dframe</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Takes a DataFrame object and uses pandas to generate an HTML</span>
-<span class="sd">        table containing display images.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="kn">import</span> <span class="nn">pandas</span>
-        <span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">display</span><span class="p">,</span> <span class="n">HTML</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">overrides</span> <span class="o">=</span> <span class="n">param</span><span class="o">.</span><span class="n">ParamOverrides</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">max_colwidth</span> <span class="o">=</span> <span class="n">pandas</span><span class="o">.</span><span class="n">get_option</span><span class="p">(</span><span class="s">&#39;max_colwidth&#39;</span><span class="p">)</span>
-        <span class="n">formatters</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">formatter</span> <span class="k">for</span> <span class="n">el</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dframe</span><span class="o">.</span><span class="n">columns</span><span class="p">))]</span>
-        <span class="c"># Pandas escapes contents by default (making this class necessary)</span>
-        <span class="n">pandas</span><span class="o">.</span><span class="n">set_option</span><span class="p">(</span><span class="s">&#39;max_colwidth&#39;</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-        <span class="n">html</span> <span class="o">=</span> <span class="n">dframe</span><span class="o">.</span><span class="n">to_html</span><span class="p">(</span><span class="n">escape</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">formatters</span><span class="o">=</span><span class="n">formatters</span><span class="p">)</span>
-        <span class="n">pandas</span><span class="o">.</span><span class="n">set_option</span><span class="p">(</span><span class="s">&#39;max_colwidth&#39;</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">max_colwidth</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">display</span><span class="p">(</span><span class="n">HTML</span><span class="p">(</span><span class="n">html</span><span class="p">))</span>
-
-    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pprint</span><span class="p">(</span><span class="n">flat</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">annotate</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pprint</span><span class="p">(</span><span class="n">annotate</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">data_key</span><span class="p">:</span><span class="n">fig</span><span class="p">}</span></div>
 </pre></div>
 
           </div>

@@ -83,8 +83,8 @@
 <span class="k">try</span><span class="p">:</span>    <span class="kn">from</span> <span class="nn">pandas</span> <span class="kn">import</span> <span class="n">DataFrame</span>
 <span class="k">except</span><span class="p">:</span> <span class="n">DataFrame</span> <span class="o">=</span> <span class="bp">None</span> <span class="c"># pyflakes:ignore (try/except import)</span>
 
-<span class="k">try</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">holoviews</span> <span class="kn">import</span> <span class="n">NdMapping</span>
-<span class="k">except</span><span class="p">:</span> <span class="n">NdMapping</span> <span class="o">=</span> <span class="bp">None</span> <span class="c"># pyflakes:ignore (try/except import)</span>
+<span class="k">try</span><span class="p">:</span> <span class="kn">from</span> <span class="nn">holoviews</span> <span class="kn">import</span> <span class="n">Table</span><span class="p">,</span> <span class="n">Dimension</span>
+<span class="k">except</span><span class="p">:</span> <span class="n">Table</span> <span class="o">=</span> <span class="bp">None</span>     <span class="c"># pyflakes:ignore (try/except import)</span>
 
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span><span class="p">,</span> <span class="n">OrderedDict</span>
 
@@ -539,6 +539,15 @@
     <span class="k">def</span> <span class="nf">dframe</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">DataFrame</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">specs</span><span class="p">)</span> <span class="k">if</span> <span class="n">DataFrame</span> <span class="k">else</span> <span class="s">&quot;Pandas not available&quot;</span>
 
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">table</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">Table</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s">&quot;HoloViews Table not available&quot;</span>
+        <span class="n">keys</span> <span class="o">=</span>  <span class="bp">self</span><span class="o">.</span><span class="n">varying_keys</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">constant_keys</span>
+        <span class="n">items</span> <span class="o">=</span> <span class="p">[(</span><span class="nb">tuple</span><span class="p">([</span><span class="n">spec</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span>  <span class="ow">in</span> <span class="n">keys</span><span class="p">]),())</span> <span class="k">for</span> <span class="n">spec</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">specs</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">Table</span><span class="p">(</span><span class="n">items</span><span class="p">,</span> <span class="n">key_dimensions</span><span class="o">=</span><span class="n">keys</span><span class="p">,</span> <span class="n">value_dimensions</span><span class="o">=</span><span class="p">[])</span>
+
+
     <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">specs</span><span class="p">)</span>
 
 
@@ -902,7 +911,7 @@
 <span class="sd">    FilePattern. Unlike other explicit instances of Args, this object</span>
 <span class="sd">    extends the values of an existing Args object. Once you have</span>
 <span class="sd">    loaded the metadata, FileInfo allows you to load the file data</span>
-<span class="sd">    into a pandas DataFrame or a HoloViews NdMapping.</span>
+<span class="sd">    into a pandas DataFrame or a HoloViews Table.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">source</span> <span class="o">=</span> <span class="n">param</span><span class="o">.</span><span class="n">ClassSelector</span><span class="p">(</span><span class="n">class_</span> <span class="o">=</span> <span class="n">Args</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s">&#39;&#39;&#39;</span>
@@ -929,51 +938,58 @@
 
 
     <span class="nd">@property</span>
-<div class="viewcode-block" id="FileInfo.ndmapping"><a class="viewcode-back" href="../../Reference_Manual/lancet.html#lancet.core.FileInfo.ndmapping">[docs]</a>    <span class="k">def</span> <span class="nf">ndmapping</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="FileInfo.table"><a class="viewcode-back" href="../../Reference_Manual/lancet.html#lancet.core.FileInfo.table">[docs]</a>    <span class="k">def</span> <span class="nf">table</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return an ndmapping of the loaded data using the filenames as</span>
-<span class="sd">        values and other data as keys.</span>
+<span class="sd">        values and the remaining data as the keys.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">all_dimension_labels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">constant_keys</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">varying_keys</span>
         <span class="n">dimension_labels</span> <span class="o">=</span> <span class="p">[</span><span class="n">d</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">all_dimension_labels</span> <span class="k">if</span> <span class="n">d</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">key</span><span class="p">]</span>
 
-        <span class="n">mapping</span> <span class="o">=</span> <span class="n">NdMapping</span><span class="p">(</span><span class="n">dimensions</span><span class="o">=</span><span class="n">dimension_labels</span><span class="p">)</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">key_dimensions</span><span class="o">=</span><span class="n">dimension_labels</span><span class="p">,</span>
+                        <span class="n">value_dimensions</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">key</span><span class="p">])</span>
         <span class="k">for</span> <span class="n">spec</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">specs</span><span class="p">:</span>
             <span class="n">value</span> <span class="o">=</span> <span class="n">spec</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">key</span><span class="p">]</span>
             <span class="n">key</span> <span class="o">=</span> <span class="p">[</span><span class="n">spec</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">dimension_labels</span><span class="p">]</span>
-            <span class="n">mapping</span><span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">key</span><span class="p">)]</span> <span class="o">=</span> <span class="n">value</span>
-        <span class="k">return</span> <span class="n">mapping</span>
+            <span class="n">table</span><span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">key</span><span class="p">)]</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">return</span> <span class="n">table</span>
 
 </div>
 <div class="viewcode-block" id="FileInfo.load"><a class="viewcode-back" href="../../Reference_Manual/lancet.html#lancet.core.FileInfo.load">[docs]</a>    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Load the file contents into the supplied pandas dataframe or</span>
-<span class="sd">        HoloViews Ndmapping. This allows a selection to be made over</span>
-<span class="sd">        the metadata before loading the file contents (may be slow).</span>
+<span class="sd">        HoloViews Table. This allows a selection to be made over the</span>
+<span class="sd">        metadata before loading the file contents (may be slow).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">NdMapping</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">NdMapping</span><span class="p">):</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_ndmapping</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">Table</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">Table</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_table</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">DataFrame</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">DataFrame</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_dframe</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&quot;Type </span><span class="si">%s</span><span class="s"> not a DataFrame or NdMapping.&quot;</span> <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="n">val</span><span class="p">))</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&quot;Type </span><span class="si">%s</span><span class="s"> not a DataFrame or Table.&quot;</span> <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="n">val</span><span class="p">))</span>
 
 </div>
-<div class="viewcode-block" id="FileInfo.load_ndmapping"><a class="viewcode-back" href="../../Reference_Manual/lancet.html#lancet.core.FileInfo.load_ndmapping">[docs]</a>    <span class="k">def</span> <span class="nf">load_ndmapping</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ndmapping</span><span class="p">,</span> <span class="n">data_key</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="FileInfo.load_table"><a class="viewcode-back" href="../../Reference_Manual/lancet.html#lancet.core.FileInfo.load_table">[docs]</a>    <span class="k">def</span> <span class="nf">load_table</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Load the file contents into the supplied NdMapping using the</span>
-<span class="sd">        specified key and filetype. The input ndmapping should have</span>
-<span class="sd">        the filenames as values which will be replaced by the loaded</span>
+<span class="sd">        Load the file contents into the supplied Table using the</span>
+<span class="sd">        specified key and filetype. The input table should have the</span>
+<span class="sd">        filenames as values which will be replaced by the loaded</span>
 <span class="sd">        data. If data_key is specified, this key will be used to index</span>
 <span class="sd">        the loaded data to retrive the specified item.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">ndmapping</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="n">data_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filetype</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">data_key</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-                <span class="n">ndmapping</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">data_dict</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">ndmapping</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">data_dict</span><span class="p">[</span><span class="n">data_key</span><span class="p">]</span>
-        <span class="k">return</span> <span class="n">ndmapping</span>
+        <span class="n">items</span><span class="p">,</span>  <span class="n">data_keys</span> <span class="o">=</span> <span class="p">[],</span> <span class="bp">None</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">table</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">data_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filetype</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">filename</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">current_keys</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">data_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+            <span class="n">values</span> <span class="o">=</span> <span class="p">[</span><span class="n">data_dict</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">current_keys</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">data_keys</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">data_keys</span> <span class="o">=</span> <span class="n">current_keys</span>
+            <span class="k">elif</span> <span class="n">data_keys</span> <span class="o">!=</span> <span class="n">current_keys</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&quot;Data keys are inconsistent&quot;</span><span class="p">)</span>
+            <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">key</span><span class="p">,</span> <span class="n">values</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">Table</span><span class="p">(</span><span class="n">items</span><span class="p">,</span> <span class="n">key_dimensions</span><span class="o">=</span><span class="n">table</span><span class="o">.</span><span class="n">key_dimensions</span><span class="p">,</span>
+                     <span class="n">value_dimensions</span><span class="o">=</span><span class="n">data_keys</span><span class="p">)</span>
 
 </div>
 <div class="viewcode-block" id="FileInfo.load_dframe"><a class="viewcode-back" href="../../Reference_Manual/lancet.html#lancet.core.FileInfo.load_dframe">[docs]</a>    <span class="k">def</span> <span class="nf">load_dframe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dframe</span><span class="p">):</span>
