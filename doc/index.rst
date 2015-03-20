@@ -136,7 +136,8 @@ Paper describing reproducible workflows using Lancet and IPython Notebook: ::
      journal   = {{Frontiers in Neuroinformatics}},
      year      = {2013},
      volume    = {7},
-     pages     = {44}
+     pages     = {44},
+     url       = {http://www.ncbi.nlm.nih.gov/pmc/articles/PMC3874632/}
    }
 
 All the code, notebooks and other assets used in the following paper along with
