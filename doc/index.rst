@@ -127,7 +127,7 @@ integrated in a real research workflow.
 Papers published using Lancet
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Paper describing reproducible workflows using Lancet and IPython Notebook: ::
+Paper describing `reproducible workflows using Lancet and IPython Notebook `<http://www.ncbi.nlm.nih.gov/pmc/articles/PMC3874632/>`_: ::
 
    @article{Stevens2013,
      author    = {Jean-Luc Stevens and Marco Elver and James A. Bednar},
