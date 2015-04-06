@@ -882,10 +882,15 @@ class FileInfo(Args):
 
         table = Table(key_dimensions=dimension_labels,
                         value_dimensions=[self.key])
+        keys = []
         for spec in self.specs:
             value = spec[self.key]
-            key = [spec[k] for k in dimension_labels]
-            table[tuple(key)] = value
+            key = tuple([spec[k] for k in dimension_labels])
+            if key in keys:
+                key_fmt = ', '.join('%s=%r' % (k,v) for (k,v) in zip(dimension_labels, key))
+                self.warning('Key clash got %s (overriding)' % key_fmt)
+            table[key] = value
+            keys.append(key)
         return table
 
 
