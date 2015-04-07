@@ -2,11 +2,6 @@ import os, tempfile, json, pickle
 import param
 from lancet.core import PrettyPrinted
 
-try:
-    from io import StringIO
-except:
-    from StringIO import StringIO
-
 try:    import numpy
 except: pass
 

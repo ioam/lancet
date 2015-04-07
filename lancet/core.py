@@ -17,7 +17,7 @@ except:
 try:    from pandas import DataFrame
 except: DataFrame = None # pyflakes:ignore (try/except import)
 
-try: from holoviews import Table, Dimension
+try: from holoviews import Table
 except: Table = None     # pyflakes:ignore (try/except import)
 
 from collections import defaultdict, OrderedDict
