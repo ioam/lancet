@@ -1,7 +1,11 @@
 #!/usr/bin/env python
 
 import sys
-from distutils.core import setup
+try:
+    # Support setup.py develop if setuptools is available.
+    from setuptools import setup
+except ImportError:
+    from distutils.core import setup
 
 setup_args = {}
 
