@@ -170,10 +170,10 @@ class ShellCommand(Command):
 
         options = []
         for (k, v) in expanded.items():
-            if k in self.posargs or spec[k] == False:
+            if k in self.posargs or spec[k] is False:
                 continue
             options.append('%s%s' % (self.long_prefix if len(k) > 1 else self.short_prefix, k))
-            if spec[k] != True:
+            if spec[k] is not True:
                 options.append(v)
 
         posargs = [expanded[parg] if (parg in expanded) else parg(spec, info, tid)
