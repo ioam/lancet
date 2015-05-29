@@ -899,8 +899,12 @@ class FileInfo(Args):
         all_dimension_labels = self.constant_keys + self.varying_keys
         dimension_labels = [d for d in all_dimension_labels if d != self.key]
 
+        if dimension_labels == []:
+            return Table([spec[self.key] for spec in self.specs],
+                         value_dimensions=[self.key])
+
         table = Table(key_dimensions=dimension_labels,
-                        value_dimensions=[self.key])
+                      value_dimensions=[self.key])
         keys = []
         for spec in self.specs:
             value = spec[self.key]
