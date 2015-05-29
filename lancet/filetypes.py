@@ -188,6 +188,35 @@ class CustomFile(FileType):
         return val
 
 
+class HVZFile(CustomFile):
+    """
+    FileType supporting the .hvz file format of the the HoloViews
+    library (http://ioam.github.io/holoviews).
+
+    Equivalent to the following CustomFile:
+
+    CustomFile(metadata_fn=lambda f: Unpickler.key(f),
+               data_fn = lambda f: {e: Unpickler.load(f, [e])
+                                       for e in Unpickler.entries(f)})
+    """
+
+    def hvz_data_fn(f):
+        from holoviews.core.io import Unpickler
+        return {e: Unpickler.load(f, [e]) for e in Unpickler.entries(f)}
+
+    def hvz_metadata_fn(f):
+        from holoviews.core.io import Unpickler
+        return Unpickler.key(f)
+
+    data_fn = param.Callable(hvz_data_fn, doc="""
+        By default loads all the entries in the .hvz file using
+        Unpickler.load and returns them as a dictionary.""")
+
+    metadata_fn = param.Callable(hvz_metadata_fn, doc="""
+       Returns the key stored in the .hvz file as metadata using the
+       Unpickler.key method.""")
+
+
 
 class JSONFile(FileType):
     """
