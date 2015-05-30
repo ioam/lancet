@@ -158,14 +158,14 @@ class ShellCommand(Command):
 
     def __call__(self, spec, tid=None, info={}):
         # Function expansions are called here.
-        expanded = {}
+        expanded = type(spec)()
         for (k,v) in self.expansions.items():
             if isinstance(v, types.FunctionType):
                 expanded[k] = v(spec, info, tid)
             else:
                 expanded[k] = v
 
-        expanded.update(spec)
+        expanded.update(spec.items())
         expanded = core.Arguments.spec_formatter(expanded)
 
         options = []

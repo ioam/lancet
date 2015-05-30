@@ -142,7 +142,7 @@ class Arguments(PrettyPrinted, param.Parameterized):
     @classmethod
     def spec_formatter(cls, spec):
         " Formats the elements of an argument set appropriately"
-        return dict((k, str(v)) for (k,v) in spec.items())
+        return type(spec)((k, str(v)) for (k,v) in spec.items())
 
     @property
     def constant_keys(self):
