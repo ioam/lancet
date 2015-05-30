@@ -1,0 +1,12 @@
+<map id="inheritance3af1fc917b" name="inheritance3af1fc917b">
+<area shape="rect" id="node1" href="#lancet.core.PrettyPrinted" title="A mixin class for generating pretty&#45;printed representations." alt="" coords="45,105,225,130"/>
+<area shape="rect" id="node3" href="#lancet.filetypes.FileType" title="params(data_key=String, directory=String, extensions=List, hash_suffix=Boolean, name=String)" alt="" coords="312,130,483,155"/>
+<area shape="rect" id="node2" href="#lancet.filetypes.CustomFile" title="params(data_fn=Callable, metadata_fn=Callable, data_key=String, directory=String, extensions=List, hash_suffix=Boolean, name=String)" alt="" coords="537,6,729,31"/>
+<area shape="rect" id="node6" href="#lancet.filetypes.HVZFile" title="params(data_fn=Callable, metadata_fn=Callable, data_key=String, directory=String, extensions=List, hash_suffix=Boolean, name=String)" alt="" coords="784,6,955,31"/>
+<area shape="rect" id="node4" href="#lancet.filetypes.FileOption" title="params(first=ClassSelector, second=ClassSelector, data_key=String, directory=String, extensions=List, hash_suffix=Boolean, name=String)" alt="" coords="541,55,725,81"/>
+<area shape="rect" id="node7" href="#lancet.filetypes.ImageFile" title="params(data_mode=ObjectSelector, image_info=Dict, data_key=String, directory=String, extensions=List, hash_suffix=Boolean, name=String)" alt="" coords="542,105,725,130"/>
+<area shape="rect" id="node8" href="#lancet.filetypes.JSONFile" title="params(data_key=String, directory=String, extensions=List, hash_suffix=Boolean, name=String)" alt="" coords="546,154,721,179"/>
+<area shape="rect" id="node9" href="#lancet.filetypes.MatplotlibFile" title="params(data_key=String, directory=String, extensions=List, hash_suffix=Boolean, name=String)" alt="" coords="531,203,735,229"/>
+<area shape="rect" id="node10" href="#lancet.filetypes.NumpyFile" title="params(compress=Boolean, data_key=String, directory=String, extensions=List, hash_suffix=Boolean, name=String)" alt="" coords="539,253,727,278"/>
+<area shape="rect" id="node5" title="params(name=String)" alt="" coords="5,154,264,179"/>
+</map>

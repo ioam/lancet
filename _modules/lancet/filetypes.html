@@ -253,6 +253,35 @@
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&quot;The metadata callable must return a dictionary.&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">val</span>
 
+</div>
+<div class="viewcode-block" id="HVZFile"><a class="viewcode-back" href="../../Reference_Manual/lancet.html#lancet.filetypes.HVZFile">[docs]</a><span class="k">class</span> <span class="nc">HVZFile</span><span class="p">(</span><span class="n">CustomFile</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    FileType supporting the .hvz file format of the the HoloViews</span>
+<span class="sd">    library (http://ioam.github.io/holoviews).</span>
+
+<span class="sd">    Equivalent to the following CustomFile:</span>
+
+<span class="sd">    CustomFile(metadata_fn=lambda f: Unpickler.key(f),</span>
+<span class="sd">               data_fn = lambda f: {e: Unpickler.load(f, [e])</span>
+<span class="sd">                                       for e in Unpickler.entries(f)})</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">hvz_data_fn</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+        <span class="kn">from</span> <span class="nn">holoviews.core.io</span> <span class="kn">import</span> <span class="n">Unpickler</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">e</span><span class="p">:</span> <span class="n">Unpickler</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">[</span><span class="n">e</span><span class="p">])</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">Unpickler</span><span class="o">.</span><span class="n">entries</span><span class="p">(</span><span class="n">f</span><span class="p">)}</span>
+
+    <span class="k">def</span> <span class="nf">hvz_metadata_fn</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+        <span class="kn">from</span> <span class="nn">holoviews.core.io</span> <span class="kn">import</span> <span class="n">Unpickler</span>
+        <span class="k">return</span> <span class="n">Unpickler</span><span class="o">.</span><span class="n">key</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+    <span class="n">data_fn</span> <span class="o">=</span> <span class="n">param</span><span class="o">.</span><span class="n">Callable</span><span class="p">(</span><span class="n">hvz_data_fn</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s">&quot;&quot;&quot;</span>
+<span class="s">        By default loads all the entries in the .hvz file using</span>
+<span class="s">        Unpickler.load and returns them as a dictionary.&quot;&quot;&quot;</span><span class="p">)</span>
+
+    <span class="n">metadata_fn</span> <span class="o">=</span> <span class="n">param</span><span class="o">.</span><span class="n">Callable</span><span class="p">(</span><span class="n">hvz_metadata_fn</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s">&quot;&quot;&quot;</span>
+<span class="s">       Returns the key stored in the .hvz file as metadata using the</span>
+<span class="s">       Unpickler.key method.&quot;&quot;&quot;</span><span class="p">)</span>
+
 
 </div>
 <div class="viewcode-block" id="JSONFile"><a class="viewcode-back" href="../../Reference_Manual/lancet.html#lancet.filetypes.JSONFile">[docs]</a><span class="k">class</span> <span class="nc">JSONFile</span><span class="p">(</span><span class="n">FileType</span><span class="p">):</span>

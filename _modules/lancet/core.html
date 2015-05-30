@@ -208,7 +208,7 @@
     <span class="nd">@classmethod</span>
 <div class="viewcode-block" id="Arguments.spec_formatter"><a class="viewcode-back" href="../../Reference_Manual/lancet.html#lancet.core.Arguments.spec_formatter">[docs]</a>    <span class="k">def</span> <span class="nf">spec_formatter</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">spec</span><span class="p">):</span>
         <span class="s">&quot; Formats the elements of an argument set appropriately&quot;</span>
-        <span class="k">return</span> <span class="nb">dict</span><span class="p">((</span><span class="n">k</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">))</span> <span class="k">for</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="n">spec</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+        <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="n">spec</span><span class="p">)((</span><span class="n">k</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">))</span> <span class="k">for</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="n">spec</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
 </div>
     <span class="nd">@property</span>
 <div class="viewcode-block" id="Arguments.constant_keys"><a class="viewcode-back" href="../../Reference_Manual/lancet.html#lancet.core.Arguments.constant_keys">[docs]</a>    <span class="k">def</span> <span class="nf">constant_keys</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -937,6 +937,25 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">pprint_args</span><span class="p">([</span><span class="s">&#39;source&#39;</span><span class="p">,</span> <span class="s">&#39;key&#39;</span><span class="p">,</span> <span class="s">&#39;filetype&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s">&#39;ignore&#39;</span><span class="p">])</span>
 
 
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="FileInfo.from_pattern"><a class="viewcode-back" href="../../Reference_Manual/lancet.html#lancet.core.FileInfo.from_pattern">[docs]</a>    <span class="k">def</span> <span class="nf">from_pattern</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">pattern</span><span class="p">,</span> <span class="n">filetype</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s">&#39;filename&#39;</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">ignore</span><span class="o">=</span><span class="p">[]):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Convenience method to directly chain a pattern processed by</span>
+<span class="sd">        FilePattern into a FileInfo instance.</span>
+
+<span class="sd">        Note that if a default filetype has been set on FileInfo, the</span>
+<span class="sd">        filetype argument may be omitted.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">filepattern</span> <span class="o">=</span> <span class="n">FilePattern</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">pattern</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="n">root</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">FileInfo</span><span class="o">.</span><span class="n">filetype</span> <span class="ow">and</span> <span class="n">filetype</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">filetype</span> <span class="o">=</span> <span class="n">FileInfo</span><span class="o">.</span><span class="n">filetype</span>
+        <span class="k">elif</span> <span class="n">filetype</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&quot;The filetype argument must be supplied unless &quot;</span>
+                            <span class="s">&quot;an appropriate default has been specified as &quot;</span>
+                            <span class="s">&quot;FileInfo.filetype&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">FileInfo</span><span class="p">(</span><span class="n">filepattern</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">filetype</span><span class="p">,</span> <span class="n">ignore</span><span class="o">=</span><span class="n">ignore</span><span class="p">)</span>
+
+</div>
     <span class="nd">@property</span>
 <div class="viewcode-block" id="FileInfo.table"><a class="viewcode-back" href="../../Reference_Manual/lancet.html#lancet.core.FileInfo.table">[docs]</a>    <span class="k">def</span> <span class="nf">table</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -946,8 +965,12 @@
         <span class="n">all_dimension_labels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">constant_keys</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">varying_keys</span>
         <span class="n">dimension_labels</span> <span class="o">=</span> <span class="p">[</span><span class="n">d</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">all_dimension_labels</span> <span class="k">if</span> <span class="n">d</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">key</span><span class="p">]</span>
 
+        <span class="k">if</span> <span class="n">dimension_labels</span> <span class="o">==</span> <span class="p">[]:</span>
+            <span class="k">return</span> <span class="n">Table</span><span class="p">([</span><span class="n">spec</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">spec</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">specs</span><span class="p">],</span>
+                         <span class="n">value_dimensions</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">key</span><span class="p">])</span>
+
         <span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">key_dimensions</span><span class="o">=</span><span class="n">dimension_labels</span><span class="p">,</span>
-                        <span class="n">value_dimensions</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">key</span><span class="p">])</span>
+                      <span class="n">value_dimensions</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">key</span><span class="p">])</span>
         <span class="n">keys</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">spec</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">specs</span><span class="p">:</span>
             <span class="n">value</span> <span class="o">=</span> <span class="n">spec</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">key</span><span class="p">]</span>
