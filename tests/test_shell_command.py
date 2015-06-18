@@ -66,5 +66,26 @@ class TestShellCommand(TestCase):
         expected = ['test.py']
         self.assertEqual(cmd_line, expected)
 
+    def test_expansions_are_correctly_called_for_long_filenames(self):
+        # Given
+        lf = ShellCommand.LongFilename('')
+        sc = ShellCommand('test.py', expansions={'output': lf})
+
+        # When
+        spec = OrderedDict([('arg', 0)])
+        info = {
+            'root_directory': '/tmp',
+            'batch_name': 'test',
+            'varying_keys': ['arg']
+        }
+
+        # Then.
+        result = sc(spec, info=info)
+
+        fname = lf(spec, info, None)
+        expected = ['test.py', '--output', fname, '--arg', '0']
+        self.assertEqual(result, expected)
+
+
 if __name__ == '__main__':
     main()
