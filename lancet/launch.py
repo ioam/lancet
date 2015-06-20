@@ -133,7 +133,7 @@ class ShellCommand(Command):
         that expand to valid argument values.  If a function is used,
         it must have the signature (spec, info, tid). A typical usage
         for a function value is to build a valid output filename given
-        the contrext.
+        the context.
 
         Three such subclasses are provided:
         'RootDirectory', 'LongFilename' and 'Expand'.''')
@@ -152,15 +152,15 @@ class ShellCommand(Command):
 
     def __init__(self, executable, **params):
         super(ShellCommand,self).__init__(executable = executable,
-                                         do_format=False,
-                                         **params)
+                                          do_format=False,
+                                          **params)
         self.pprint_args(['executable','posargs'],['long_prefix'])
 
     def __call__(self, spec, tid=None, info={}):
         # Function expansions are called here.
         expanded = type(spec)()
         for (k,v) in self.expansions.items():
-            if isinstance(v, types.FunctionType):
+            if callable(v):
                 expanded[k] = v(spec, info, tid)
             else:
                 expanded[k] = v
@@ -170,10 +170,10 @@ class ShellCommand(Command):
 
         options = []
         for (k, v) in expanded.items():
-            if k in self.posargs or spec[k] is False:
+            if k in self.posargs or spec.get(k) is False:
                 continue
             options.append('%s%s' % (self.long_prefix if len(k) > 1 else self.short_prefix, k))
-            if spec[k] is not True:
+            if spec.get(k) is not True:
                 options.append(v)
 
         posargs = [expanded[parg] if (parg in expanded) else parg(spec, info, tid)
