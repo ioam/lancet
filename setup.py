@@ -8,7 +8,7 @@ install_requires = ['param>=0.0.1']
 
 
 setup_args.update(dict(
-    name='lancet',
+    name='lancet-ioam',
     version="0.9.0",
     install_requires = install_requires,
     description='Launch jobs, organize the output, and dissect the results.',
