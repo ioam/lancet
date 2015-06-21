@@ -1,40 +1,18 @@
 #!/usr/bin/env python
 
-import sys
-try:
-    # Support setup.py develop if setuptools is available.
-    from setuptools import setup
-except ImportError:
-    from distutils.core import setup
+import sys, os
+from distutils.core import setup
 
 setup_args = {}
-
-required = {'param':">=0.0.1"}
-
-packages_to_install = [required]
-packages_to_state = [required]
-
-
-if 'setuptools' in sys.modules:
-    # support easy_install without depending on setuptools
-    install_requires = []
-    for package_list in packages_to_install:
-        install_requires+=["%s%s"%(package,version) for package,version in package_list.items()]
-    setup_args['install_requires']=install_requires
-    setup_args['dependency_links']=["http://pypi.python.org/simple/"]
-    setup_args['zip_safe'] = False
-
-for package_list in packages_to_state:
-    requires = []
-    requires+=["%s (%s)"%(package,version) for package,version in package_list.items()]
-    setup_args['requires']=requires
+install_requires = ['param>=0.0.1']
 
 
 setup_args.update(dict(
     name='lancet',
-    version="0.8",
+    version="0.9.0",
+    install_requires = install_requires,
     description='Launch jobs, organize the output, and dissect the results.',
-    long_description=open('README.rst').read(),
+    long_description=open('README.rst').read() if os.path.isfile('README.rst') else 'Consult README.rst',
     author= "Jean-Luc Stevens and Marco Elver",
     author_email= "developers@topographica.org",
     maintainer= "IOAM",
@@ -58,10 +36,27 @@ setup_args.update(dict(
 ))
 
 
+def check_pseudo_package(path):
+    """
+    Verifies that a fake subpackage path for assets (notebooks, svgs,
+    pngs etc) both exists and is populated with files.
+    """
+    if not os.path.isdir(path):
+        raise Exception("Please make sure pseudo-package %s exists." % path)
+    else:
+        assets = os.listdir(path)
+        if len(assets) == 0:
+            raise Exception("Please make sure pseudo-package %s is populated." % path)
+
 if __name__=="__main__":
 
-    if 'upload' in sys.argv:
-        import lancet
-        lancet.__version__.verify(setup_args['version'])
+    if 'LANCET_RELEASE' in os.environ:
+        # Add unit tests
+        setup_args['packages'].append('lancet.tests')
+
+        if ('upload' in sys.argv) or ('sdist' in sys.argv):
+            check_pseudo_package(os.path.join('.', 'lancet', 'tests'))
+            import lancet
+            lancet.__version__.verify(setup_args['version'])
 
     setup(**setup_args)

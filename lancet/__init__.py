@@ -53,7 +53,7 @@ consuming computational time and resources.
 import os, sys, subprocess
 import param
 
-__version__ = param.Version(release=(0,8,0), fpath=__file__, commit="$Format:%h$")
+__version__ = param.Version(release=(0,9,0), fpath=__file__, commit="$Format:%h$")
 
 from lancet.core import *       # pyflakes:ignore (appropriate import)
 from lancet.dynamic import *    # pyflakes:ignore (appropriate import)
