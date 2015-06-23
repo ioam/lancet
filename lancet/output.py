@@ -3,12 +3,14 @@ from collections import OrderedDict, namedtuple
 from glob import glob
 import json
 import os
-from os.path import isdir, join, splitext
 
 import param
 
 import lancet.core as core
 
+#===============#
+# Output Helper #
+#===============#
 
 class Output(param.Parameterized):
     """A convenience class to help collect the generated outputs from an
@@ -27,32 +29,31 @@ class Output(param.Parameterized):
 
     Here is an example of using the class::
 
-        >>> output = Output('output')
-        >>> len(output)
+        >> output = Output('output')
+        >> len(output)
         2
-        >>> output[-1]._fields # the fields of the namedtuple.
+        >> output[-1]._fields # the fields of the namedtuple.
         ('timestamp', 'path', 'tids', 'specs', 'stdout', 'stderr', 'log', 'info')
 
-        >>> output[-1].path # the path of the last run.
+        >> output[-1].path # the path of the last run.
         u'/tmp/output/2015-06-21_0325-prime_quintuplet'
 
-        >>> len(output[-1].specs) # spec the arguments for each case.
+        >> len(output[-1].specs) # spec the arguments for each case.
         16
-        >>> output[-1].specs[-1]
+        >> output[-1].specs[-1]
         {'integer': 115}
-        >>> len(output[1].stdout) # the path to the stdout for each case.
+        >> len(output[1].stdout) # the path to the stdout for each case.
         16
-        >>> open(output[1].stdout[-1]).read()
+        >> open(output[1].stdout[-1]).read()
         '109: 109\n'
 
     One can iterate over the LaunchInfo for the launches like so::
 
-        >>> for li in output:
-        ...     print(li.path)
-        ...
+        >> for li in output:
+        ..     print(li.path)
+        ..
         /tmp/output/2015-06-21_0315-prime_quintuplet
         /tmp/output/2015-06-21_0325-prime_quintuplet
-        >>>
 
     """
 
@@ -69,8 +70,6 @@ class Output(param.Parameterized):
 
         See the `ShellCommand.RootDirectory`, `ShellCommand.LongFilename` and
         `ShellCommand.Expand`.''')
-
-    ##### object Protocol ####################################################
 
     def __init__(self, output_dir, **params):
         super(Output,self).__init__(output_dir=output_dir, **params)
@@ -93,15 +92,13 @@ class Output(param.Parameterized):
     def __len__(self):
         return len(self.launches)
 
-    ##### Private Protocol ####################################################
-
     def _get_launch_info(self, launch_dir):
-        log_path = glob(join(launch_dir, '*.log'))[0]
+        log_path = glob(os.path.join(launch_dir, '*.log'))[0]
         log = core.Log.extract_log(log_path, OrderedDict)
         tids = list(log.keys())
         specs = list(log.values())
 
-        info_file = glob(join(launch_dir, '*.info'))[0]
+        info_file = glob(os.path.join(launch_dir, '*.info'))[0]
         info = json.load(open(info_file))
         stdout, stderr = self._get_streams(info)
 
@@ -121,9 +118,9 @@ class Output(param.Parameterized):
     def _get_streams(self, info):
 
         def _get_paths(pattern):
-            streams = join(info['root_directory'], 'streams')
-            files = glob(join(streams, pattern))
-            files = sorted(files, key=lambda x: splitext(x)[1])
+            streams = os.path.join(info['root_directory'], 'streams')
+            files = glob(os.path.join(streams, pattern))
+            files = sorted(files, key=lambda x: os.path.splitext(x)[1])
             return files
 
         batch_name = info['batch_name']
@@ -131,16 +128,13 @@ class Output(param.Parameterized):
         stderr = _get_paths('%s_*.e.*'%batch_name)
         return stdout, stderr
 
-    ##### Public  Protocol ####################################################
-
     def update(self):
         """Update the launch information -- use if additional launches were
         made.
         """
         launches = []
-        for path in sorted(os.listdir(self.output_dir)):
-            full_path = join(self.output_dir, path)
-            if isdir(full_path):
+        for path in os.listdir(self.output_dir):
+            full_path = os.path.join(self.output_dir, path)
+            if os.path.isdir(full_path):
                 launches.append(self._get_launch_info(full_path))
-        launches.sort()
-        self.launches = launches
+        self.launches = sorted(launches)
