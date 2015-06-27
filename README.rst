@@ -1,5 +1,4 @@
-|BuildStatus|_
-
+|BuildStatus|_ |License|_
 
 Lancet
 ======
@@ -85,4 +84,5 @@ Philipp Rudiger: Testing, feedback and suggestions.
 .. |BuildStatus| image:: https://travis-ci.org/ioam/lancet.svg?branch=master
 .. _BuildStatus: https://travis-ci.org/ioam/lancet
 
-
+.. |License| image:: https://img.shields.io/pypi/l/lancet-ioam.svg
+.. _License: https://pypi.python.org/pypi/lancet-ioam
