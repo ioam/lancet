@@ -950,8 +950,7 @@ class FileInfo(Args):
                 raise Exception("Data keys are inconsistent")
             items.append((key, values))
 
-        return Table(items, key_dimensions=table.key_dimensions,
-                     value_dimensions=data_keys)
+        return Table(items, kdims=table.kdims, vdims=data_keys)
 
 
     def load_dframe(self, dframe):
