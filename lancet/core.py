@@ -756,6 +756,7 @@ class FilePattern(Args):
     def __init__(self, key, pattern, root=None, **params):
         root = os.getcwd() if root is None else root
         specs = self._load_expansion(key, root, pattern)
+        self.files = [s[key] for s in specs]
         super(FilePattern, self).__init__(specs, key=key, pattern=pattern,
                                           root=root, **params)
         self.pprint_args(['key', 'pattern'], ['root'])
