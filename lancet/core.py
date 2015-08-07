@@ -32,6 +32,14 @@ def set_fp_precision(value):
     """
     Arguments.set_default('fp_precision', value)
 
+def to_table(args, vdims=[]):
+    "Helper function to convet an Args object to a HoloViews Table"
+    if not Table:
+        return "HoloViews Table not available"
+    kdims = args.constant_keys + args.varying_keys
+    items = ((tuple([spec[k] for k in kdims]), ()) for spec in args.specs)
+    return Table(items, kdims=kdims, vdims=[]).reindex(None, vdims)
+
 #=====================#
 # Argument Specifiers #
 #=====================#
@@ -475,12 +483,7 @@ class Args(Arguments):
 
     @property
     def table(self):
-        if not Table:
-            return "HoloViews Table not available"
-        keys =  self.varying_keys + self.constant_keys
-        items = [(tuple([spec[k] for k  in keys]),()) for spec in self.specs]
-        return Table(items, key_dimensions=keys, value_dimensions=[])
-
+        return to_table(self)
 
     def __len__(self): return len(self.specs)
 
@@ -835,6 +838,10 @@ class FilePattern(Args):
         fields = list(f for f in fields if f)
         return globpat, regexp_pattern , fields, dict(types)
 
+    @property
+    def table(self):
+        return to_table(self, [self.key])
+
 
 # Importing from filetypes requires PrettyPrinted to be defined first
 from lancet.filetypes import FileType
@@ -893,29 +900,7 @@ class FileInfo(Args):
 
     @property
     def table(self):
-        """
-        Return an ndmapping of the loaded data using the filenames as
-        values and the remaining data as the keys.
-        """
-        all_dimension_labels = self.constant_keys + self.varying_keys
-        dimension_labels = [d for d in all_dimension_labels if d != self.key]
-
-        if dimension_labels == []:
-            return Table([spec[self.key] for spec in self.specs],
-                         value_dimensions=[self.key])
-
-        table = Table(key_dimensions=dimension_labels,
-                      value_dimensions=[self.key])
-        keys = []
-        for spec in self.specs:
-            value = spec[self.key]
-            key = tuple([spec[k] for k in dimension_labels])
-            if key in keys:
-                key_fmt = ', '.join('%s=%r' % (k,v) for (k,v) in zip(dimension_labels, key))
-                self.warning('Key clash got %s (overriding)' % key_fmt)
-            table[key] = value
-            keys.append(key)
-        return table
+        return to_table(self, [self.key])
 
 
     def load(self, val, **kwargs):
