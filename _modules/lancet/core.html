@@ -97,6 +97,14 @@
 <span class="sd">    Function to set the floating precision across lancet.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">Arguments</span><span class="o">.</span><span class="n">set_default</span><span class="p">(</span><span class="s">&#39;fp_precision&#39;</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="to_table"><a class="viewcode-back" href="../../Reference_Manual/lancet.html#lancet.core.to_table">[docs]</a><span class="k">def</span> <span class="nf">to_table</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">vdims</span><span class="o">=</span><span class="p">[]):</span>
+    <span class="s">&quot;Helper function to convet an Args object to a HoloViews Table&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">Table</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s">&quot;HoloViews Table not available&quot;</span>
+    <span class="n">kdims</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">constant_keys</span> <span class="o">+</span> <span class="n">args</span><span class="o">.</span><span class="n">varying_keys</span>
+    <span class="n">items</span> <span class="o">=</span> <span class="p">((</span><span class="nb">tuple</span><span class="p">([</span><span class="n">spec</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">kdims</span><span class="p">]),</span> <span class="p">())</span> <span class="k">for</span> <span class="n">spec</span> <span class="ow">in</span> <span class="n">args</span><span class="o">.</span><span class="n">specs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">Table</span><span class="p">(</span><span class="n">items</span><span class="p">,</span> <span class="n">kdims</span><span class="o">=</span><span class="n">kdims</span><span class="p">,</span> <span class="n">vdims</span><span class="o">=</span><span class="p">[])</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="n">vdims</span><span class="p">)</span>
 
 <span class="c">#=====================#</span>
 <span class="c"># Argument Specifiers #</span>
@@ -541,12 +549,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">table</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">Table</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s">&quot;HoloViews Table not available&quot;</span>
-        <span class="n">keys</span> <span class="o">=</span>  <span class="bp">self</span><span class="o">.</span><span class="n">varying_keys</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">constant_keys</span>
-        <span class="n">items</span> <span class="o">=</span> <span class="p">[(</span><span class="nb">tuple</span><span class="p">([</span><span class="n">spec</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span>  <span class="ow">in</span> <span class="n">keys</span><span class="p">]),())</span> <span class="k">for</span> <span class="n">spec</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">specs</span><span class="p">]</span>
-        <span class="k">return</span> <span class="n">Table</span><span class="p">(</span><span class="n">items</span><span class="p">,</span> <span class="n">key_dimensions</span><span class="o">=</span><span class="n">keys</span><span class="p">,</span> <span class="n">value_dimensions</span><span class="o">=</span><span class="p">[])</span>
-
+        <span class="k">return</span> <span class="n">to_table</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">specs</span><span class="p">)</span>
 
@@ -822,6 +825,7 @@
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">pattern</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">):</span>
         <span class="n">root</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span> <span class="k">if</span> <span class="n">root</span> <span class="ow">is</span> <span class="bp">None</span> <span class="k">else</span> <span class="n">root</span>
         <span class="n">specs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_expansion</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">root</span><span class="p">,</span> <span class="n">pattern</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">files</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">specs</span><span class="p">]</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">FilePattern</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">specs</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">key</span><span class="p">,</span> <span class="n">pattern</span><span class="o">=</span><span class="n">pattern</span><span class="p">,</span>
                                           <span class="n">root</span><span class="o">=</span><span class="n">root</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pprint_args</span><span class="p">([</span><span class="s">&#39;key&#39;</span><span class="p">,</span> <span class="s">&#39;pattern&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s">&#39;root&#39;</span><span class="p">])</span>
@@ -900,6 +904,10 @@
         <span class="n">fields</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">fields</span> <span class="k">if</span> <span class="n">f</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">globpat</span><span class="p">,</span> <span class="n">regexp_pattern</span> <span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="n">types</span><span class="p">)</span>
 
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">table</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">to_table</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">key</span><span class="p">])</span>
+
 
 <span class="c"># Importing from filetypes requires PrettyPrinted to be defined first</span></div>
 <span class="kn">from</span> <span class="nn">lancet.filetypes</span> <span class="kn">import</span> <span class="n">FileType</span>
@@ -957,32 +965,10 @@
 
 </div>
     <span class="nd">@property</span>
-<div class="viewcode-block" id="FileInfo.table"><a class="viewcode-back" href="../../Reference_Manual/lancet.html#lancet.core.FileInfo.table">[docs]</a>    <span class="k">def</span> <span class="nf">table</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Return an ndmapping of the loaded data using the filenames as</span>
-<span class="sd">        values and the remaining data as the keys.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">all_dimension_labels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">constant_keys</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">varying_keys</span>
-        <span class="n">dimension_labels</span> <span class="o">=</span> <span class="p">[</span><span class="n">d</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">all_dimension_labels</span> <span class="k">if</span> <span class="n">d</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">key</span><span class="p">]</span>
+    <span class="k">def</span> <span class="nf">table</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">to_table</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">key</span><span class="p">])</span>
 
-        <span class="k">if</span> <span class="n">dimension_labels</span> <span class="o">==</span> <span class="p">[]:</span>
-            <span class="k">return</span> <span class="n">Table</span><span class="p">([</span><span class="n">spec</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">spec</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">specs</span><span class="p">],</span>
-                         <span class="n">value_dimensions</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">key</span><span class="p">])</span>
 
-        <span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">key_dimensions</span><span class="o">=</span><span class="n">dimension_labels</span><span class="p">,</span>
-                      <span class="n">value_dimensions</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">key</span><span class="p">])</span>
-        <span class="n">keys</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">spec</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">specs</span><span class="p">:</span>
-            <span class="n">value</span> <span class="o">=</span> <span class="n">spec</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">key</span><span class="p">]</span>
-            <span class="n">key</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">([</span><span class="n">spec</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">dimension_labels</span><span class="p">])</span>
-            <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
-                <span class="n">key_fmt</span> <span class="o">=</span> <span class="s">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s">&#39;</span><span class="si">%s</span><span class="s">=</span><span class="si">%r</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">dimension_labels</span><span class="p">,</span> <span class="n">key</span><span class="p">))</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s">&#39;Key clash got </span><span class="si">%s</span><span class="s"> (overriding)&#39;</span> <span class="o">%</span> <span class="n">key_fmt</span><span class="p">)</span>
-            <span class="n">table</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
-            <span class="n">keys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">table</span>
-
-</div>
 <div class="viewcode-block" id="FileInfo.load"><a class="viewcode-back" href="../../Reference_Manual/lancet.html#lancet.core.FileInfo.load">[docs]</a>    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Load the file contents into the supplied pandas dataframe or</span>
@@ -1016,8 +1002,7 @@
                 <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&quot;Data keys are inconsistent&quot;</span><span class="p">)</span>
             <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">key</span><span class="p">,</span> <span class="n">values</span><span class="p">))</span>
 
-        <span class="k">return</span> <span class="n">Table</span><span class="p">(</span><span class="n">items</span><span class="p">,</span> <span class="n">key_dimensions</span><span class="o">=</span><span class="n">table</span><span class="o">.</span><span class="n">key_dimensions</span><span class="p">,</span>
-                     <span class="n">value_dimensions</span><span class="o">=</span><span class="n">data_keys</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Table</span><span class="p">(</span><span class="n">items</span><span class="p">,</span> <span class="n">kdims</span><span class="o">=</span><span class="n">table</span><span class="o">.</span><span class="n">kdims</span><span class="p">,</span> <span class="n">vdims</span><span class="o">=</span><span class="n">data_keys</span><span class="p">)</span>
 
 </div>
 <div class="viewcode-block" id="FileInfo.load_dframe"><a class="viewcode-back" href="../../Reference_Manual/lancet.html#lancet.core.FileInfo.load_dframe">[docs]</a>    <span class="k">def</span> <span class="nf">load_dframe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dframe</span><span class="p">):</span>
