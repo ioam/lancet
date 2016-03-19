@@ -791,7 +791,7 @@ class QLauncher(Launcher):
         # Pickle launcher before exit if necessary.
         if self.dynamic or (self.reduction_fn is not None):
             pickle_path = os.path.join(self.root_directory, 'qlauncher.pkl')
-            pickle.dump(self, open(pickle_path,'wb'))
+            pickle.dump(self, open(pickle_path,'wb'), protocol=2)
 
     def _qsub_collate_and_launch(self, output_dir, error_dir, job_names):
         """
