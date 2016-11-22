@@ -973,7 +973,9 @@ class FileInfo(Args):
 
             mdata = dict((k,v) for (k,v) in filetype.metadata(spec[key]).items()
                          if k not in ignore)
-            mdata_spec = dict(spec, **mdata)
+            mdata_spec = {}
+            mdata_spec.update(spec)
+            mdata_spec.update(mdata)
             specs.append(mdata_spec)
             mdata_clashes = mdata_clashes | (set(spec.keys()) & set(mdata.keys()))
         # Metadata clashes can be avoided by using the ignore list.
