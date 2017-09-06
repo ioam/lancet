@@ -131,11 +131,11 @@ class Arguments(PrettyPrinted, param.Parameterized):
     """
 
     fp_precision = param.Integer(default=4, constant=True, doc='''
-         The floating point precision to use for floating point
-         values.  Unlike other basic Python types, floats need care
-         with their representation as you only want to display up to
-         the precision actually specified. A floating point precision
-         of 0 casts number to integers before representing them.''')
+        The floating point precision to use for floating point values.
+        Unlike other basic Python types, floats need care with their
+        representation as you only want to display up to the precision
+        actually specified. A floating point precision of 0 casts
+        number to integers before representing them.''')
 
     def __init__(self, **params):
         self._pprint_args = ([],[],None,{})
@@ -286,8 +286,8 @@ class Identity(Arguments):
 
     fp_precision = param.Integer(default=None, allow_None=True,
                                  precedence=(-1), constant=True, doc='''
-       fp_precision is disabled as Identity() never contains any
-       arguments.''')
+        fp_precision is disabled as Identity() never contains any
+        arguments.''')
 
     def __eq__(self, other): return isinstance(other, Identity)
     def __repr__(self): return "Identity()"
@@ -330,9 +330,9 @@ class Args(Arguments):
     """
 
     specs = param.List(default=[], constant=True, doc='''
-          The static list of specifications (ie. dictionaries) to be
-          returned by the specifier. Float values are rounded
-          according to fp_precision.''')
+        The static list of specifications (ie. dictionaries) to be
+        returned by the specifier. Float values are rounded according
+        to fp_precision.''')
 
     def __init__(self, specs=None, fp_precision=None, **params):
         if fp_precision is None: fp_precision = Arguments.fp_precision
@@ -498,11 +498,11 @@ class Concatenate(Args):
     the arguments in first followed by the arguments in second.
     """
 
-    first = param.ClassSelector(default=None, class_=Args, allow_None=True,
-       constant=True, doc='''The first specifier in the concatenation.''')
+    first = param.ClassSelector(default=None, class_=Args, allow_None=True, constant=True, doc='''
+        The first specifier in the concatenation.''')
 
-    second = param.ClassSelector(default=None, class_=Args, allow_None=True,
-       constant=True, doc='''The second specifier in the concatenation.''')
+    second = param.ClassSelector(default=None, class_=Args, allow_None=True, constant=True, doc='''
+        The second specifier in the concatenation.''')
 
     def __init__(self, first, second):
 
@@ -551,22 +551,22 @@ class Range(Args):
     """
 
     key = param.String(default='', constant=True, doc='''
-         The key assigned to the values computed over the numeric range.''')
+        The key assigned to the values computed over the numeric range.''')
 
-    start_value =  param.Number(default=None, allow_None=True, constant=True,
-        doc='''The starting numeric value of the range.''')
+    start_value =  param.Number(default=None, allow_None=True, constant=True, doc='''
+        The starting numeric value of the range.''')
 
-    end_value = param.Number(default=None, allow_None=True, constant=True,
-       doc='''The ending numeric value of the range (inclusive).''')
+    end_value = param.Number(default=None, allow_None=True, constant=True, doc='''
+        The ending numeric value of the range (inclusive).''')
 
-    steps = param.Integer(default=2, constant=True, bounds=(1,None),
-       doc='''The number of steps to interpolate over. Default is 2
-         which returns the start and end values without interpolation.''')
+    steps = param.Integer(default=2, constant=True, bounds=(1,None), doc='''
+        The number of steps to interpolate over. Default is 2 which
+        returns the start and end values without interpolation.''')
 
     # Can't this be a lambda?
     mapfn = param.Callable(default=identityfn, constant=True, doc='''
-         The function to be mapped across the linear range. The
-         identity function is used by by default''')
+        The function to be mapped across the linear range. The
+        identity function is used by by default''')
 
     def __init__(self, key, start_value, end_value, steps=2, mapfn=identityfn, **params):
 
@@ -618,15 +618,14 @@ class Log(Args):
     Args(Log.extract_log(<log_file>).values()),
     """
 
-    log_path = param.String(default=None, allow_None=True, constant=True,
-         doc='''The relative or absolute path to the log file. If a
-              relative path is given, the absolute path is computed
-              relative to os.getcwd().''')
+    log_path = param.String(default=None, allow_None=True, constant=True, doc='''
+        The relative or absolute path to the log file. If a relative
+        path is given, the absolute path is computed relative to
+        os.getcwd().''')
 
-    tid_key = param.String(default='tid', constant=True, allow_None=True,
-         doc='''If not None, the key given to the tid values included
-               in the loaded specifications. If None, the tid number
-               is ignored.''')
+    tid_key = param.String(default='tid', constant=True, allow_None=True, doc='''
+        If not None, the key given to the tid values included in the
+        loaded specifications. If None, the tid number is ignored.''')
 
     @staticmethod
     def extract_log(log_path, dict_type=dict):
@@ -732,15 +731,15 @@ class FilePattern(Args):
     filenames anyway).
     """
 
-    key = param.String(default=None, allow_None=True, constant=True,
-       doc='''The key name given to the matched file path strings.''')
+    key = param.String(default=None, allow_None=True, constant=True, doc='''
+        The key name given to the matched file path strings.''')
 
-    pattern = param.String(default=None, allow_None=True, constant=True,
-       doc='''The pattern files are to be searched against.''')
+    pattern = param.String(default=None, allow_None=True, constant=True, doc='''
+        The pattern files are to be searched against.''')
 
-    root = param.String(default=None, allow_None=True, constant=True,
-       doc='''The root directory from which patterns are to be loaded.
-       The root is set relative to os.getcwd().''')
+    root = param.String(default=None, allow_None=True, constant=True, doc='''
+        The root directory from which patterns are to be loaded.  The
+        root is set relative to os.getcwd().''')
 
     @classmethod
     def directory(cls, directory, root=None, extension=None, **kwargs):
@@ -865,10 +864,10 @@ class FileInfo(Args):
         A FileType object to be applied to each file path.''')
 
     key = param.String(constant=True, doc='''
-       The key used to find the file paths for inspection.''')
+        The key used to find the file paths for inspection.''')
 
     ignore = param.List(default=[], constant=True, doc='''
-       Metadata keys that are to be explicitly ignored. ''')
+        Metadata keys that are to be explicitly ignored. ''')
 
     def __init__(self, source, key, filetype, ignore = [], **params):
         specs = self._info(source, key, filetype, ignore)
